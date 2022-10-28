@@ -9,8 +9,6 @@ using Microsoft.OpenApi.Models;
 using WorkoutBuddy.Authentication;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
-using Microsoft.Azure.Services.AppAuthentication;
-using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,24 +36,20 @@ if (shouldUseKeyVault)
 }
 
 // Add services to the container.
-
-builder.Services.AddDbContext<DataContext>(async options =>
+builder.Services.AddDbContext<DataContext>(options =>
 {
-    // Todo put in app settings / keyvault
-    var endpoint = "https://localhost:8081";
-    var primaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-    var dbname = "timetowork-local";
+    var endpoint = builder.Configuration.GetValue<string>("Cosmos:Uri") ?? throw new Exception("Missing configuration: Cosmos:Uri");
+    var primaryKey = builder.Configuration.GetValue<string>("Cosmos:Key") ?? throw new Exception("Missing configuration: Cosmos:Key");
+    var dbname = builder.Configuration.GetValue<string>("Cosmos:DbName") ?? throw new Exception("Missing configuration: Cosmos:DbName");
 
-    // cosmos db connection
     options.UseCosmos(
         endpoint, 
         primaryKey, 
         dbname);
 });
 
-
-
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -63,12 +57,9 @@ builder.Services
             .AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Time To Work", Version = "v1" });
-
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
-
                     Type = SecuritySchemeType.OAuth2,
-
                     Flows = new OpenApiOAuthFlows
                     {
                         Password = new OpenApiOAuthFlow
@@ -78,9 +69,7 @@ builder.Services
                                 {
                                     { "returnSecureToken", new OpenApiBoolean(true) },
                                 },
-
                         }
-
                     }
                 });
                 c.OperationFilter<AuthorizeCheckOperationFilter>();
