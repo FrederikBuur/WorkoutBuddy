@@ -6,7 +6,8 @@ public record Exercise(
     Guid id, 
     Guid creatorId, 
     string name, 
-    string description, 
+    string? description, 
     string? imageUrl,
-    IEnumerable<MuscleGroup> muscleGroups
+    MuscleGroupType primaryMuscleGroup,
+    ICollection<MuscleGroupType> secondaryMuscleGroup
 );

@@ -1,11 +1,11 @@
-﻿
+
 namespace workouts;
 
 public class ExerciseDto
 {
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    public Guid CreaterId { get; set; }
+    public Guid CreatorId { get; set; }
 
     public string Name { get; set; }
 
@@ -13,5 +13,7 @@ public class ExerciseDto
 
     public string? ImageUrl { get; set; }
 
-    public IEnumerable<MuscleGroupDto> MuscleGroups { get; set; } = new List<MuscleGroupDto>();
+    public MuscleGroupType PrimaryMuscleGroup { get; set; }
+
+    public ICollection<MuscleGroupType> SecondaryMuscleGroups { get; set; } = new List<MuscleGroupType>();
 }

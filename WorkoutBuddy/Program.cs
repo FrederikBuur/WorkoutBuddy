@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using WorkoutBuddy.Authentication;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
+using WorkoutBuddy.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,9 +25,10 @@ builder.Configuration
 
 var azureCredentials = new DefaultAzureCredential(new DefaultAzureCredentialOptions
 {
-    ManagedIdentityClientId = builder.Configuration.GetValue<string>("Auth:ManagedIdentityId") ?? throw new Exception("Missing configuration: Auth:ManagedIdentityId")
+    ManagedIdentityClientId = builder.Configuration.GetValue<string>("ManagedIdentity:Id") ?? throw new Exception("Missing configuration: Auth:ManagedIdentityId")
 });
 
+// Setup keyvault secrets
 var shouldUseKeyVault = builder.Configuration.GetValue<bool>("KeyVault:UseKeyVault", true);
 if (shouldUseKeyVault)
 {
@@ -35,7 +37,7 @@ if (shouldUseKeyVault)
     builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredentials);
 }
 
-// Add services to the container.
+// Setup EF Core
 builder.Services.AddDbContext<DataContext>(options =>
 {
     var endpoint = builder.Configuration.GetValue<string>("Cosmos:Uri") ?? throw new Exception("Missing configuration: Cosmos:Uri");
@@ -43,61 +45,59 @@ builder.Services.AddDbContext<DataContext>(options =>
     var dbname = builder.Configuration.GetValue<string>("Cosmos:DbName") ?? throw new Exception("Missing configuration: Cosmos:DbName");
 
     options.UseCosmos(
-        endpoint, 
-        primaryKey, 
-        dbname);
+        endpoint,
+        primaryKey,
+        dbname
+    );
 });
 
-builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services
-            .AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Time To Work", Version = "v1" });
+    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+            Password = new OpenApiOAuthFlow
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Time To Work", Version = "v1" });
-                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                TokenUrl = new Uri("/v1/auth", UriKind.Relative),
+                Extensions = new Dictionary<string, IOpenApiExtension>
                 {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
-                    {
-                        Password = new OpenApiOAuthFlow
-                        {
-                            TokenUrl = new Uri("/v1/auth", UriKind.Relative),
-                            Extensions = new Dictionary<string, IOpenApiExtension>
-                                {
-                                    { "returnSecureToken", new OpenApiBoolean(true) },
-                                },
-                        }
-                    }
-                });
-                c.OperationFilter<AuthorizeCheckOperationFilter>();
-            });
-
-// inject settings
-builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("Auth"));
+                    { "returnSecureToken", new OpenApiBoolean(true) },
+                },
+            }
+        }
+    });
+    c.OperationFilter<AuthorizeCheckOperationFilter>();
+});
 
 // firebase authentication
-builder.Services.AddSingleton(FirebaseApp.Create());
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddScheme<AuthenticationSchemeOptions, FirebaseAuthenticationHandler>(
-                    JwtBearerDefaults.AuthenticationScheme,
-                    (o) => { }
-                );
+builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("Auth"))
+    .AddSingleton(FirebaseApp.Create())
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddScheme<AuthenticationSchemeOptions, FirebaseAuthenticationHandler>(
+        JwtBearerDefaults.AuthenticationScheme,
+        (o) => { }
+    );
+
+// setup services
+builder.Services.AddControllers();
+builder.Services.AddSingleton<IProfileService, ProfileService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/error");
-    app.UseSwagger()
-         .UseSwaggerUI(c =>
-         {
-             c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Chivado Api");
-         });
-    app.UseSwaggerUI();
-}
+app.UseExceptionHandler("/error")
+    .UseSwagger()
+    .UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Chivado Api");
+        })
+    .UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

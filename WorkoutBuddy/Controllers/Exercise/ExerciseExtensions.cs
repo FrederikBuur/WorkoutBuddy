@@ -4,34 +4,23 @@
     {
         public static Exercise ToExercise(this ExerciseDto e) => new Exercise(
             e.Id,
-            e.CreaterId,
+            e.CreatorId,
             e.Name,
-            e.Description,
-            e.ImageUrl,
-            e.MuscleGroups.Select(mg => mg.ToMuscleGroup())
+            e?.Description,
+            e?.ImageUrl,
+            e.PrimaryMuscleGroup, 
+            e.SecondaryMuscleGroups
         );
 
         public static ExerciseDto ToExerciseDto(this Exercise e) => new ExerciseDto
         {
             Id = e.id,
-            CreaterId = e.creatorId, 
+            CreatorId = e.creatorId, 
             Name = e.name,
             Description = e.description,
             ImageUrl = e.imageUrl,
-            MuscleGroups= e.muscleGroups.Select(mg => mg.ToMuscleGroupDto())
-        };
-
-        public static MuscleGroup ToMuscleGroup(this MuscleGroupDto mg) => new MuscleGroup(
-            mg.Id,
-            mg.Activation,
-            mg.Type
-        );
-
-        public static MuscleGroupDto ToMuscleGroupDto(this MuscleGroup mg) => new MuscleGroupDto
-        {
-            Id = mg.id,
-            Type = mg.type,
-            Activation = mg.activation,
+            PrimaryMuscleGroup = e.primaryMuscleGroup, 
+            SecondaryMuscleGroups = e.secondaryMuscleGroup
         };
     }
 }
