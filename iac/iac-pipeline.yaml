@@ -1,0 +1,75 @@
+trigger:
+  - master
+
+stages:
+  # To deploy from local machine:
+  # You need to have a recent verion of Azure CLI
+  # az login --tenant deloitte.dk --use-device-code
+  # Log in with your administrator account (The --use-device-code parameter allows you to choose a browser where you are logged in as the correct user instead of opening your default browser)
+  # az account set --subscription "DK FACT - Microsoft Azure Enterprise (OS_EFF_BO)"
+  # az deployment group create -g 42-devtest -f iac/deloitte42EnvironmentResources.bicep -p deploymentEnvironment=devtest
+  - stage: DeployDevtest
+    jobs:
+      - deployment: Deploy42EnvironmentInfrastructureToAzureDevtest
+        environment: 42-devtest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - download: none
+                - task: AzureCLI@2
+                  displayName: Deploy
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment group create `
+                        --resource-group 42-devtest `
+                        --template-file $(Build.SourcesDirectory)/iac/deloitte42EnvironmentResources.bicep `
+                        --parameters deploymentEnvironment=devtest
+
+  - stage: DeployStable
+    jobs:
+      - deployment: Deploy42EnvironmentInfrastructureToAzureStable
+        environment: 42-stable
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - download: none
+                - task: AzureCLI@2
+                  displayName: Deploy
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment group create `
+                        --resource-group 42-stable `
+                        --template-file $(Build.SourcesDirectory)/iac/deloitte42EnvironmentResources.bicep `
+                        --parameters deploymentEnvironment=stable
+
+  - stage: DeployProd
+    jobs:
+      - deployment: Deploy42EnvironmentInfrastructureToAzureProd
+        environment: 42-prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - download: none
+                - task: AzureCLI@2
+                  displayName: Deploy
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az deployment group create `
+                        --resource-group 42-prod `
+                        --template-file $(Build.SourcesDirectory)/iac/deloitte42EnvironmentResources.bicep `
+                        --parameters deploymentEnvironment=prod

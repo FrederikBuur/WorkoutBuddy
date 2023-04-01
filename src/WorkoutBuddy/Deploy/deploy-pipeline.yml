@@ -1,0 +1,147 @@
+trigger:
+  - master
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build42Code
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "14.19.0"
+          - task: DotNetCoreCLI@2
+            displayName: dotnet test
+            inputs:
+              command: test
+              projects: src/Deloitte42.Test/Deloitte42.Test.csproj
+          - task: DotNetCoreCLI@2
+            displayName: dotnet publish
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: src/Deloitte42/Deloitte42.csproj
+              arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
+              zipAfterPublish: true
+          - publish: $(Build.ArtifactStagingDirectory)
+            displayName: Upload Artifacts
+            artifact: 42Code
+
+  # To deploy from local machine:
+  # You need to have a recent verion of Azure CLI
+  # az login --tenant deloitte.dk --use-device-code
+  # Log in with your administrator account (The --use-device-code parameter allows you to choose a browser where you are logged in as the correct user instead of opening your default browser)
+  # az account set --subscription "DK FACT - Microsoft Azure Enterprise (OS_EFF_BO)"
+  # dotnet publish src/Deloitte42/Deloitte42.csproj --configuration Release --output bin/publish
+  # rm bin/package.zip -f && (cd bin/publish && zip -r ../package.zip .)
+  # (cd bin/publish && ConnectionStrings__SQL="Server=tcp:sql-fact-shared-we-del.database.windows.net;Authentication=Active Directory Device Code Flow; Database=42-devtest;" ./Deloitte42 migrate)
+  # az webapp deployment source config-zip --src bin/package.zip -n app-42-devtest-we-del -g 42-devtest
+  - stage: DeployDevtest
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - deployment: Deploy42CodeToAzureDevtest
+        environment: 42-devtest
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: 42Code
+                - task: ExtractFiles@1
+                  inputs:
+                    archiveFilePatterns: $(Pipeline.Workspace)/42Code/Deloitte42.zip
+                    destinationFolder: $(Pipeline.Workspace)/42Code/extracted
+                - task: AzureCLI@2
+                  displayName: Migrate database
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: ./Deloitte42 migrate
+                    workingDirectory: $(Pipeline.Workspace)/42Code/extracted
+                  env:
+                    ConnectionStrings__SQL: Server=tcp:sql-fact-shared-we-del.database.windows.net;Authentication=Active Directory Device Code Flow; Database=42-devtest;
+                - task: AzureCLI@2
+                  displayName: Deploy
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az webapp deployment source config-zip `
+                        --src $env:PIPELINE_WORKSPACE/42Code/Deloitte42.zip `
+                        --name app-42-devtest-we-del `
+                        --resource-group 42-devtest
+
+  - stage: DeployStable
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - deployment: Deploy42CodeToAzureStable
+        environment: 42-stable
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: 42Code
+                - task: ExtractFiles@1
+                  inputs:
+                    archiveFilePatterns: $(Pipeline.Workspace)/42Code/Deloitte42.zip
+                    destinationFolder: $(Pipeline.Workspace)/42Code/extracted
+                - task: AzureCLI@2
+                  displayName: Migrate database
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: ./Deloitte42 migrate
+                    workingDirectory: $(Pipeline.Workspace)/42Code/extracted
+                  env:
+                    ConnectionStrings__SQL: Server=tcp:sql-fact-shared-we-del.database.windows.net;Authentication=Active Directory Device Code Flow; Database=42-stable;
+                - task: AzureCLI@2
+                  displayName: Deploy
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az webapp deployment source config-zip `
+                        --src $env:PIPELINE_WORKSPACE/42Code/Deloitte42.zip `
+                        --name app-42-stable-we-del `
+                        --resource-group 42-stable
+
+  - stage: DeployProd
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - deployment: Deploy42CodeToAzureProd
+        environment: 42-prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: 42Code
+                - task: ExtractFiles@1
+                  inputs:
+                    archiveFilePatterns: $(Pipeline.Workspace)/42Code/Deloitte42.zip
+                    destinationFolder: $(Pipeline.Workspace)/42Code/extracted
+                - task: AzureCLI@2
+                  displayName: Migrate database
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: ./Deloitte42 migrate
+                    workingDirectory: $(Pipeline.Workspace)/42Code/extracted
+                  env:
+                    ConnectionStrings__SQL: Server=tcp:sql-fact-shared-we-del.database.windows.net;Authentication=Active Directory Device Code Flow; Database=42-prod;
+                - task: AzureCLI@2
+                  displayName: Deploy
+                  inputs:
+                    azureSubscription: FACT Devops
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az webapp deployment source config-zip `
+                        --src $env:PIPELINE_WORKSPACE/42Code/Deloitte42.zip `
+                        --name app-42-prod-we-del `
+                        --resource-group 42-prod
