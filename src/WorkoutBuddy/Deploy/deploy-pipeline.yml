@@ -39,7 +39,7 @@ stages:
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     jobs:
       - deployment: Deploy42CodeToAzureDevtest
-        environment: 42-devtest
+        environment: workout-buddy-devtest
         strategy:
           runOnce:
             deploy:
@@ -72,48 +72,11 @@ stages:
                         --name app-42-devtest-we-del `
                         --resource-group 42-devtest
 
-  - stage: DeployStable
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-    jobs:
-      - deployment: Deploy42CodeToAzureStable
-        environment: 42-stable
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - download: current
-                  artifact: 42Code
-                - task: ExtractFiles@1
-                  inputs:
-                    archiveFilePatterns: $(Pipeline.Workspace)/42Code/Deloitte42.zip
-                    destinationFolder: $(Pipeline.Workspace)/42Code/extracted
-                - task: AzureCLI@2
-                  displayName: Migrate database
-                  inputs:
-                    azureSubscription: FACT Devops
-                    scriptType: pscore
-                    scriptLocation: inlineScript
-                    inlineScript: ./Deloitte42 migrate
-                    workingDirectory: $(Pipeline.Workspace)/42Code/extracted
-                  env:
-                    ConnectionStrings__SQL: Server=tcp:sql-fact-shared-we-del.database.windows.net;Authentication=Active Directory Device Code Flow; Database=42-stable;
-                - task: AzureCLI@2
-                  displayName: Deploy
-                  inputs:
-                    azureSubscription: FACT Devops
-                    scriptType: pscore
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      az webapp deployment source config-zip `
-                        --src $env:PIPELINE_WORKSPACE/42Code/Deloitte42.zip `
-                        --name app-42-stable-we-del `
-                        --resource-group 42-stable
-
   - stage: DeployProd
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     jobs:
       - deployment: Deploy42CodeToAzureProd
-        environment: 42-prod
+        environment: workout-buddy-prod
         strategy:
           runOnce:
             deploy:
