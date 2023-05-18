@@ -1,8 +1,6 @@
-using WorkoutBuddy.Controllers.Exercise.Model;
-
 namespace WorkoutBuddy.Controllers.Workout.Model;
 
-public record Workout(
+public record WorkoutDto(
     Guid id,
     Guid owner,
     Guid creatorId,
@@ -10,5 +8,5 @@ public record Workout(
     string name,
     string? description,
     DateTime lastPerformed,
-    IEnumerable<WorkoutBuddy.Controllers.Exercise.Model.Exercise> exercises
+    IEnumerable<WorkoutBuddy.Controllers.Exercise.Model.ExerciseDto> exercises
 );

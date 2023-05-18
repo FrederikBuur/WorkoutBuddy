@@ -8,12 +8,12 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        var requiredScopes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
+        var requiredScopes = context.MethodInfo.DeclaringType?.GetCustomAttributes(true)
                  .OfType<AuthorizeAttribute>()
                  .Select(attr => attr.Policy)
                  .Distinct();
 
-        if (requiredScopes.Any())
+        if (requiredScopes?.Any() == true)
         {
             var oAuthScheme = new OpenApiSecurityScheme
             {

@@ -12,9 +12,10 @@ public class ProfileController : ControllerBase
     private readonly DataContext _dataContext;
     private readonly ProfileService _profileService;
 
-    public ProfileController(ILogger<ProfileController> logger, ProfileService profileService)
+    public ProfileController(ILogger<ProfileController> logger, DataContext dataContext, ProfileService profileService)
     {
         _logger = logger;
+        _dataContext = dataContext;
         _profileService = profileService;
     }
 

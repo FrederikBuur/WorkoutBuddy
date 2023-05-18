@@ -15,7 +15,7 @@ public class TestSuite
     [TestMethod]
     public void CanReferenceProject()
     {
-        var item = new ExerciseDto();
+        var item = new Exercise();
         Assert.IsNotNull(item);
     }
 }

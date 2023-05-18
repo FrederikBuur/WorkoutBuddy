@@ -6,7 +6,7 @@ namespace WorkoutBuddy.Controllers.Workout.Model;
 
 public static class WorkoutExtensions
 {
-    public static Workout MapToWorkout(this WorkoutDto w) => new Workout(
+    public static WorkoutDto MapToWorkout(this Data.Model.Workout w) => new WorkoutDto(
         w.Id,
         w.Owner,
         w.CreatorId,
@@ -14,10 +14,10 @@ public static class WorkoutExtensions
         w.Name,
         w.Desciption,
         w.LastPerformed,
-        w.Exercises.Select(e => e.ToExercise())
+        w.Exercises.Select(e => e.ToExerciseDto())
     );
 
-    public static WorkoutDto MapToWorkoutDto(this Workout w) => new WorkoutDto
+    public static Data.Model.Workout MapToWorkoutDto(this WorkoutDto w) => new Data.Model.Workout
     {
         Id = w.id,
         Owner = w.owner,
@@ -26,6 +26,6 @@ public static class WorkoutExtensions
         Name = w.name,
         Desciption = w.description,
         LastPerformed = w.lastPerformed,
-        Exercises = w.exercises.Select(e => e.ToExerciseDto())
+        Exercises = w.exercises.Select(e => e.ToExercise())
     };
 }

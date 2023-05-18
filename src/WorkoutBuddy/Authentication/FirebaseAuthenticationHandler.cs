@@ -30,7 +30,7 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
             return AuthenticateResult.Fail("Missing Bearer token");
         }
 
-        string bearerToken = Context.Request.Headers["Authorization"];
+        string? bearerToken = Context.Request.Headers["Authorization"];
         if (bearerToken is null || !bearerToken.StartsWith("Bearer "))
         {
             return AuthenticateResult.Fail("Invalid scheme");

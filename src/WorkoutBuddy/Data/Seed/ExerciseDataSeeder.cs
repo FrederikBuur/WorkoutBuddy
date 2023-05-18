@@ -15,8 +15,8 @@ public static class ExerciseDataSeeder
 
         var creatorId = DatabaseHelper.CreatorId;
 
-        var initialExercises = new List<ExerciseDto>() {
-            new ExerciseDto()
+        var initialExercises = new List<Model.Exercise>() {
+            new Model.Exercise()
             {
                 Id = Guid.Parse("9f1a7d66-e070-424b-aa3b-dc1ff3cd3bff"),
                 CreatorId = creatorId,
@@ -25,7 +25,7 @@ public static class ExerciseDataSeeder
                 PrimaryMuscleGroup = MuscleGroupType.UpperBack,
                 SecondaryMuscleGroups = new List<MuscleGroupType> { MuscleGroupType.Hamstring, MuscleGroupType.Glutes }
             },
-            new ExerciseDto()
+            new Model.Exercise()
             {
                 Id = Guid.Parse("8126c195-4f25-47a6-be90-9333ee061de6"),
                 CreatorId = creatorId,

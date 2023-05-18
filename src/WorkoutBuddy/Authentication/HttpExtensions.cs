@@ -6,7 +6,7 @@ namespace WorkoutBuddy.Authentication;
 
 public static class HttpExtensions
 {
-    public static async Task<R> PostAsJsonAsync<T, R>(
+    public static async Task<R?> PostAsJsonAsync<T, R>(
         this HttpClient httpClient, string url, T data)
     {
         var response = await httpClient.PostAsJsonAsync<T>(url, data);

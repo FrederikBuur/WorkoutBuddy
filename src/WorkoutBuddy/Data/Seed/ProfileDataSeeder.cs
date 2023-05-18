@@ -9,8 +9,8 @@ public static class ProfileDataSeeder
     {
         Console.WriteLine("Seeding Profiles");
 
-        var initialProfiles = new List<ProfileDto>() {
-            new ProfileDto()
+        var initialProfiles = new List<Profile>() {
+            new Profile()
             {
                 Id = DatabaseHelper.CreatorId,
                 UserId = "24dqp5PO9iNN6Gh3zoNaY5NO8zp2",

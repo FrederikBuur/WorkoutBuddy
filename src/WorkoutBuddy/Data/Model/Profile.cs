@@ -1,6 +1,6 @@
 ﻿namespace WorkoutBuddy.Data.Model
 {
-    public class ProfileDto
+    public class Profile
     {
         public Guid Id { get; set; }
         public string UserId { get; set; } = "";
@@ -10,7 +10,7 @@
 
         public override bool Equals(object? obj)
         {
-            var other = obj as ProfileDto;
+            var other = obj as Profile;
             if (other is null) return false;
 
             return this.Id == other.Id &&

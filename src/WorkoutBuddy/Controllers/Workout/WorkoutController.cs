@@ -21,7 +21,7 @@ public class WorkoutController : ControllerBase
     }
 
     [HttpGet()]
-    public ActionResult<IEnumerable<Workout>> GetWorkouts(
+    public ActionResult<IEnumerable<WorkoutDto>> GetWorkouts(
         [FromQuery] bool publicWorkouts = false
     )
     {

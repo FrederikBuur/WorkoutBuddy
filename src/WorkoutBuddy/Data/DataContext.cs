@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutBuddy.Controllers.Exercise.Model;
 using WorkoutBuddy.Data.Model;
-using WorkoutBuddy.Data.Seed;
 using WorkoutBuddy.EFConverters;
 
 namespace WorkoutBuddy.Data;
@@ -17,24 +16,24 @@ public class DataContext : DbContext
         //Database.EnsureCreated();
     }
 
-    public DbSet<ProfileDto> Profiles => Set<ProfileDto>();
-    public DbSet<ExerciseDto> Exercises => Set<ExerciseDto>();
-    public DbSet<WorkoutDto> Workouts => Set<WorkoutDto>();
+    public DbSet<Model.Profile> Profiles => base.Set<Model.Profile>();
+    public DbSet<Model.Exercise> Exercises => base.Set<Model.Exercise>();
+    public DbSet<Workout> Workouts => Set<Workout>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Profile
-        modelBuilder.Entity<ProfileDto>()
+        modelBuilder.Entity<Profile>()
             .ToContainer("Profiles")
             .HasPartitionKey(p => p.UserId);
 
         // Exercise
-        modelBuilder.Entity<ExerciseDto>()
+        modelBuilder.Entity<Exercise>()
             .ToContainer("Exercises")
             .HasPartitionKey(e => e.CreatorId)
             .Property(mg => mg.PrimaryMuscleGroup)
             .HasConversion(new EnumToStringConverter<MuscleGroupType>());
-        modelBuilder.Entity<ExerciseDto>()
+        modelBuilder.Entity<Model.Exercise>()
             .Property(mg => mg.SecondaryMuscleGroups)
             .HasConversion(
                 mg => string.Join(",", mg),
@@ -42,13 +41,13 @@ public class DataContext : DbContext
                     .Select(x => Enum.Parse<MuscleGroupType>(x))
                     .ToArray(),
                 new ValueComparer<ICollection<MuscleGroupType>>(
-                    (mg1, mg2) => mg1.SequenceEqual(mg2),
-                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    (mg1, mg2) => mg1!.SequenceEqual(mg2!),
+                    c => c.Aggregate(0, (int a, MuscleGroupType v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList())
             );
 
         // Workout
-        modelBuilder.Entity<WorkoutDto>(entity =>
+        modelBuilder.Entity<Workout>(entity =>
         {
             entity.ToContainer("Workouts")
                 .HasPartitionKey(w => w.Owner);

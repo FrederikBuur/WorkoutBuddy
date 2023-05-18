@@ -36,10 +36,10 @@ public class AuthController : Controller
             var token = new Token
             {
                 token_type = "Bearer",
-                access_token = result.idToken,
-                id_token = result.idToken,
-                expires_in = int.Parse(result?.expiresIn),
-                refresh_token = result.refreshToken
+                access_token = result?.idToken,
+                id_token = result?.idToken,
+                expires_in = int.Parse(result?.expiresIn ?? "0"),
+                refresh_token = result?.refreshToken
 
             };
             return Ok(token);

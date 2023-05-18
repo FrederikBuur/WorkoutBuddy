@@ -16,7 +16,7 @@ public class ProfileService : IProfileService
         _userService = userService;
     }
 
-    public ProfileDto? GetProfile()
+    public Profile? GetProfile()
     {
         var userId = _userService.Id;
         return _dataContext.Profiles.SingleOrDefault(p => p.UserId == userId);
