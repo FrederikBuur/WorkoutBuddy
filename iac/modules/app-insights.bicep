@@ -28,6 +28,6 @@ resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   }
 }
 
-output instrumentationKey string = appInsights.properties.InstrumentationKey
+output connectionString string = appInsights.properties.ConnectionString
 output resourceId string = appInsights.id
 output logAnalyticsId string = workspace.id

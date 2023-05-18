@@ -4,5 +4,5 @@ namespace WorkoutBuddy.Controllers;
 
 public interface IProfileService
 {
-    ProfileDto? GetProfileByUserId(string userId);
+    ProfileDto? GetProfile();
 }

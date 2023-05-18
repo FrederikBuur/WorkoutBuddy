@@ -1,0 +1,7 @@
+Todo list:
+
+- svelte app root path giver 404, bliver ikke deployed
+- fix/updater firebase implementering i Program.cs
+- tilføj flere endpoints
+- tilføj mere seed data
+  

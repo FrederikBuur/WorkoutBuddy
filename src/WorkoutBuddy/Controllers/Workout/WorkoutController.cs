@@ -20,24 +20,19 @@ public class WorkoutController : ControllerBase
         _profileService = profileService;
     }
 
-    [HttpGet("by-user")]
-    public ActionResult<IEnumerable<Workout>> GetWorkoutsByUser(
-        [FromQuery][Required] Guid profileId
+    [HttpGet()]
+    public ActionResult<IEnumerable<Workout>> GetWorkouts(
+        [FromQuery] bool publicWorkouts = false
     )
     {
-        var idClaim = User.Claims.SingleOrDefault(c => c.Type == "id")?.Value;
-        if (idClaim is null)
-            return Unauthorized("Id missing in claims");
-
-        var profile = _profileService.GetProfileByUserId(idClaim);
+        var profile = _profileService.GetProfile();
         if (profile is null)
-            return Unauthorized("Invalid claim id");
+            return Unauthorized();
 
         var workouts = _dataContext.Workouts.Where(w =>
-            w.Owner == profileId &&
-            profileId == profile.Id
-                ? true
-                : w.IsPublic
+            publicWorkouts
+                ? w.IsPublic
+                : w.Owner == profile.Id
         );
         var response = workouts.Select(w => w.MapToWorkout());
 

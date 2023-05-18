@@ -23,7 +23,7 @@
 <slot />
 
 <style>
-	@tailwind base;
+	/* @tailwind base;
 	@tailwind components;
-	@tailwind utilities;
+	@tailwind utilities; */
 </style>

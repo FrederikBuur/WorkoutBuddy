@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutBuddy.Controllers.Exercise.Model;
 using WorkoutBuddy.Data.Model;
 using WorkoutBuddy.Data.Seed;
+using WorkoutBuddy.EFConverters;
 
 namespace WorkoutBuddy.Data;
 
@@ -11,12 +12,14 @@ public class DataContext : DbContext
 {
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
-        Database.EnsureCreated();
+        // seems like migrations are not supported for cosmos. makes sence since it is document based
+        //Database.EnsureDeleted();
+        //Database.EnsureCreated();
     }
 
-    public DbSet<ProfileDto> Profiles { get; set; }
-    public DbSet<ExerciseDto> Exercises { get; set; }
-    public DbSet<WorkoutDto> Workouts { get; set; }
+    public DbSet<ProfileDto> Profiles => Set<ProfileDto>();
+    public DbSet<ExerciseDto> Exercises => Set<ExerciseDto>();
+    public DbSet<WorkoutDto> Workouts => Set<WorkoutDto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,7 +40,7 @@ public class DataContext : DbContext
                 mg => string.Join(",", mg),
                 mg => mg.Split(",", StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => Enum.Parse<MuscleGroupType>(x))
-                    .ToArray(), 
+                    .ToArray(),
                 new ValueComparer<ICollection<MuscleGroupType>>(
                     (mg1, mg2) => mg1.SequenceEqual(mg2),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
@@ -45,14 +48,24 @@ public class DataContext : DbContext
             );
 
         // Workout
-        modelBuilder.Entity<WorkoutDto>()
-            .ToContainer("Workouts")
-            .HasPartitionKey(w => w.Owner);
+        modelBuilder.Entity<WorkoutDto>(entity =>
+        {
+            entity.ToContainer("Workouts")
+                .HasPartitionKey(w => w.Owner);
 
-        // Seeding
-        modelBuilder.Entity<ProfileDto>()
-            .SeedProfiles();
-        modelBuilder.Entity<ExerciseDto>()
-            .SeedExercises();
+            entity.HasMany(e => e.Exercises);
+        });
+
+
+        // Seeding - this method is onlr working with migrations
+        // modelBuilder.Entity<ProfileDto>()
+        //     .SeedProfiles();
+        // modelBuilder.Entity<ExerciseDto>()
+        //     .SeedExercises();
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<DateTime>().HaveConversion<DateTimeUtcConverter>();
     }
 }

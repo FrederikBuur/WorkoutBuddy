@@ -7,11 +7,11 @@ stages:
   # az login --tenant deloitte.dk --use-device-code
   # Log in with your administrator account (The --use-device-code parameter allows you to choose a browser where you are logged in as the correct user instead of opening your default browser)
   # az account set --subscription "DK FACT - Microsoft Azure Enterprise (OS_EFF_BO)"
-  # az deployment group create -g WorkoutBuddy-devtest -f iac/deloitteWorkoutBuddyEnvironmentResources.bicep -p deploymentEnvironment=devtest
-  - stage: DeployDevTest
+  # az deployment group create -g WorkoutBuddy-dev -f iac/deloitteWorkoutBuddyEnvironmentResources.bicep -p deploymentEnvironment=dev
+  - stage: DeployDev
     jobs:
-      - deployment: DeployWorkoutBuddyEnvironmentInfrastructureToAzureDevtest
-        environment: workout-buddy-devtest
+      - deployment: DeployWorkoutBuddyEnvironmentInfrastructureToAzureDev
+        environment: workout-buddy-dev
         strategy:
           runOnce:
             deploy:
@@ -21,14 +21,14 @@ stages:
                 - task: AzureCLI@2
                   displayName: Deploy
                   inputs:
-                    azureSubscription: FACT Devops
+                    azureSubscription: Azure subscription 1
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: |
                       az deployment group create `
-                        --resource-group workout-buddy-devtest `
-                        --template-file $(Build.SourcesDirectory)/iac/main-recources.bicep `
-                        --parameters deploymentEnvironment=devtest
+                        --resource-group workout-buddy-dev `
+                        --template-file $(Build.SourcesDirectory)/iac/main-resources.bicep `
+                        --parameters deploymentEnvironment=dev
 
   - stage: DeployProd
     jobs:
@@ -43,11 +43,11 @@ stages:
                 - task: AzureCLI@2
                   displayName: Deploy
                   inputs:
-                    azureSubscription: FACT Devops
+                    azureSubscription: Azure subscription 1
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: |
                       az deployment group create `
                         --resource-group workout-buddy-prod `
-                        --template-file $(Build.SourcesDirectory)/iac/main-recources.bicep `
+                        --template-file $(Build.SourcesDirectory)/iac/main-resources.bicep `
                         --parameters deploymentEnvironment=prod

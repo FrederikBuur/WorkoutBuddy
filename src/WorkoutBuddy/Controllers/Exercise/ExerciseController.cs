@@ -41,13 +41,17 @@ public class ExerciseController : ControllerBase
             return NotFound("Exercise not found");
 
         return Ok(exercise);
-
     }
 
     [HttpPost]
     public ActionResult<Exercise> PostExercise([FromBody] Exercise exercise)
     {
+        var profile = _profileService.GetProfile();
+        if (profile is null)
+            return Unauthorized();
+
         var e = exercise.ToExerciseDto();
+        e.CreatorId = profile.Id;
         var result = _dataContext.Add(e);
         _dataContext.SaveChanges();
         var response = result.Entity.ToExercise();
@@ -60,20 +64,15 @@ public class ExerciseController : ControllerBase
         [FromBody] Exercise updatedExercise
     )
     {
-        var idClaim = User.Claims.SingleOrDefault(c => c.Type == "id")?.Value;
-        if (idClaim is null)
-            return Unauthorized("Id missing in claims");
-
-        var profile = _profileService.GetProfileByUserId(idClaim);
+        var profile = _profileService.GetProfile();
         if (profile is null)
-            return Unauthorized("Invalid claim id");
+            return Unauthorized();
 
         var exerciseDto = await _dataContext.Exercises.SingleOrDefaultAsync(e => e.Id == updatedExercise.id);
         if (exerciseDto is null)
             return NotFound("Exercise not found");
 
-        if (profile.Id != updatedExercise.creatorId ||
-            profile.Id != exerciseDto.CreatorId)
+        if (profile.Id != exerciseDto.CreatorId)
             return Unauthorized("Not allowed to update this exercise");
 
         exerciseDto.Name = updatedExercise.name;
@@ -81,7 +80,7 @@ public class ExerciseController : ControllerBase
         exerciseDto.ImageUrl = updatedExercise.imageUrl;
         exerciseDto.PrimaryMuscleGroup = updatedExercise.primaryMuscleGroup;
         exerciseDto.SecondaryMuscleGroups = updatedExercise.secondaryMuscleGroup;
-        _dataContext.SaveChanges();
+        await _dataContext.SaveChangesAsync();
 
         return Ok(exerciseDto.ToExercise());
     }
@@ -89,23 +88,20 @@ public class ExerciseController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult<Exercise>> DeleteExercise([FromRoute][Required] Guid id)
     {
-        var idClaim = User.Claims.SingleOrDefault(c => c.Type == "id");
-        if (idClaim is null)
-            return Unauthorized("Id missing in claims");
-
-        var profile = _profileService.GetProfileByUserId(idClaim.Value);
+        var profile = _profileService.GetProfile();
         if (profile is null)
-            return Unauthorized("Invalid claim id");
+            return Unauthorized();
 
         var exerciseDto = await _dataContext.Exercises.SingleOrDefaultAsync(e => e.Id == id);
         if (exerciseDto is null)
             return NotFound("Exercise not found");
 
         if (profile.Id != exerciseDto.CreatorId)
-            return Unauthorized("Not allowed to update this exercise");
+            return Unauthorized("Not allowed to delete this exercise");
 
         var result = _dataContext.Remove(exerciseDto);
         var response = result.Entity.ToExercise();
+        await _dataContext.SaveChangesAsync();
         return Ok(response);
     }
 

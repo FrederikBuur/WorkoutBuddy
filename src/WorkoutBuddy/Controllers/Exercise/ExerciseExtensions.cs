@@ -10,7 +10,7 @@ public static class ExerciseExtensions
         e.Name,
         e?.Description,
         e?.ImageUrl,
-        e.PrimaryMuscleGroup, 
+        e!.PrimaryMuscleGroup!, 
         e.SecondaryMuscleGroups
     );
 

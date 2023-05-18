@@ -6,21 +6,41 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/bin/Debug/net6.0/WorkoutBuddy.dll",
+      "program": "${workspaceFolder}/src/WorkoutBuddy/bin/Debug/net6.0/WorkoutBuddy.dll",
       "args": [],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${workspaceFolder}/src/WorkoutBuddy",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
+      // open swagger on launch:
+      // "serverReadyAction": {
+      //   "action": "openExternally",
+      //   "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+      //   "uriFormat": "%s/swagger"
+      // },
+      // open web app on launch:
       "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-        "uriFormat": "%s/swagger"
+        "pattern": "\\bNow listening on:\\s+(http?://\\S+)",
+        "uriFormat": "%s/"
       },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Local",
         "GOOGLE_APPLICATION_CREDENTIALS": "./firebase-config.json"
-      },
-      "sourceFileMap": {
-        "/Views": "${workspaceFolder}/Views"
+      }
+    },
+    {
+      "name": "Initialise DB",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/WorkoutBuddy/bin/Debug/net6.0/WorkoutBuddy.dll",
+      "args": ["init-db"],
+      "cwd": "${workspaceFolder}/src/WorkoutBuddy",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "GOOGLE_APPLICATION_CREDENTIALS": "./firebase-config.json"
       }
     },
     {

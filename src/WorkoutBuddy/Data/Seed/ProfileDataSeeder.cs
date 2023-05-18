@@ -1,23 +1,45 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WorkoutBuddy.Data.Model;
+﻿using WorkoutBuddy.Data.Model;
 
 namespace WorkoutBuddy.Data.Seed;
 
 public static class ProfileDataSeeder
 {
-    public static readonly Guid CreatorId = Guid.Parse("ea21cae2-728c-4679-a14f-988e1ccfcd64");
 
-    public static DataBuilder<ProfileDto> SeedProfiles(this EntityTypeBuilder<ProfileDto> builder)
+    public static async Task SeedProfiles(this DataContext context)
     {
-        var creatorProfile = new ProfileDto()
-        {
-            Id = Guid.Parse("bf64a313-03bf-4758-a1dd-60460e0b2807"),
-            UserId = "24dqp5PO9iNN6Gh3zoNaY5NO8zp2",
-            Name = "The Creator",
-            Email = "test@test.com",
-            ProfilePictureUrl = null
+        Console.WriteLine("Seeding Profiles");
+
+        var initialProfiles = new List<ProfileDto>() {
+            new ProfileDto()
+            {
+                Id = DatabaseHelper.CreatorId,
+                UserId = "24dqp5PO9iNN6Gh3zoNaY5NO8zp2",
+                Name = "The Creator",
+                Email = "test@test.com",
+                ProfilePictureUrl = null
+            }
         };
 
-        return builder.HasData(creatorProfile);
+        foreach (var profile in initialProfiles)
+        {
+            var p = context.Profiles.SingleOrDefault(e => e.Id == profile.Id);
+
+            if (p is null)
+            {
+                await context.Profiles.AddAsync(profile);
+                Console.WriteLine($"Adding Profile: {profile.Name}");
+            }
+            else if (!p.Equals(profile))
+            {
+                context.Profiles.Update(profile);
+                Console.WriteLine($"Update Profile: {profile.Name}");
+            }
+            else
+            {
+                Console.WriteLine($"Skipped Profile: {profile.Name}");
+            }
+
+        }
+        await context.SaveChangesAsync();
     }
 }

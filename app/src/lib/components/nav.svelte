@@ -1,11 +1,14 @@
 <script lang="ts">
 	export let user: string;
+	console.log(user)
 </script>
 
 <div class="navbar bg-slate-300">
 	<div class="navbar-start">
 		<div class="dropdown">
-			<label tabindex="0" class="btn btn-ghost lg:hidden">
+			<label 
+			class="btn btn-ghost lg:hidden"
+			for="">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					class="h-5 w-5"
@@ -21,12 +24,11 @@
 				>
 			</label>
 			<ul
-				tabindex="0"
 				class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
 			>
-				<li><a>Item 1</a></li>
-				<li tabindex="0">
-					<a class="justify-between">
+				<li><a href="https://placeholder.com">Item 1</a></li>
+				<li>
+					<a class="justify-between" href="https://placeholder.com">
 						Parent
 						<svg
 							class="fill-current"
@@ -38,20 +40,20 @@
 						>
 					</a>
 					<ul class="p-2">
-						<li><a>Submenu 1</a></li>
-						<li><a>Submenu 2</a></li>
+						<li><a href="https://placeholder.com">Submenu 1</a></li>
+						<li><a href="https://placeholder.com">Submenu 2</a></li>
 					</ul>
 				</li>
-				<li><a>Item 3</a></li>
+				<li><a href="https://placeholder.com">Item 3</a></li>
 			</ul>
 		</div>
-		<a class="btn btn-ghost normal-case text-xl">Test123</a>
+		<a class="btn btn-ghost normal-case text-xl" href="https://placeholder.com">Test123</a>
 	</div>
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal px-1">
-			<li><a>Item 1</a></li>
-			<li tabindex="0">
-				<a>
+			<li><a href="https://placeholder.com">Item 1</a></li>
+			<li>
+				<a href="https://placeholder.com">
 					Parent
 					<svg
 						class="fill-current"
@@ -63,14 +65,14 @@
 					>
 				</a>
 				<ul class="p-2">
-					<li><a>Submenu 1</a></li>
-					<li><a>Submenu 2</a></li>
+					<li><a href="https://placeholder.com">Submenu 1</a></li>
+					<li><a href="https://placeholder.com">Submenu 2</a></li>
 				</ul>
 			</li>
-			<li><a>Item 3</a></li>
+			<li><a href="https://placeholder.com">Item 3</a></li>
 		</ul>
 	</div>
 	<div class="navbar-end">
-		<a class="btn">Get started</a>
+		<a class="btn" href="https://placeholder.com">Get started</a>
 	</div>
 </div>

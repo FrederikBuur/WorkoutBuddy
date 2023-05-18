@@ -1,0 +1,115 @@
+trigger:
+  - master
+
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildWorkoutBuddyCode
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "18.13.0"
+          - task: DotNetCoreCLI@2
+            displayName: dotnet testnpm
+            inputs:
+              command: test
+              projects: src/WorkoutBuddy.Test/WorkoutBuddy.Test.csproj
+          - task: DotNetCoreCLI@2
+            displayName: dotnet publish
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: src/WorkoutBuddy/WorkoutBuddy.csproj
+              arguments: --configuration Release --output $(Build.ArtifactStagingDirectory)
+              zipAfterPublish: true
+          - publish: $(Build.ArtifactStagingDirectory)
+            displayName: Upload Artifacts
+            artifact: WorkoutBuddyCode
+
+  # To deploy from local machine:
+  # You need to have a recent verion of Azure CLI
+  # az login --tenant deloitte.dk --use-device-code
+  # Log in with your administrator account (The --use-device-code parameter allows you to choose a browser where you are logged in as the correct user instead of opening your default browser)
+  # az account set --subscription "DK FACT - Microsoft Azure Enterprise (OS_EFF_BO)"
+  # dotnet publish src/WorkoutBuddy/WorkoutBuddy.csproj --configuration Release --output bin/publish
+  # rm bin/package.zip -f && (cd bin/publish && zip -r ../package.zip .)
+  # (cd bin/publish && ConnectionStrings__SQL="Server=tcp:sql-fact-shared-we-del.database.windows.net;Authentication=Active Directory Device Code Flow; Database=42-devtest;" ./WorkoutBuddy migrate)
+  # az webapp deployment source config-zip --src bin/package.zip -n app-42-devtest-we-del -g 42-devtest
+  - stage: DeployDev
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - deployment: WorkoutBuddyCodeToAzureDev
+        environment: workout-buddy-dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: WorkoutBuddyCode
+                - task: ExtractFiles@1
+                  inputs:
+                    archiveFilePatterns: $(Pipeline.Workspace)/WorkoutBuddyCode/WorkoutBuddy.zip
+                    destinationFolder: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
+                - task: AzureCLI@2
+                  displayName: Init and Seed Db
+                  inputs:
+                    azureSubscription: Azure subscription 1
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: ./WorkoutBuddy initAndSeedDb
+                    workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
+                  env:
+                    KeyVault__Url: https://kv-workoutbuddy-dev-we.vault.azure.net/
+                    Cosmos__Uri: https://cosdb-workoutbuddy-dev-we.documents.azure.com:443/
+                    Cosmos__DbName: workoutbuddy-dev
+                - task: AzureCLI@2
+                  displayName: Deploy
+                  inputs:
+                    azureSubscription: Azure subscription 1
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az webapp deployment source config-zip `
+                        --src $env:PIPELINE_WORKSPACE/WorkoutBuddyCode/WorkoutBuddy.zip `
+                        --name app-workoutbuddy-dev-we `
+                        --resource-group workout-buddy-dev
+
+  - stage: DeployProd
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    jobs:
+      - deployment: Deploy42CodeToAzureProd
+        environment: workout-buddy-prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: WorkoutBuddyCode
+                - task: ExtractFiles@1
+                  inputs:
+                    archiveFilePatterns: $(Pipeline.Workspace)/WorkoutBuddyCode/WorkoutBuddy.zip
+                    destinationFolder: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
+                - task: AzureCLI@2
+                  displayName: Make sure cosmos database is created
+                  condition: eq(variables['initialiseDatabase'], 'True')
+                  inputs:
+                    azureSubscription: Azure subscription 1
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: ./WorkoutBuddy initAndSeedDb
+                    workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
+                  env:
+                    KeyVault__Url: https://kv-workoutbuddy-prod-we.vault.azure.net/
+                    Cosmos__Uri: https://cosdb-workoutbuddy-prod-we.documents.azure.com:443/
+                    Cosmos__DbName: workoutbuddy-prod
+                - task: AzureCLI@2
+                  displayName: Deploy
+                  inputs:
+                    azureSubscription: Azure subscription 1
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      az webapp deployment source config-zip `
+                        --src $env:PIPELINE_WORKSPACE/WorkoutBuddyCode/WorkoutBuddy.zip `
+                        --name app-workoutbuddy-prod-we `
+                        --resource-group workout-buddy-prod

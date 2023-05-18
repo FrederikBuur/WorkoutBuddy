@@ -7,6 +7,9 @@ param location string
 @description('List of access policies')
 param accessPolicies array
 
+@description('List of secrets')
+param secrets array = []
+
 
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
   name: keyvaultName
@@ -26,9 +29,35 @@ resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
       tenantId: tenant().tenantId
       permissions: {
         keys: accessPolicy.keysPermissions
-        secrets: accessPolicy.secretsPermiossions
+        secrets: accessPolicy.secretsPermissions
         certificates: accessPolicy.certificatesPermissions
       }
     }]
+    
+  }
+}
+
+// todo
+// resource secret 'Microsoft.KeyVault/vaults/secrets@2022-11-01' = [for secret in secrets: {
+//   name: secret.name
+//   parent: keyVault
+//   properties: {
+//     value: secret.value
+//   }
+// }]
+
+resource secret1 'Microsoft.KeyVault/vaults/secrets@2022-11-01' = {
+  name: 'test-secret1'
+  parent: keyVault
+  properties: {
+    value: 'super secret1'
+  }
+}
+
+resource secret2 'Microsoft.KeyVault/vaults/secrets@2022-11-01' = {
+  name: 'test-secret2'
+  parent: keyVault
+  properties: {
+    value: 'super secret2'
   }
 }
