@@ -16,8 +16,8 @@ public class DataContext : DbContext
         //Database.EnsureCreated();
     }
 
-    public DbSet<Model.Profile> Profiles => base.Set<Model.Profile>();
-    public DbSet<Model.Exercise> Exercises => base.Set<Model.Exercise>();
+    public DbSet<Profile> Profiles => Set<Profile>();
+    public DbSet<Exercise> Exercises => Set<Exercise>();
     public DbSet<Workout> Workouts => Set<Workout>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,10 +31,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<Exercise>()
             .ToContainer("Exercises")
             .HasPartitionKey(e => e.CreatorId)
-            .Property(mg => mg.PrimaryMuscleGroup)
-            .HasConversion(new EnumToStringConverter<MuscleGroupType>());
-        modelBuilder.Entity<Model.Exercise>()
-            .Property(mg => mg.SecondaryMuscleGroups)
+            .Property(mg => mg.MuscleGroups)
             .HasConversion(
                 mg => string.Join(",", mg),
                 mg => mg.Split(",", StringSplitOptions.RemoveEmptyEntries)
@@ -66,5 +63,38 @@ public class DataContext : DbContext
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.Properties<DateTime>().HaveConversion<DateTimeUtcConverter>();
+    }
+
+    public override int SaveChanges()
+    {
+        UpdateEntityBaseFields();
+        return base.SaveChanges();
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        UpdateEntityBaseFields();
+        return base.SaveChangesAsync(true, cancellationToken);
+    }
+
+    private void UpdateEntityBaseFields()
+    {
+        var now = DateTime.UtcNow;
+
+        foreach (var changedEntity in ChangeTracker.Entries())
+        {
+            if (changedEntity.Entity is not IEntityBase entity) throw new Exception($"Entity must implement: {nameof(IEntityBase)}");
+
+            switch (changedEntity.State)
+            {
+                case EntityState.Added:
+                    entity.CreatedAt = now;
+                    entity.UpdatedAt = now;
+                    break;
+                case EntityState.Modified:
+                    entity.UpdatedAt = now;
+                    break;
+            }
+        }
     }
 }
