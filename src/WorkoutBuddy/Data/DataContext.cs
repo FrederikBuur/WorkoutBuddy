@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WorkoutBuddy.Controllers.Exercise.Model;
+using WorkoutBuddy.Controllers.ExerciseModel;
 using WorkoutBuddy.Data.Model;
 using WorkoutBuddy.EFConverters;
 
@@ -32,16 +32,17 @@ public class DataContext : DbContext
             .ToContainer("Exercises")
             .HasPartitionKey(e => e.CreatorId)
             .Property(mg => mg.MuscleGroups)
-            .HasConversion(
-                mg => string.Join(",", mg),
-                mg => mg.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => Enum.Parse<MuscleGroupType>(x))
-                    .ToArray(),
-                new ValueComparer<ICollection<MuscleGroupType>>(
-                    (mg1, mg2) => mg1!.SequenceEqual(mg2!),
-                    c => c.Aggregate(0, (int a, MuscleGroupType v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c.ToList())
-            );
+            // .HasConversion(
+            //     mg => string.Join(",", mg),
+            //     mg => mg.Split(",", StringSplitOptions.RemoveEmptyEntries)
+            //         .Select(x => Enum.Parse<MuscleGroupType>(x))
+            //         .ToArray(),
+            //     new ValueComparer<IEnumerable<MuscleGroupType>>(
+            //         (mg1, mg2) => mg1!.SequenceEqual(mg2!),
+            //         c => c.Aggregate(0, (int a, MuscleGroupType v) => HashCode.Combine(a, v.GetHashCode())),
+            //         c => c.ToList())
+            // )
+            ;
 
         // Workout
         modelBuilder.Entity<Workout>(entity =>

@@ -8,5 +8,5 @@ public record WorkoutDto(
     string name,
     string? description,
     DateTime lastPerformed,
-    IEnumerable<WorkoutBuddy.Controllers.Exercise.Model.ExerciseDto> exercises
+    IEnumerable<WorkoutBuddy.Controllers.ExerciseModel.ExerciseDto> exercises
 );

@@ -82,6 +82,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
     c.OperationFilter<AuthorizeCheckOperationFilter>();
+    //c.SchemaFilter<EnumSchemaFilter>(); // todo show enums in swagger
 });
 
 // setup application insight logging

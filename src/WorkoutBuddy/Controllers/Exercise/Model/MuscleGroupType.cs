@@ -1,34 +1,41 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
-namespace WorkoutBuddy.Controllers.Exercise.Model;
+namespace WorkoutBuddy.Controllers.ExerciseModel;
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum MuscleGroupType
 {
     // arms
-    [EnumMember(Value = "Bicep")]
-    Bicep,
-    [EnumMember(Value = "Tricep")]
-    Tricep,
+    [EnumMember(Value = "Biceps")]
+    Biceps,
+    [EnumMember(Value = "Triceps")]
+    Triceps,
 
     // upper body
-    [EnumMember(Value = "Shoulder")]
-    Shoulder,
+    [EnumMember(Value = "Shoulders")]
+    Shoulders,
+    [EnumMember(Value = "Rhomboids")]
+    Rhomboids,
     [EnumMember(Value = "Chest")]
     Chest,
+    [EnumMember(Value = "UpperChest")]
+    UpperChest,
     [EnumMember(Value = "Abs")]
     Abs,
     [EnumMember(Value = "UpperBack")]
     UpperBack,
     [EnumMember(Value = "LowerBack")]
     LowerBack,
-    [EnumMember(Value = "Lat")]
-    Lat,
+    [EnumMember(Value = "Lats")]
+    Lats,
+
 
     // lower body
     [EnumMember(Value = "Glutes")]
     Glutes,
-    [EnumMember(Value = "Hamstring")]
-    Hamstring,
-    [EnumMember(Value = "Quads")]
-    Quads,
+    [EnumMember(Value = "Hamstrings")]
+    Hamstrings,
+    [EnumMember(Value = "Quadriceps")]
+    Quadriceps,
 }

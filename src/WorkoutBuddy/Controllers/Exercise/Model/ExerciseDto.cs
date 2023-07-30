@@ -1,5 +1,5 @@
 
-namespace WorkoutBuddy.Controllers.Exercise.Model;
+namespace WorkoutBuddy.Controllers.ExerciseModel;
 
 public record ExerciseDto(
     Guid? id,
@@ -9,6 +9,5 @@ public record ExerciseDto(
     string? description,
     string? imageUrl,
     bool isPublic,
-    MuscleGroupType primaryMuscleGroup,
-    ICollection<MuscleGroupType> secondaryMuscleGroup
+    string muscleGroups
 );

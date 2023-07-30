@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WorkoutBuddy.Data.Model;
 
-namespace WorkoutBuddy.Controllers.Exercise.Model;
+namespace WorkoutBuddy.Controllers.ExerciseModel;
 
 [Authorize]
 [ApiController]
@@ -21,19 +23,39 @@ public partial class ExerciseController : ControllerBase
     }
     [HttpGet]
     public async Task<ActionResult<List<ExerciseDto>>> GetExercises(
-        [FromQuery] ExerciseFilter exerciseFilter = ExerciseFilter.PRIVATE,
+        [FromQuery] VisibilityFilter visibilityFilter = VisibilityFilter.OWNED,
+        [FromQuery] MuscleGroupType? muscleGroupType = null,
         [FromQuery] string? searchQuery = null,
         [FromQuery] int pageNumber = 0,
         [FromQuery] int pageSize = 10
     )
     {
-        var profile = _profileService.GetProfile();
+        var profileId = _profileService.GetProfile()?.Id ?? throw new Exception("Couldnt finde frofile");
+
+        #region predicates
+        Expression<Func<Data.Model.Exercise, bool>> visibilityPredicate = (e) =>
+            (visibilityFilter == VisibilityFilter.PUBLIC && e.IsPublic)
+            || visibilityFilter == VisibilityFilter.OWNED && e.Owner == profileId
+            || visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileId);
+
+        Expression<Func<Data.Model.Exercise, bool>> muscleGroupPredicate = (e) =>
+            muscleGroupType != null
+            && String.Join(",", nameof(e.MuscleGroups)).Contains(nameof(muscleGroupType));
+
+        Expression<Func<Data.Model.Exercise, bool>> searchQueryPredicate = (e) =>
+            !string.IsNullOrWhiteSpace(searchQuery)
+            && e.Name.ToLower().Contains(searchQuery!.ToLower() ?? "");
+
+        #endregion
+
         var exercises = await _dataContext.Exercises
-            .Where(e => exerciseFilter.ApplyExerciseFilter(e, profile.Id))
-            .Where(e => searchQuery != null
-                ? EF.Functions.Contains(e.Name, searchQuery)
-                : false
-                )
+            //.Where(visibilityPredicate) // working
+            .Where(e =>
+                muscleGroupType != null
+                &&
+                e.MuscleGroups.ToLower().Contains(muscleGroupType!.ToString()!.ToLower() ?? "")
+            )
+            //.Where(searchQueryPredicate) // working
             .Skip(pageNumber * pageNumber)
             .Take(pageSize)
             .ToListAsync();
@@ -42,6 +64,22 @@ public partial class ExerciseController : ControllerBase
 
         return Ok(result);
     }
+
+    private bool qwerty(Exercise e, MuscleGroupType? muscleGroupType)
+    {
+        var ok = muscleGroupType != null
+                && e.MuscleGroups.Any(mg => nameof(mg) == nameof(muscleGroupType));
+        return ok;
+    }
+
+    private Func<Tuple<Guid, VisibilityFilter>, Expression<Func<Data.Model.Exercise, bool>>> testFilter = (tuple) =>
+    {
+        (Guid profileId, VisibilityFilter filter) = tuple;
+        return ((e) =>
+            (filter == VisibilityFilter.PUBLIC && e.IsPublic)
+            || filter == VisibilityFilter.OWNED && e.Owner == profileId
+            || filter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileId));
+    };
 
     [HttpGet("{id}")]
     public ActionResult<Exception> GetExercise([FromRoute][Required] Guid id)
@@ -99,8 +137,7 @@ public partial class ExerciseController : ControllerBase
         exerciseDto.Name = updatedExercise.name;
         exerciseDto.Description = updatedExercise.description;
         exerciseDto.ImageUrl = updatedExercise.imageUrl;
-        exerciseDto.PrimaryMuscleGroup = updatedExercise.primaryMuscleGroup;
-        exerciseDto.SecondaryMuscleGroups = updatedExercise.secondaryMuscleGroup;
+        exerciseDto.MuscleGroups = updatedExercise.muscleGroups;
         await _dataContext.SaveChangesAsync();
 
         return Ok(exerciseDto.ToExerciseDto());

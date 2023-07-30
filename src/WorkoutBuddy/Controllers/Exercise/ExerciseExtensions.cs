@@ -1,10 +1,10 @@
 ﻿using WorkoutBuddy.Data.Model;
 
-namespace WorkoutBuddy.Controllers.Exercise.Model;
+namespace WorkoutBuddy.Controllers.ExerciseModel;
 
 public static class ExerciseExtensions
 {
-    public static ExerciseDto ToExerciseDto(this Data.Model.Exercise e) => new ExerciseDto(
+    public static ExerciseDto ToExerciseDto(this Exercise e) => new ExerciseDto(
         e.Id,
         e.Owner,
         e.CreatorId,
@@ -12,29 +12,21 @@ public static class ExerciseExtensions
         e?.Description,
         e?.ImageUrl,
         e!.IsPublic,
-        e.PrimaryMuscleGroup,
-        e.SecondaryMuscleGroups
+        e.MuscleGroups
     );
 
     public static Data.Model.Exercise ToExercise(this ExerciseDto e) => new Data.Model.Exercise
-    {
-        Id = e.id,
-        Owner = e.owner,
-        CreatorId = e.creatorId,
-        Name = e.name,
-        Description = e.description,
-        ImageUrl = e.imageUrl,
-        IsPublic = e.isPublic,
-        PrimaryMuscleGroup = e.primaryMuscleGroup,
-        SecondaryMuscleGroups = e.secondaryMuscleGroup
-    };
+    (
+        id: e.id,
+        owner: e.owner,
+        creatorId: e.creatorId,
+        name: e.name,
+        description: e.description,
+        imageUrl: e.imageUrl,
+        isPublic: e.isPublic,
+        muscleGroups: e.muscleGroups
+    );
 
-    public static bool ApplyExerciseFilter(this ExerciseFilter filter, Data.Model.Exercise e, Guid? profileId) =>
-    filter switch
-    {
-        ExerciseFilter.PUBLIC => e.IsPublic,
-        ExerciseFilter.PRIVATE => e.Owner == profileId,
-        ExerciseFilter.ALL => e.IsPublic || e.Owner == profileId,
-        _ => false
-    };
+    // public static bool ApplyMuscleGroupFilter(this MuscleGroupType? muscleGroupType, Data.Model.Exercise e) =>
+    //     muscleGroupType != null && e.MuscleGroups.Contains((MuscleGroupType)muscleGroupType);
 }

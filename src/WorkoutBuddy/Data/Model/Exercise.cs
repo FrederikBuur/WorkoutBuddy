@@ -1,4 +1,4 @@
-using WorkoutBuddy.Controllers.Exercise.Model;
+using WorkoutBuddy.Controllers.ExerciseModel;
 
 namespace WorkoutBuddy.Data.Model;
 
@@ -11,8 +11,28 @@ public class Exercise
     public string? Description { get; set; }
     public string? ImageUrl { get; set; }
     public bool IsPublic { get; set; }
-    public MuscleGroupType PrimaryMuscleGroup { get; set; }
-    public ICollection<MuscleGroupType> SecondaryMuscleGroups { get; set; } = new List<MuscleGroupType>();
+    //public IEnumerable<MuscleGroupType> MuscleGroups { get; set; } = new List<MuscleGroupType>();
+    public string MuscleGroups { get; set; } = ""; // comma seperated
+
+    public Exercise(
+        Guid? id,
+        Guid owner,
+        Guid? creatorId,
+        string name,
+        string? description,
+        string? imageUrl,
+        bool isPublic,
+        string muscleGroups)
+    {
+        Id = id;
+        Owner = owner;
+        CreatorId = creatorId;
+        Name = name;
+        Description = description;
+        ImageUrl = imageUrl;
+        IsPublic = isPublic;
+        MuscleGroups = muscleGroups;
+    }
 
     public override bool Equals(object? obj)
     {
@@ -25,8 +45,7 @@ public class Exercise
         this.Description == other.Description &&
         this.ImageUrl == other.ImageUrl &&
         this.IsPublic == other.IsPublic &&
-        this.PrimaryMuscleGroup == other.PrimaryMuscleGroup &&
-        this.SecondaryMuscleGroups.SequenceEqual(other.SecondaryMuscleGroups);
+        this.MuscleGroups.SequenceEqual(other.MuscleGroups);
     }
 
     public override int GetHashCode()

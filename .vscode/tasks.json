@@ -36,6 +36,9 @@
         "${workspaceFolder}/src/WorkoutBuddy/WorkoutBuddy.csproj"
       ],
       "problemMatcher": "$msCompile"
+      // "options": {
+      //   "cwd": "${workspaceFolder}/src/WorkoutBuddy/"
+      // }
     }
   ]
 }

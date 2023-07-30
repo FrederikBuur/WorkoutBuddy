@@ -1,5 +1,6 @@
 Todo list:
 
+- kan stadig ikke lave query på muscleGroupType hvis de er enums i db/converteret til enum med EF
 - svelte app root path giver 404, bliver ikke deployed
 - fix/updater firebase implementering i Program.cs
 - tilføj flere endpoints

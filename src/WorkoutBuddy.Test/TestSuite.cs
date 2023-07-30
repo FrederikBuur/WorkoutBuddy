@@ -1,5 +1,7 @@
 using WorkoutBuddy.Data.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 
 namespace Deloitte42.Test;
 
@@ -15,7 +17,17 @@ public class TestSuite
     [TestMethod]
     public void CanReferenceProject()
     {
-        var item = new Exercise();
+        var creatorId = Guid.NewGuid();
+        var item = new Exercise(
+            id: null,
+            owner: creatorId,
+            creatorId: creatorId,
+            name: "TEST",
+            description: "TEST",
+            imageUrl: null,
+            isPublic: true,
+            muscleGroups: new List<WorkoutBuddy.Controllers.ExerciseModel.MuscleGroupType> { }
+            );
         Assert.IsNotNull(item);
     }
 }

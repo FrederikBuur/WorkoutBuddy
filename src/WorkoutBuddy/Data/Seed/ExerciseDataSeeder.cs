@@ -1,4 +1,5 @@
-using WorkoutBuddy.Controllers.Exercise.Model;
+using System.Text.Json;
+using WorkoutBuddy.Controllers.ExerciseModel;
 using WorkoutBuddy.Data.Model;
 
 namespace WorkoutBuddy.Data;
@@ -15,30 +16,16 @@ public static class ExerciseDataSeeder
 
         var creatorId = DatabaseHelper.CreatorId;
 
-        var initialExercises = new List<Model.Exercise>() {
-            new Model.Exercise()
-            {
-                Id = Guid.Parse("9f1a7d66-e070-424b-aa3b-dc1ff3cd3bff"),
-                CreatorId = creatorId,
-                Name = "Deadlift",
-                Description = "The barbell deadlift is a classic bodybuilding exercise meant for putting on mass and building overall strength throughout the entire body.",
-                PrimaryMuscleGroup = MuscleGroupType.UpperBack,
-                SecondaryMuscleGroups = new List<MuscleGroupType> { MuscleGroupType.Hamstring, MuscleGroupType.Glutes }
-            },
-            new Model.Exercise()
-            {
-                Id = Guid.Parse("8126c195-4f25-47a6-be90-9333ee061de6"),
-                CreatorId = creatorId,
-                Name = "Bench press",
-                Description = "The bench press is a compound exercise that builds strength and muscle in the chest, triceps and shoulders. When many people think of listing, the bench press is often the first exercise that comes to mind",
-                PrimaryMuscleGroup = MuscleGroupType.Chest,
-                SecondaryMuscleGroups = new List<MuscleGroupType> { MuscleGroupType.Tricep, MuscleGroupType.Shoulder }
-            }
-        };
+        var json = await File.ReadAllTextAsync("Data/Seed/exercises.json");
+        ICollection<Exercise> initialExercises = JsonSerializer.Deserialize<ICollection<Exercise>>(json) ?? throw new Exception("Failed to deserialize exercieses.json");
 
         foreach (var exercise in initialExercises)
         {
-            var e = context.Exercises.SingleOrDefault(e => e.Id == exercise.Id && e.CreatorId == exercise.CreatorId);
+            exercise.Owner = creatorId;
+            exercise.CreatorId = creatorId;
+            exercise.IsPublic = true;
+
+            var e = context.Exercises.SingleOrDefault(e => e.Id == exercise.Id);
             if (e is null)
             {
                 context.Exercises.Add(exercise);
