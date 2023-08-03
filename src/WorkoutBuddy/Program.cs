@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Interfaces;
 using WorkoutBuddy.Controllers;
 using Google.Apis.Auth.OAuth2;
 using WorkoutBuddy.Services;
+using WorkoutBuddy.Features.WorkoutModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -116,6 +117,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<WorkoutService, WorkoutService>();
 
 var app = builder.Build();
 
@@ -141,7 +143,7 @@ void RunApp(WebApplication app)
         .UseSwaggerUI();
 
     app.UseHttpsRedirection();
-
+    app.UseExceptionHandler("/error");
     app.UseAuthentication();
     app.UseAuthorization();
 

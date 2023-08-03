@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WorkoutBuddy.Controllers.ExerciseModel;
 using WorkoutBuddy.Data.Model;
 using WorkoutBuddy.EFConverters;
 
@@ -49,8 +47,6 @@ public class DataContext : DbContext
         {
             entity.ToContainer("Workouts")
                 .HasPartitionKey(w => w.Owner);
-
-            entity.HasMany(e => e.Exercises);
         });
 
 

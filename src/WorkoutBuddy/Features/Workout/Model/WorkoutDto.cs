@@ -1,12 +1,12 @@
-namespace WorkoutBuddy.Controllers.Workout.Model;
+namespace WorkoutBuddy.Controllers.WorkoutModel;
 
 public record WorkoutDto(
     Guid id,
     Guid owner,
     Guid creatorId,
-    bool isPublic,
     string name,
     string? description,
+    bool isPublic,
     DateTime lastPerformed,
-    IEnumerable<WorkoutBuddy.Controllers.ExerciseModel.ExerciseDto> exercises
+    IEnumerable<Guid> exerciseIds
 );

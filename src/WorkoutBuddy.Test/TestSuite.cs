@@ -26,7 +26,7 @@ public class TestSuite
             description: "TEST",
             imageUrl: null,
             isPublic: true,
-            muscleGroups: new List<WorkoutBuddy.Controllers.ExerciseModel.MuscleGroupType> { }
+            muscleGroups: "type1, type2, type3"
             );
         Assert.IsNotNull(item);
     }

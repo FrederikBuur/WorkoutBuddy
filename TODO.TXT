@@ -1,8 +1,11 @@
 Todo list:
 
-- kan stadig ikke lave query på muscleGroupType hvis de er enums i db/converteret til enum med EF
+-færdig gør error handling i workout + exercise
+- tilføj flere endpoints
+    - lav et workoutset
+        -lav exercise set
+- lav exercise service ud fra exercise controller
 - svelte app root path giver 404, bliver ikke deployed
 - fix/updater firebase implementering i Program.cs
-- tilføj flere endpoints
 - tilføj mere seed data
   

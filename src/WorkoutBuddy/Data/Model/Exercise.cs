@@ -1,5 +1,3 @@
-using WorkoutBuddy.Controllers.ExerciseModel;
-
 namespace WorkoutBuddy.Data.Model;
 
 public class Exercise
