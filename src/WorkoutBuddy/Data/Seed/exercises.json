@@ -3,120 +3,120 @@
     "Id": "1e1b8f12-6fe2-4e24-9d54-0edf61e6e99a",
     "Name": "Squats",
     "Description": "Squats are a compound exercise that targets the muscles of the lower body, including the quadriceps, hamstrings, and glutes.",
-    "MuscleGroups": ["Quadriceps", "Hamstrings", "Glutes"]
+    "MuscleGroups": "Quadriceps,Hamstrings,Glutes"
   },
   {
     "Id": "f56a03d3-1c74-48c9-8a25-2c3519c6f438",
     "Name": "Deadlift",
     "Description": "The deadlift is a compound exercise that targets the muscles of the LowerBack, glutes, and hamstrings.",
-    "MuscleGroups": ["LowerBack", "Glutes", "Hamstrings"]
+    "MuscleGroups": "LowerBack,Glutes,Hamstrings"
   },
   {
     "Id": "9e27d00d-8f71-4c97-8909-48b5a5359e42",
     "Name": "Bench Press",
     "Description": "The bench press is a compound exercise that primarily targets the chest, shoulders, and triceps.",
-    "MuscleGroups": ["Chest", "Shoulders", "Triceps"]
+    "MuscleGroups": "Chest,Shoulders,Triceps"
   },
   {
     "Id": "37f9f365-3b80-47e5-97ef-1532a1e6e78b",
     "Name": "Dumbbell Shoulder Press",
     "Description": "The dumbbell shoulder press is an exercise that primarily targets the shoulders and triceps.",
-    "MuscleGroups": ["Shoulders", "Triceps"]
+    "MuscleGroups": "Shoulders,Triceps"
   },
   {
     "Id": "ec951df5-3b1a-4c2d-bc41-48e2f2cfc7d2",
     "Name": "Barbell Rows",
     "Description": "Barbell rows are an exercise that targets the muscles of the upper back, including the lats and rhomboids.",
-    "MuscleGroups": ["UpperBack", "Lats", "Rhomboids"]
+    "MuscleGroups": "UpperBack,Lats,Rhomboids"
   },
   {
     "Id": "ed96fe8f-4e4b-4d2b-8a0f-7211c6c9d0a1",
     "Name": "Dumbbell Lunges",
     "Description": "Dumbbell lunges are a lower body exercise that targets the quadriceps, hamstrings, and glutes.",
-    "MuscleGroups": ["Quadriceps", "Hamstrings", "Glutes"]
+    "MuscleGroups": "Quadriceps,Hamstrings,Glutes"
   },
   {
     "Id": "a72c7d4f-6ad6-454b-9c8f-6e081fcf4ebf",
     "Name": "Incline Dumbbell Press",
     "Description": "The incline dumbbell press is a variation of the bench press that targets the upper chest, shoulders, and triceps.",
-    "MuscleGroups": ["UpperChest", "Shoulders", "Triceps"]
+    "MuscleGroups": "UpperChest,Shoulders,Triceps"
   },
   {
     "Id": "3f49f7e2-2899-4f1d-9384-6aeb9a3f14a9",
     "Name": "Barbell Squats",
     "Description": "Barbell squats are a compound exercise that targets the muscles of the lower body, including the quadriceps, hamstrings, and glutes.",
-    "MuscleGroups": ["Quadriceps", "Hamstrings", "Glutes"]
+    "MuscleGroups": "Quadriceps,Hamstrings,Glutes"
   },
   {
     "Id": "d02cc847-ffcf-4a85-a2b3-afdfcd124a9b",
     "Name": "Overhead Press",
     "Description": "The overhead press is a shoulder exercise that primarily targets the deltoids and triceps.",
-    "MuscleGroups": ["Shoulders", "Triceps"]
+    "MuscleGroups": "Shoulders,Triceps"
   },
   {
     "Id": "6347acff-53e4-4c2f-ae81-63a4890f60ab",
     "Name": "Romanian Deadlift",
     "Description": "The Romanian deadlift is a variation of the deadlift that focuses on the muscles of the posterior chain, including the glutes and hamstrings.",
-    "MuscleGroups": ["Glutes", "Hamstrings"]
+    "MuscleGroups": "Glutes,Hamstrings"
   },
   {
     "Id": "ed2ac0a2-0c3c-4963-9125-aa28a4a6eb34",
     "Name": "Dumbbell Bicep Curls",
     "Description": "Dumbbell bicep curls are an isolation exercise that targets the biceps.",
-    "MuscleGroups": ["Biceps"]
+    "MuscleGroups": "Biceps"
   },
   {
     "Id": "ca1f8db5-7a0e-4da5-a0e9-d2f7d9a0b3f9",
     "Name": "Seated Cable Rows",
     "Description": "Seated cable rows are an exercise that targets the muscles of the upper back, including the lats and rhomboids.",
-    "MuscleGroups": ["UpperBack", "Lats", "Rhomboids"]
+    "MuscleGroups": "UpperBack,Lats,Rhomboids"
   },
   {
     "Id": "0f88e7b9-7043-49a2-80a7-4c4df0d8d437",
     "Name": "Dumbbell Bench Press",
     "Description": "The dumbbell bench press is a variation of the bench press that targets the chest, shoulders, and triceps.",
-    "MuscleGroups": ["Chest", "Shoulders", "Triceps"]
+    "MuscleGroups": "Chest,Shoulders,Triceps"
   },
   {
     "Id": "402ee1c0-22f2-4579-a5b0-b4c3be5c04a2",
     "Name": "Weighted Lunges",
     "Description": "Weighted lunges are a lower body exercise that targets the quadriceps, hamstrings, and glutes.",
-    "MuscleGroups": ["Quadriceps", "Hamstrings", "Glutes"]
+    "MuscleGroups": "Quadriceps,Hamstrings,Glutes"
   },
   {
     "Id": "fc1793c4-bb72-4b6b-bc62-3e3a50be703d",
     "Name": "Pull-ups",
     "Description": "Pull-ups are a compound exercise that targets the muscles of the back, shoulders, and arms.",
-    "MuscleGroups": ["UpperBack", "Shoulders", "Biceps"]
+    "MuscleGroups": "UpperBack,Shoulders,Biceps"
   },
   {
     "Id": "2ed5d5de-6f55-4150-a31f-5ad1a0ccab5e",
     "Name": "Incline Bench Press",
     "Description": "The incline bench press is a variation of the bench press that targets the upper chest, shoulders, and triceps.",
-    "MuscleGroups": ["UpperChest", "Shoulders", "Triceps"]
+    "MuscleGroups": "UpperChest,Shoulders,Triceps"
   },
   {
     "Id": "f0b92a14-f1a2-41a4-9f6b-49d6412160fe",
     "Name": "Barbell Lunges",
     "Description": "Barbell lunges are a lower body exercise that targets the quadriceps, hamstrings, and glutes.",
-    "MuscleGroups": ["Quadriceps", "Hamstrings", "Glutes"]
+    "MuscleGroups": "Quadriceps,Hamstrings,Glutes"
   },
   {
     "Id": "fe84679c-3720-4ab3-9589-8994a7cc50c9",
     "Name": "Lateral Raises",
     "Description": "Lateral raises are a shoulder exercise that primarily targets the deltoids.",
-    "MuscleGroups": ["Shoulders"]
+    "MuscleGroups": "Shoulders"
   },
   {
     "Id": "245d96f1-9ce9-4d33-a4fe-9e51a30b42f1",
     "Name": "Barbell Bicep Curls",
     "Description": "Barbell bicep curls are an isolation exercise that targets the biceps.",
-    "MuscleGroups": ["Biceps"]
+    "MuscleGroups": "Biceps"
   },
   {
     "Id": "f9f6420e-43f1-4e1e-b12e-8f0ac0d8b6cc",
     "Name": "Barbell Bench Press",
     "Description": "The barbell bench press is a compound exercise that primarily targets the chest, shoulders, and triceps.",
-    "MuscleGroups": ["Chest", "Shoulders", "Triceps"]
+    "MuscleGroups": "Chest,Shoulders,Triceps"
   }
 ]

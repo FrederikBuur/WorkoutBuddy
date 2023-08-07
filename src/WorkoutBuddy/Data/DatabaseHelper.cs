@@ -25,6 +25,7 @@ internal static class DatabaseHelper
         Console.WriteLine("Begin seeding");
         await context.SeedProfiles();
         await context.SeedExercises();
+        await context.SeedWorkouts();
         Console.WriteLine("Finished seeding");
     }
 }

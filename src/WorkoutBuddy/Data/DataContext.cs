@@ -17,6 +17,7 @@ public class DataContext : DbContext
     public DbSet<Profile> Profiles => Set<Profile>();
     public DbSet<Exercise> Exercises => Set<Exercise>();
     public DbSet<Workout> Workouts => Set<Workout>();
+    public DbSet<WorkoutExerciseEntry> WorkoutExerciseEnties => Set<WorkoutExerciseEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -46,15 +47,16 @@ public class DataContext : DbContext
         modelBuilder.Entity<Workout>(entity =>
         {
             entity.ToContainer("Workouts")
-                .HasPartitionKey(w => w.Owner);
+                .HasPartitionKey(w => w.Owner)
+                .HasMany(w => w.Exercises);
         });
 
-
-        // Seeding - this method is onlr working with migrations
-        // modelBuilder.Entity<ProfileDto>()
-        //     .SeedProfiles();
-        // modelBuilder.Entity<ExerciseDto>()
-        //     .SeedExercises();
+        // WorkoutExerciseEntity
+        modelBuilder.Entity<WorkoutExerciseEntry>(entry =>
+        {
+            entry.ToContainer("WorkoutExerciseEntries")
+                .HasPartitionKey(we => we.Id);
+        });
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

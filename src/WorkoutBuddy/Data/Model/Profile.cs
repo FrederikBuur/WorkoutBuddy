@@ -1,12 +1,14 @@
 ﻿namespace WorkoutBuddy.Data.Model
 {
-    public class Profile
+    public class Profile : IEntityBase
     {
         public Guid Id { get; set; }
         public string UserId { get; set; } = "";
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? ProfilePictureUrl { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         public override bool Equals(object? obj)
         {

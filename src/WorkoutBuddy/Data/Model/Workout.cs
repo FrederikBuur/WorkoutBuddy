@@ -1,6 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace WorkoutBuddy.Data.Model;
 
-public class Workout
+public class Workout : IEntityBase
 {
     public Guid Id { get; set; }
     public Guid Owner { get; set; }
@@ -9,7 +11,9 @@ public class Workout
     public string? Description { get; set; }
     public bool IsPublic { get; set; }
     public DateTime LastPerformed { get; set; }
-    public IEnumerable<Guid> ExerciseIds { get; set; } = new List<Guid>();
+    public IEnumerable<WorkoutExerciseEntry> Exercises { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public Workout(
         Guid id,
@@ -18,8 +22,7 @@ public class Workout
         string name,
         string? description,
         bool isPublic,
-        DateTime lastPerformed,
-        IEnumerable<Guid> exerciseIds)
+        DateTime lastPerformed)
     {
         Id = id;
         Owner = owner;
@@ -28,6 +31,21 @@ public class Workout
         Description = description;
         IsPublic = isPublic;
         LastPerformed = lastPerformed;
-        ExerciseIds = exerciseIds;
+        Exercises = new List<WorkoutExerciseEntry>(); ;
+    }
+
+    [JsonConstructor]
+    public Workout(
+    Guid id,
+    Guid owner,
+    Guid creatorId,
+    string name,
+    string? description,
+    bool isPublic,
+    DateTime lastPerformed,
+    IEnumerable<WorkoutExerciseEntry> exerciseIds
+    ) : this(id, owner, creatorId, name, description, isPublic, lastPerformed)
+    {
+        Exercises = exerciseIds;
     }
 }

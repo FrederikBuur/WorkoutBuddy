@@ -1,5 +1,4 @@
 using System.Text.Json;
-using WorkoutBuddy.Controllers.ExerciseModel;
 using WorkoutBuddy.Data.Model;
 
 namespace WorkoutBuddy.Data;
@@ -17,7 +16,8 @@ public static class ExerciseDataSeeder
         var creatorId = DatabaseHelper.CreatorId;
 
         var json = await File.ReadAllTextAsync("Data/Seed/exercises.json");
-        ICollection<Exercise> initialExercises = JsonSerializer.Deserialize<ICollection<Exercise>>(json) ?? throw new Exception("Failed to deserialize exercieses.json");
+        ICollection<Exercise> initialExercises = JsonSerializer.Deserialize<ICollection<Exercise>>(json)
+            ?? throw new Exception("Failed to deserialize exercieses.json");
 
         foreach (var exercise in initialExercises)
         {

@@ -1,6 +1,6 @@
 namespace WorkoutBuddy.Data.Model;
 
-public class Exercise
+public class Exercise : IEntityBase
 {
     public Guid? Id { get; set; }
     public Guid Owner { get; set; }
@@ -11,6 +11,8 @@ public class Exercise
     public bool IsPublic { get; set; }
     //public IEnumerable<MuscleGroupType> MuscleGroups { get; set; } = new List<MuscleGroupType>();
     public string MuscleGroups { get; set; } = ""; // comma seperated
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public Exercise(
         Guid? id,

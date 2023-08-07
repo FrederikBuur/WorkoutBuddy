@@ -1,4 +1,6 @@
-﻿using WorkoutBuddy.Data.Model;
+﻿using System.Net;
+using WorkoutBuddy.Data.Model;
+using WorkoutBuddy.Features.ErrorHandling;
 using WorkoutBuddy.Services;
 
 namespace WorkoutBuddy.Controllers;
@@ -21,5 +23,15 @@ public class ProfileService : IProfileService
         var userId = _userService.Id;
         var profile = _dataContext.Profiles.SingleOrDefault(p => p.UserId == userId);
         return profile;
+    }
+
+    public HttpResponseException? ProfileMissingAsException(out Profile? profile)
+    {
+        profile = GetProfile();
+        
+        if(profile is null) 
+            return new HttpResponseException(HttpStatusCode.Unauthorized, "You dont have an account");
+        else 
+            return null;
     }
 }

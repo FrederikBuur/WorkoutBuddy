@@ -47,12 +47,11 @@ if (shouldUseKeyVault)
 }
 
 // Setup EF Core
+var endpoint = builder.Configuration.GetValue<string>("Cosmos:Uri"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:Uri");
+var primaryKey = builder.Configuration.GetValue<string>("Cosmos:Key"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:Key");
+var dbname = builder.Configuration.GetValue<string>("Cosmos:DbName"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:DbName");
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    var endpoint = builder.Configuration.GetValue<string>("Cosmos:Uri"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:Uri");
-    var primaryKey = builder.Configuration.GetValue<string>("Cosmos:Key"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:Key");
-    var dbname = builder.Configuration.GetValue<string>("Cosmos:DbName"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:DbName");
-
     // todo still cant use managed identity to connect to cosmos with EF
     options.UseCosmos(
         endpoint,
@@ -132,7 +131,7 @@ switch (args.FirstOrDefault())
     case var arg: throw new ArgumentException($"Unknown command-line argument: {arg}");
 }
 
-void RunApp(WebApplication app)
+static void RunApp(WebApplication app)
 {
     app.UseExceptionHandler("/error")
         .UseSwagger()
@@ -143,7 +142,6 @@ void RunApp(WebApplication app)
         .UseSwaggerUI();
 
     app.UseHttpsRedirection();
-    app.UseExceptionHandler("/error");
     app.UseAuthentication();
     app.UseAuthorization();
 

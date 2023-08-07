@@ -1,11 +1,15 @@
 Todo list:
 
--færdig gør error handling i workout + exercise
+-seed workout data | kan ikke deserialize workouts!!!???
+-fix jwt/firebaseauth impl (nick chapsas vid)
+    - fix/updater firebase implementering i Program.cs
 - tilføj flere endpoints
     - lav et workoutset
         -lav exercise set
+-færdig gør error handling i exercise
+    brug result class
 - lav exercise service ud fra exercise controller
+- set healthcheck - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
 - svelte app root path giver 404, bliver ikke deployed
-- fix/updater firebase implementering i Program.cs
 - tilføj mere seed data
   

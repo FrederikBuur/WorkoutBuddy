@@ -2,7 +2,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-public class EnumSchemaFilter : ISchemaFilter
+public class EnumSchemaFilter : ISchemaFilter // todo not used?
 {
     public void Apply(OpenApiSchema model, SchemaFilterContext context)
     {
