@@ -1,17 +1,19 @@
+using System.Text.Json.Serialization;
+
 namespace WorkoutBuddy.Data.Model;
 
 public class WorkoutExerciseEntry : IEntityBase
 {
-    public Guid Id { get; set; }
     public int Order { get; set; }
     public Guid ExerciseId { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
 
-    public WorkoutExerciseEntry(Guid id, int order, Guid exerciseId)
+    public override bool Equals(object? obj)
     {
-        Id = id;
-        Order = order;
-        ExerciseId = exerciseId;
+        return base.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 }

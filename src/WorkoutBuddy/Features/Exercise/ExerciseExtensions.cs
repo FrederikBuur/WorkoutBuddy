@@ -15,13 +15,15 @@ public static class ExerciseExtensions
         e.MuscleGroups
     );
 
-    public static Exercise ToExercise(this ExerciseDto e) => new Exercise(
-        id: e.id,
-        owner: e.owner,
-        creatorId: e.creatorId,
-        name: e.name,
-        description: e.description,
-        imageUrl: e.imageUrl,
-        isPublic: e.isPublic,
-        muscleGroups: e.muscleGroups);
+    public static Exercise ToExercise(this ExerciseDto e) => new()
+    {
+        Id = e.id,
+        Owner = e.owner,
+        CreatorId = e.creatorId,
+        Name = e.name,
+        Description = e.description,
+        ImageUrl = e.imageUrl,
+        IsPublic = e.isPublic,
+        MuscleGroups = e.muscleGroups
+    };
 }

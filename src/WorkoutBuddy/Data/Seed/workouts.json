@@ -5,7 +5,7 @@
     "Description": "An intense full body workout to boost strength and endurance.",
     "IsPublic": true,
     "LastPerformed": "2023-08-01T08:00:00Z",
-    "Exercises": [
+    "ExerciseEntries": [
       {
         "Id": "3f63a7bf-589e-48c2-b8f6-0b1d4e9f5a7c",
         "Order": 1,
@@ -17,7 +17,7 @@
         "ExerciseId": "f56a03d3-1c74-48c9-8a25-2c3519c6f438"
       },
       {
-        "Id": "d4e3f2b1-0c9a-8b7f-6e5d-4a3c2d1f0e9",
+        "Id": "b5a353f4-d58b-45f4-9f6e-e322c80dbe32",
         "Order": 3,
         "ExerciseId": "9e27d00d-8f71-4c97-8909-48b5a5359e42"
       },
@@ -27,7 +27,7 @@
         "ExerciseId": "ec951df5-3b1a-4c2d-bc41-48e2f2cfc7d2"
       },
       {
-        "Id": "e3f4a5b6-7c8d-9e0a-b1c2-d3e4f5a6b7c",
+        "Id": "d65054b0-c738-4994-9df6-098dfb2b7a2a",
         "Order": 5,
         "ExerciseId": "ed96fe8f-4e4b-4d2b-8a0f-7211c6c9d0a1"
       }
@@ -39,29 +39,29 @@
     "Description": "A dynamic full body workout to enhance power and agility.",
     "IsPublic": true,
     "LastPerformed": "2023-08-02T09:00:00Z",
-    "Exercises": [
+    "ExerciseEntries": [
       {
-        "Id": "5a4f3e2d-1c0b9e8d-0a2b3c4d-7e6f5a4b",
+        "Id": "cbf39cd4-6907-44e9-a2be-9f8d587beadd",
         "Order": 1,
         "ExerciseId": "1e1b8f12-6fe2-4e24-9d54-0edf61e6e99a"
       },
       {
-        "Id": "8f9a0b1c-2d3e4f5a-6b7c8d9e-a0b1c2d3",
+        "Id": "2552d682-60f6-44b9-af9b-ce039951e7b7",
         "Order": 2,
         "ExerciseId": "f56a03d3-1c74-48c9-8a25-2c3519c6f438"
       },
       {
-        "Id": "c4d5e6f7-8a9b0c1d-2e3f4a5b-6c7d8e9f",
+        "Id": "2e88875e-47ed-4ba6-b4fd-bd970c5c71d7",
         "Order": 3,
         "ExerciseId": "9e27d00d-8f71-4c97-8909-48b5a5359e42"
       },
       {
-        "Id": "d1e2f3a4-b5c6d7e8-9f0a1b2c-3d4e5f6a",
+        "Id": "addf9308-cdab-45b2-83c4-6630b63d86f3",
         "Order": 4,
         "ExerciseId": "d02cc847-ffcf-4a85-a2b3-afdfcd124a9b"
       },
       {
-        "Id": "a1b2c3d4-e5f6a7b-8c9d0e1f-2a3b4c5d",
+        "Id": "8be10de4-7cd6-44b6-9aa2-f11c912c8a49",
         "Order": 5,
         "ExerciseId": "6347acff-53e4-4c2f-ae81-63a4890f60ab"
       }

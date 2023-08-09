@@ -24,7 +24,7 @@ public class DataContext : DbContext
         // Profile
         modelBuilder.Entity<Profile>()
             .ToContainer("Profiles")
-            .HasPartitionKey(p => p.UserId);
+            .HasPartitionKey(nameof(Profile.UserId));
 
         // Exercise
         modelBuilder.Entity<Exercise>()
@@ -47,16 +47,25 @@ public class DataContext : DbContext
         modelBuilder.Entity<Workout>(entity =>
         {
             entity.ToContainer("Workouts")
-                .HasPartitionKey(w => w.Owner)
-                .HasMany(w => w.Exercises);
+                .HasPartitionKey(nameof(Workout.Id))
+                .OwnsMany(w => w.ExerciseEntries);
+            // .HasMany(w => w.Exercises)
+            // .WithOne(we => we.Workout)
+            // .HasForeignKey(we => we.WorkoutId);
         });
 
         // WorkoutExerciseEntity
-        modelBuilder.Entity<WorkoutExerciseEntry>(entry =>
-        {
-            entry.ToContainer("WorkoutExerciseEntries")
-                .HasPartitionKey(we => we.Id);
-        });
+        // modelBuilder.Entity<WorkoutExerciseEntry>(entity =>
+        // {
+        //     entity.HasKey(we => we.Id);
+        //     entity.ToContainer("WorkoutExerciseEntries")
+        //         .HasPartitionKey(we => we.Id);
+
+        //     entity.HasOne(we => we.Workout)
+        //         .WithMany(w => w.WorkoutExerciseEntry)
+        //         .HasForeignKey(we => we.WorkoutId);
+        // });
+
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -87,6 +96,7 @@ public class DataContext : DbContext
             switch (changedEntity.State)
             {
                 case EntityState.Added:
+                    if (entity.Id == default) entity.Id = Guid.NewGuid();
                     entity.CreatedAt = now;
                     entity.UpdatedAt = now;
                     break;

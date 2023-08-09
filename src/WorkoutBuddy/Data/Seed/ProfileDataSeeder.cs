@@ -31,7 +31,7 @@ public static class ProfileDataSeeder
             }
             else if (!p.Equals(profile))
             {
-                context.Profiles.Update(profile);
+                context.Entry(p).CurrentValues.SetValues(profile);
                 Console.WriteLine($"Update Profile: {profile.Name}");
             }
             else

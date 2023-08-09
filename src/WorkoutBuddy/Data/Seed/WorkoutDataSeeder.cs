@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using WorkoutBuddy.Data.Model;
 
 namespace WorkoutBuddy.Data;
@@ -12,7 +13,7 @@ public static class WorkoutDataSeeder
         var creatorId = DatabaseHelper.CreatorId;
 
         var json = await File.ReadAllTextAsync("Data/Seed/workouts.json");
-        IEnumerable<Workout> initialWorkouts = JsonSerializer.Deserialize<IEnumerable<Workout>>(json)
+        ICollection<Workout> initialWorkouts = JsonSerializer.Deserialize<ICollection<Workout>>(json)
             ?? throw new Exception("Failed to deserialize workouts.json");
 
         foreach (var workout in initialWorkouts)
@@ -21,20 +22,22 @@ public static class WorkoutDataSeeder
             workout.CreatorId = creatorId;
             workout.IsPublic = true;
 
-            var w = context.Workouts.SingleOrDefault(w => w.Id == workout.Id);
+            var w = context.Workouts
+                .SingleOrDefault(w => w.Id == workout.Id);
+
             if (w is null)
             {
-                context.Workouts.Add(workout);
-                Console.WriteLine($"Adding Exercise: {workout.Name}");
+                var test = context.Workouts.Add(workout);
+                Console.WriteLine($"Adding Workout: {workout.Name}");
             }
             else if (!w.Equals(workout))
             {
                 context.Entry(w).CurrentValues.SetValues(workout);
-                Console.WriteLine($"Update Exercise: {workout.Name}");
+                Console.WriteLine($"Update Workout: {workout.Name}");
             }
             else
             {
-                Console.WriteLine($"Skipped Exercise: {workout.Name}");
+                Console.WriteLine($"Skipped Workout: {workout.Name}");
             }
         }
         await context.SaveChangesAsync();
