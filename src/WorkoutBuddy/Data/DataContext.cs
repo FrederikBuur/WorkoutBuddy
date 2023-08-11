@@ -29,19 +29,7 @@ public class DataContext : DbContext
         // Exercise
         modelBuilder.Entity<Exercise>()
             .ToContainer("Exercises")
-            .HasPartitionKey(e => e.CreatorId)
-            .Property(mg => mg.MuscleGroups)
-            // .HasConversion(
-            //     mg => string.Join(",", mg),
-            //     mg => mg.Split(",", StringSplitOptions.RemoveEmptyEntries)
-            //         .Select(x => Enum.Parse<MuscleGroupType>(x))
-            //         .ToArray(),
-            //     new ValueComparer<IEnumerable<MuscleGroupType>>(
-            //         (mg1, mg2) => mg1!.SequenceEqual(mg2!),
-            //         c => c.Aggregate(0, (int a, MuscleGroupType v) => HashCode.Combine(a, v.GetHashCode())),
-            //         c => c.ToList())
-            // )
-            ;
+            .HasPartitionKey(e => e.CreatorId);
 
         // Workout
         modelBuilder.Entity<Workout>(entity =>
@@ -49,23 +37,7 @@ public class DataContext : DbContext
             entity.ToContainer("Workouts")
                 .HasPartitionKey(nameof(Workout.Id))
                 .OwnsMany(w => w.ExerciseEntries);
-            // .HasMany(w => w.Exercises)
-            // .WithOne(we => we.Workout)
-            // .HasForeignKey(we => we.WorkoutId);
         });
-
-        // WorkoutExerciseEntity
-        // modelBuilder.Entity<WorkoutExerciseEntry>(entity =>
-        // {
-        //     entity.HasKey(we => we.Id);
-        //     entity.ToContainer("WorkoutExerciseEntries")
-        //         .HasPartitionKey(we => we.Id);
-
-        //     entity.HasOne(we => we.Workout)
-        //         .WithMany(w => w.WorkoutExerciseEntry)
-        //         .HasForeignKey(we => we.WorkoutId);
-        // });
-
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -75,13 +47,13 @@ public class DataContext : DbContext
 
     public override int SaveChanges()
     {
-        UpdateEntityBaseFields();
+        UpdateEntityBaseFields(); // setup for base entity properties
         return base.SaveChanges();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        UpdateEntityBaseFields();
+        UpdateEntityBaseFields(); // setup for base entity properties
         return base.SaveChangesAsync(true, cancellationToken);
     }
 

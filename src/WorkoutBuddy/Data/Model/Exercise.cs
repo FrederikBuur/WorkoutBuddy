@@ -8,6 +8,9 @@ public class Exercise : IEntityBase
     public string? Description { get; set; }
     public string? ImageUrl { get; set; }
     public bool IsPublic { get; set; }
+    /// <summary>
+    /// Comma seperated string of Enum type <see cref="MuscleGroups"/>
+    /// </summary>
     public string MuscleGroups { get; set; } = ""; // comma seperated
 
     // EF Core needs empty constructor
