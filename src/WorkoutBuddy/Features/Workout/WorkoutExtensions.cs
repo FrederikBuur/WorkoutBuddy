@@ -16,21 +16,15 @@ public static class WorkoutExtensions
         w.ExerciseEntries.Select(e => e.ToWorkoutExerciseEntryDto())
     );
 
-    public static Workout ToWorkout(this WorkoutDto w)
-    {
-        var workout = new Workout()
-        {
-            Id = w.Id,
-            Owner = w.Owner,
-            CreatorId = w.CreatorId,
-            Name = w.Name,
-            Description = w.Description,
-            IsPublic = w.IsPublic,
-            LastPerformed = w.LastPerformed,
-            ExerciseEntries = w.Exercises.Select(e => e.ToWorkoutExerciseEntry()).ToList()
-        };
-        return workout;
-    }
+    public static Workout ToWorkout(this WorkoutDto w) => new(
+        id: w.Id,
+        owner: w.Owner,
+        creatorId: w.CreatorId,
+        name: w.Name,
+        description: w.Description,
+        isPublic: w.IsPublic,
+        lastPerformed: w.LastPerformed,
+        exerciseEntries: w.Exercises.Select(e => e.ToWorkoutExerciseEntry()).ToList());
 
     public static WorkoutExerciseEntryDto ToWorkoutExerciseEntryDto(this WorkoutExerciseEntry we) => new(
         we.Id,
@@ -38,10 +32,9 @@ public static class WorkoutExtensions
         we.ExerciseId
     );
 
-    public static WorkoutExerciseEntry ToWorkoutExerciseEntry(this WorkoutExerciseEntryDto we) => new()
-    {
-        Id = we.Id,
-        Order = we.Order,
-        ExerciseId = we.ExerciseId
-    };
+    public static WorkoutExerciseEntry ToWorkoutExerciseEntry(this WorkoutExerciseEntryDto we) => new(
+        id: we.Id,
+        order: we.Order,
+        exerciseId: we.ExerciseId
+    );
 }

@@ -1,6 +1,5 @@
 Todo list:
 
--fix equals 
 -fix jwt/firebaseauth impl (nick chapsas vid)
     - fix/updater firebase implementering i Program.cs
 - tilføj flere endpoints

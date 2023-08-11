@@ -19,6 +19,11 @@ public static class ExerciseDataSeeder
         ICollection<Exercise> initialExercises = JsonSerializer.Deserialize<ICollection<Exercise>>(json)
             ?? throw new Exception("Failed to deserialize exercieses.json");
 
+        var created = 0;
+        var updated = 0;
+        var skipped = 0;
+        var total = initialExercises.Count;
+
         foreach (var exercise in initialExercises)
         {
             exercise.Owner = creatorId;
@@ -29,18 +34,22 @@ public static class ExerciseDataSeeder
             if (e is null)
             {
                 context.Exercises.Add(exercise);
+                created++;
                 Console.WriteLine($"Adding Exercise: {exercise.Name}");
             }
             else if (!e.Equals(exercise))
             {
                 context.Entry(e).CurrentValues.SetValues(exercise);
+                updated++;
                 Console.WriteLine($"Update Exercise: {exercise.Name}");
             }
             else
             {
-                Console.WriteLine($"Skipped Exercise: {exercise.Name}");
+                skipped++;
+                // Console.WriteLine($"Skipped Exercise: {exercise.Name}");
             }
         }
         await context.SaveChangesAsync();
+        Console.WriteLine($"Result of {nameof(ExerciseDataSeeder)}. Created: {created}, Updated: {updated}, Skipped: {skipped}, Total: {total}");
     }
 }

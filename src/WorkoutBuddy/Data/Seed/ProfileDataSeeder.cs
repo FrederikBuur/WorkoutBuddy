@@ -10,15 +10,19 @@ public static class ProfileDataSeeder
         Console.WriteLine("Seeding Profiles");
 
         var initialProfiles = new List<Profile>() {
-            new Profile()
-            {
-                Id = DatabaseHelper.CreatorId,
-                UserId = "24dqp5PO9iNN6Gh3zoNaY5NO8zp2",
-                Name = "The Creator",
-                Email = "test@test.com",
-                ProfilePictureUrl = null
-            }
-        };
+            new(
+                id : DatabaseHelper.CreatorId,
+                userId : "24dqp5PO9iNN6Gh3zoNaY5NO8zp2",
+                name : "The Creator",
+                email : "test@test.com",
+                profilePictureUrl : null
+            )
+    };
+
+        var created = 0;
+        var updated = 0;
+        var skipped = 0;
+        var total = initialProfiles.Count;
 
         foreach (var profile in initialProfiles)
         {
@@ -27,19 +31,23 @@ public static class ProfileDataSeeder
             if (p is null)
             {
                 await context.Profiles.AddAsync(profile);
+                created++;
                 Console.WriteLine($"Adding Profile: {profile.Name}");
             }
             else if (!p.Equals(profile))
             {
                 context.Entry(p).CurrentValues.SetValues(profile);
+                updated++;
                 Console.WriteLine($"Update Profile: {profile.Name}");
             }
             else
             {
-                Console.WriteLine($"Skipped Profile: {profile.Name}");
+                skipped++;
+                // Console.WriteLine($"Skipped Profile: {profile.Name}");
             }
 
         }
         await context.SaveChangesAsync();
+        Console.WriteLine($"Result of {nameof(ProfileDataSeeder)}. Created: {created}, Updated: {updated}, Skipped: {skipped}, Total: {total}");
     }
 }

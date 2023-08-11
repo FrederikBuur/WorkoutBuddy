@@ -4,7 +4,7 @@ namespace WorkoutBuddy.Controllers.ExerciseModel;
 
 public static class ExerciseExtensions
 {
-    public static ExerciseDto ToExerciseDto(this Exercise e) => new ExerciseDto(
+    public static ExerciseDto ToExerciseDto(this Exercise e) => new(
         e.Id,
         e.Owner,
         e.CreatorId,
@@ -15,15 +15,14 @@ public static class ExerciseExtensions
         e.MuscleGroups
     );
 
-    public static Exercise ToExercise(this ExerciseDto e) => new()
-    {
-        Id = e.id,
-        Owner = e.owner,
-        CreatorId = e.creatorId,
-        Name = e.name,
-        Description = e.description,
-        ImageUrl = e.imageUrl,
-        IsPublic = e.isPublic,
-        MuscleGroups = e.muscleGroups
-    };
+    public static Exercise ToExercise(this ExerciseDto e) => new(
+        id: e.id,
+        owner: e.owner,
+        creatorId: e.creatorId,
+        name: e.name,
+        description: e.description,
+        imageUrl: e.imageUrl,
+        isPublic: e.isPublic,
+        muscleGroups: e.muscleGroups
+    );
 }

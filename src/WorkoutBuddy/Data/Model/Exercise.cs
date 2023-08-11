@@ -10,22 +10,50 @@ public class Exercise : IEntityBase
     public bool IsPublic { get; set; }
     public string MuscleGroups { get; set; } = ""; // comma seperated
 
+    // EF Core needs empty constructor
+    public Exercise() { }
+
+    public Exercise(Guid? id, Guid owner, Guid creatorId, string name, string? description, string? imageUrl, bool isPublic, string muscleGroups)
+    {
+        Id = id ?? Guid.NewGuid();
+        Owner = owner;
+        CreatorId = creatorId;
+        Name = name;
+        Description = description;
+        ImageUrl = imageUrl;
+        IsPublic = isPublic;
+        MuscleGroups = muscleGroups;
+    }
+
     public override bool Equals(object? obj)
     {
-        var other = obj as Exercise;
-        if (other is null) return false;
+        if (obj is null)
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj is not Exercise other) return false;
 
-        return this.Id == other.Id &&
-        this.CreatorId == other.CreatorId &&
-        this.Name == other.Name &&
-        this.Description == other.Description &&
-        this.ImageUrl == other.ImageUrl &&
-        this.IsPublic == other.IsPublic &&
-        this.MuscleGroups.SequenceEqual(other.MuscleGroups);
+        return Id == other.Id
+            && Owner == other.Owner
+            && CreatorId == other.CreatorId
+            && Name == other.Name
+            && Description == other.Description
+            && ImageUrl == other.ImageUrl
+            && IsPublic == other.IsPublic
+            && MuscleGroups == other.MuscleGroups;
     }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        HashCode hash = new();
+        hash.Add(Id);
+        hash.Add(Owner);
+        hash.Add(CreatorId);
+        hash.Add(Name);
+        hash.Add(Description);
+        hash.Add(ImageUrl);
+        hash.Add(IsPublic);
+        hash.Add(MuscleGroups);
+        return hash.ToHashCode();
     }
 }
