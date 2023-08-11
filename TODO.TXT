@@ -4,10 +4,9 @@ Todo list:
     - fix/updater firebase implementering i Program.cs
 - tilføj flere endpoints
     - lav et workoutset
-        -lav exercise set
--færdig gør error handling i exercise
-    brug result class
+    - lav exercise set
 - lav exercise service ud fra exercise controller
+    - færdig gør error handling i exercise - brug result class
 - set healthcheck - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
 - svelte app root path giver 404, bliver ikke deployed
 - tilføj mere seed data
