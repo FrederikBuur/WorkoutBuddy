@@ -12,7 +12,7 @@ public static class WorkoutDataSeeder
 
         var creatorId = DatabaseHelper.CreatorId;
 
-        var json = await File.ReadAllTextAsync("Data/Seed/workouts.json");
+        var json = await File.ReadAllTextAsync("Data/Seed/Json/workouts.json");
         ICollection<Workout> initialWorkouts = JsonSerializer.Deserialize<ICollection<Workout>>(json)
             ?? throw new Exception("Failed to deserialize workouts.json");
 

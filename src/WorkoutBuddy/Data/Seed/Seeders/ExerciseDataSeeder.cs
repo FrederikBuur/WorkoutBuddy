@@ -15,7 +15,7 @@ public static class ExerciseDataSeeder
 
         var creatorId = DatabaseHelper.CreatorId;
 
-        var json = await File.ReadAllTextAsync("Data/Seed/exercises.json");
+        var json = await File.ReadAllTextAsync("Data/Seed/Json/exercises.json");
         ICollection<Exercise> initialExercises = JsonSerializer.Deserialize<ICollection<Exercise>>(json)
             ?? throw new Exception("Failed to deserialize exercieses.json");
 
