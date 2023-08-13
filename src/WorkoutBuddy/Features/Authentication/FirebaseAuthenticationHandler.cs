@@ -8,6 +8,9 @@ using System.Text.Encodings.Web;
 
 namespace workouts;
 
+/// <summary>
+/// For every request the 'Authorization' header is validaded by Firebase to ensure the request is authorized
+/// </summary>
 public class FirebaseAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private FirebaseApp _firebaseApp;
@@ -25,30 +28,32 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (!Context.Request.Headers.ContainsKey("Authorization"))
+        bool isLocal = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local";
+
+        if (!Context.Request.Headers.TryGetValue("Authorization", out var bearerToken))
         {
             return AuthenticateResult.Fail("Missing Bearer token");
         }
 
-        string? bearerToken = Context.Request.Headers["Authorization"];
-        if (bearerToken is null || !bearerToken.StartsWith("Bearer "))
+        var bearerTokenAsString = bearerToken.ToString();
+        if (!bearerTokenAsString.StartsWith("Bearer "))
         {
             return AuthenticateResult.Fail("Invalid scheme");
         }
 
-        var token = bearerToken.Substring("Bearer ".Length);
+        var token = bearerTokenAsString.Substring("Bearer ".Length);
         try
         {
-            var firebaseToken = await FirebaseAuth.GetAuth(_firebaseApp).VerifyIdTokenAsync(token);
+            var firebaseToken = await FirebaseAuth
+                .GetAuth(_firebaseApp)
+                .VerifyIdTokenAsync(token);
+
             var authTicket = new AuthenticationTicket(
-            new ClaimsPrincipal(
-                new List<ClaimsIdentity>()
-                {
-                        new ClaimsIdentity(ToClaims(firebaseToken.Claims), nameof(FirebaseAuthenticationHandler))
-                }
-            ),
-            JwtBearerDefaults.AuthenticationScheme
-        );
+                new ClaimsPrincipal(
+                    new List<ClaimsIdentity>() { new ClaimsIdentity(ToClaims(firebaseToken.Claims), nameof(FirebaseAuthenticationHandler)) }
+                ),
+                JwtBearerDefaults.AuthenticationScheme);
+
             return AuthenticateResult.Success(authTicket);
         }
         catch (Exception ex)
@@ -57,7 +62,7 @@ public class FirebaseAuthenticationHandler : AuthenticationHandler<Authenticatio
         }
     }
 
-    private IEnumerable<Claim>? ToClaims(IReadOnlyDictionary<string, object> claims)
+    private IEnumerable<Claim> ToClaims(IReadOnlyDictionary<string, object> claims)
     {
         var claimsList = new List<Claim>
             {

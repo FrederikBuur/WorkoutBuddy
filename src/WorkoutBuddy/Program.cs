@@ -13,6 +13,8 @@ using WorkoutBuddy.Controllers;
 using Google.Apis.Auth.OAuth2;
 using WorkoutBuddy.Services;
 using WorkoutBuddy.Features.WorkoutModel;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +39,7 @@ var azureCredentials = new DefaultAzureCredential(new DefaultAzureCredentialOpti
     ExcludeInteractiveBrowserCredential = true,
 });
 
-// Setup keyvault secrets
+// Inject keyvault secrets
 var shouldUseKeyVault = builder.Configuration.GetValue<bool>("KeyVault:UseKeyVault", true);
 if (shouldUseKeyVault)
 {
@@ -46,13 +48,12 @@ if (shouldUseKeyVault)
     builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredentials);
 }
 
-// Setup EF Core
+// Setup EF Core to Cosmos db connection
 var endpoint = builder.Configuration.GetValue<string>("Cosmos:Uri"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:Uri");
 var primaryKey = builder.Configuration.GetValue<string>("Cosmos:Key"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:Key");
 var dbname = builder.Configuration.GetValue<string>("Cosmos:DbName"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:DbName");
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    // todo still cant use managed identity to connect to cosmos with EF
     options.UseCosmos(
         endpoint,
         primaryKey,
@@ -60,30 +61,12 @@ builder.Services.AddDbContext<DataContext>(options =>
     );
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+// setup swagger options
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGen();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Time To Work", Version = "v1" });
-    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        Type = SecuritySchemeType.OAuth2,
-        Flows = new OpenApiOAuthFlows
-        {
-            Password = new OpenApiOAuthFlow
-            {
-                TokenUrl = new Uri("/v1/auth", UriKind.Relative),
-                Extensions = new Dictionary<string, IOpenApiExtension>
-                {
-                    { "returnSecureToken", new OpenApiBoolean(true) },
-                },
-            }
-        }
-    });
-    c.OperationFilter<AuthorizeCheckOperationFilter>();
-    //c.SchemaFilter<EnumSchemaFilter>(); // todo show enums in swagger
-});
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerAuthOptions>();
 
 // setup application insight logging
 if (env.EnvironmentName != "Local")
@@ -95,17 +78,15 @@ if (env.EnvironmentName != "Local")
     });
 }
 
-// firebase authentication
-// JSON TO STRING CONVERTER: https://tools.knowledgewalls.com/json-to-string
-// step 1: https://www.youtube.com/watch?v=edqmYmcLnjE&t=618s&ab_channel=SingletonSean - DONE
-// step 2: https://www.youtube.com/watch?v=jkTaHb0M4nw&ab_channel=SingletonSean - TODO
+// setup firebase authentication
+// Convert firebase config json to string: https://tools.knowledgewalls.com/json-to-string
 var firebaseConfig = builder.Configuration.GetValue<string>("Auth:FirebaseConfig"); // ?? throw new ArgumentNullException("missing firebase config");
-builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("Auth"))
-    .AddSingleton(FirebaseApp.Create(new AppOptions()
-    {
-        Credential = GoogleCredential.FromJson(firebaseConfig)
-    }))
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.Configure<FirebaseAuthOptions>(builder.Configuration.GetSection("Auth"));
+builder.Services.AddSingleton(FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromJson(firebaseConfig)
+}));
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddScheme<AuthenticationSchemeOptions, FirebaseAuthenticationHandler>(
         JwtBearerDefaults.AuthenticationScheme,
         (options) => { }
@@ -138,10 +119,10 @@ static void RunApp(WebApplication app)
         .UseSwaggerUI(c =>
         {
             c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Chivado Api");
-        })
-        .UseSwaggerUI();
+        });
 
     app.UseHttpsRedirection();
+
     app.UseAuthentication();
     app.UseAuthorization();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace WorkoutBuddy.Authentication;
@@ -8,23 +9,24 @@ namespace WorkoutBuddy.Authentication;
  * https://stackoverflow.com/questions/61540706/configure-swagger-authentication-with-firebase-google-in-net-core
 **/
 
+[AllowAnonymous]
 [ApiController]
 [ApiExplorerSettings(IgnoreApi = true)]
-[Route("v1/[controller]")]
+[Route("v1/auth")]
 public class AuthController : Controller
 {
-    private readonly AuthSettings _settings;
+    private readonly FirebaseAuthOptions _settings;
 
-    public AuthController(IOptions<AuthSettings> settings)
+    public AuthController(IOptions<FirebaseAuthOptions> settings)
     {
         _settings = settings.Value;
     }
 
     [HttpPost]
-    public async Task<ActionResult> GetToken([FromForm] LoginInfo loginInfo)
+    public async Task<ActionResult> GetTokenFromGoogle([FromForm] LoginInfo loginInfo)
     {
         var apiKey = _settings.FirebaseApiKey ?? throw new ArgumentException("Missing firebase api key");
-        string uri = $"https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key={_settings.FirebaseApiKey}";
+        string uri = $"https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key={apiKey}";
         using (HttpClient client = new HttpClient())
         {
             var fireBaseLoginInfo = new FireBaseLoginInfo
@@ -49,8 +51,8 @@ public class AuthController : Controller
 
 public class LoginInfo
 {
-    public string? Username { get; set; }
-    public string? Password { get; set; }
+    public string Username { get; set; } = "";
+    public string Password { get; set; } = "";
 
 }
 
@@ -78,7 +80,6 @@ public class GoogleToken
 public class Token
 {
     internal string? refresh_token;
-
     public string? token_type { get; set; }
     public int expires_in { get; set; }
     public int ext_expires_in { get; set; }

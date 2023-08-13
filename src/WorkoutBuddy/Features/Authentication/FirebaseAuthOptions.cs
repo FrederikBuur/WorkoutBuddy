@@ -1,6 +1,6 @@
 ﻿namespace WorkoutBuddy.Authentication
 {
-    public class AuthSettings
+    public class FirebaseAuthOptions
     {
         public string? FirebaseApiKey { get; set; }
     }

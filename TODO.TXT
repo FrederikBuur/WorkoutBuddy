@@ -1,7 +1,5 @@
 Todo list:
 
--fix jwt/firebaseauth impl (nick chapsas vid)
-    - fix/updater firebase implementering i Program.cs
 - tilføj flere endpoints
     - lav et workoutset
     - lav exercise set
