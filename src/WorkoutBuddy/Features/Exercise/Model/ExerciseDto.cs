@@ -2,12 +2,12 @@
 namespace WorkoutBuddy.Controllers.ExerciseModel;
 
 public record ExerciseDto(
-    Guid id,
-    Guid owner,
-    Guid creatorId,
-    string name,
-    string? description,
-    string? imageUrl,
-    bool isPublic,
-    string muscleGroups
+    Guid Id,
+    Guid Owner,
+    Guid CreatorId,
+    string Name,
+    string? Description,
+    string? ImageUrl,
+    bool IsPublic,
+    string MuscleGroups
 );

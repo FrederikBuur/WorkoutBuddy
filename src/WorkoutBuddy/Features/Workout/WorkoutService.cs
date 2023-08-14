@@ -101,16 +101,22 @@ public class WorkoutService
             return new Result<WorkoutDto>(profileErr);
 
         var existingWorkout = await _dataContext.Workouts.SingleOrDefaultAsync(w => w.Id == workoutDto.Id && w.Owner == profile!.Id);
+
         if (existingWorkout is null)
             return new Result<WorkoutDto>(
                 new HttpResponseException(HttpStatusCode.NotFound, "Your workout could not be found")
+            );
+
+        if (existingWorkout.Owner != profile!.Id)
+            return new Result<WorkoutDto>(
+                new HttpResponseException(HttpStatusCode.NotFound, "You are not allowed to update this workout")
             );
 
         // update existing workout fields
         existingWorkout.Name = workoutDto.Name;
         existingWorkout.Description = workoutDto.Description;
         existingWorkout.IsPublic = workoutDto.IsPublic;
-        // existingWorkout.Exercises = workoutDto.Exercises.Select(e => e.ToWorkoutExerciseEntry());
+        existingWorkout.ExerciseEntries = workoutDto.Exercises.Select(e => e.ToWorkoutExerciseEntry()).ToList();
 
         await _dataContext.SaveChangesAsync();
 

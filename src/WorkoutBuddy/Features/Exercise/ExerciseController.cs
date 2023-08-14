@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkoutBuddy.Data.Model;
+using WorkoutBuddy.Features.ExerciseModel;
+using WorkoutBuddy.Features.WorkoutModel;
 
 namespace WorkoutBuddy.Controllers.ExerciseModel;
 
@@ -14,12 +16,12 @@ public partial class ExerciseController : ControllerBase
 {
     private readonly ILogger<ExerciseController> _logger;
     private readonly DataContext _dataContext;
-    private readonly IProfileService _profileService;
-    public ExerciseController(ILogger<ExerciseController> logger, DataContext dataContext, IProfileService profileService)
+    private readonly ExerciseService _exerciseService;
+    public ExerciseController(ILogger<ExerciseController> logger, DataContext dataContext, ExerciseService exerciseService)
     {
         _logger = logger;
         _dataContext = dataContext;
-        _profileService = profileService;
+        _exerciseService = exerciseService;
     }
     [HttpGet]
     public async Task<ActionResult<List<ExerciseDto>>> GetExercises(
@@ -30,74 +32,52 @@ public partial class ExerciseController : ControllerBase
         [FromQuery] int pageSize = 10
     )
     {
-        var profileId = _profileService.GetProfile()?.Id ?? throw new Exception("Couldnt find Profile");
+        var exercises = await _exerciseService.GetExercisesAsync(
+            visibilityFilter,
+            muscleGroupType,
+            searchQuery,
+            pageNumber,
+            pageSize
+        );
 
-        #region predicates
-        Expression<Func<Exercise, bool>> visibilityPredicate = (e) =>
-            (visibilityFilter == VisibilityFilter.PUBLIC && e.IsPublic)
-            || visibilityFilter == VisibilityFilter.OWNED && e.Owner == profileId
-            || visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileId);
-
-        Expression<Func<Exercise, bool>> muscleGroupPredicate = (e) =>
-            muscleGroupType != null
-                &&
-                e.MuscleGroups.ToLower().Contains(muscleGroupType!.ToString()!.ToLower() ?? "");
-
-        Expression<Func<Exercise, bool>> searchQueryPredicate = (e) =>
-            string.IsNullOrWhiteSpace(searchQuery)
-            || e.Name.ToLower().Contains(searchQuery!.ToLower() ?? "");
-
-        #endregion
-
-        var exercises = await _dataContext.Exercises
-            .Where(visibilityPredicate)
-            .Where(muscleGroupPredicate)
-            .Where(searchQueryPredicate)
-            .Skip(pageNumber * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        var result = exercises.Select(e => e.ToExerciseDto());
-
-        return Ok(result);
+        return exercises.Match(
+            (exercises) => Ok(exercises),
+            (err) => Problem(
+                statusCode: (int)err.StatusCode,
+                detail: err.UserFriendlyErrorDescription,
+                instance: err.Value?.ToString()
+            )
+        );
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Exercise>> GetExercise([FromRoute][Required] Guid id)
     {
-        var profile = _profileService.GetProfile();
-        if (profile is null)
-            return Unauthorized();
+        var exercise = await _exerciseService.GetExerciseAsync(id);
 
-        var exercise = (await _dataContext.Exercises
-            .SingleOrDefaultAsync(e => e.Id == id && e.Owner == profile.Id)
-        )?.ToExerciseDto();
-
-        if (exercise is null)
-            return NotFound("Exercise not found");
-
-        if (exercise?.isPublic != true && exercise?.owner != profile.Id)
-            return Unauthorized();
-
-
-        return Ok(exercise);
+        return exercise.Match(
+            (exercise) => Ok(exercise),
+            (err) => Problem(
+                statusCode: (int)err.StatusCode,
+                detail: err.UserFriendlyErrorDescription,
+                instance: err.Value?.ToString()
+            )
+        );
     }
 
     [HttpPost]
     public async Task<ActionResult<ExerciseDto>> PostExercise([FromBody] ExerciseDto exerciseDto)
     {
-        var profile = _profileService.GetProfile();
-        if (profile is null)
-            return Unauthorized();
+        var exercise = await _exerciseService.CreateExerciseAsync(exerciseDto);
 
-        var e = exerciseDto.ToExercise();
-        e.CreatorId = profile.Id;
-        e.Owner = profile.Id;
-        var result = _dataContext.Add(e);
-        await _dataContext.SaveChangesAsync();
-        var response = result.Entity.ToExerciseDto();
-
-        return Ok(response);
+        return exercise.Match(
+            (exercise) => Ok(exercise),
+            (err) => Problem(
+                statusCode: (int)err.StatusCode,
+                detail: err.UserFriendlyErrorDescription,
+                instance: err.Value?.ToString()
+            )
+        );
     }
 
     [HttpPut]
@@ -105,44 +85,31 @@ public partial class ExerciseController : ControllerBase
         [FromBody] ExerciseDto exercise
     )
     {
-        var profile = _profileService.GetProfile();
-        if (profile is null)
-            return Unauthorized();
+        var updatedExercise = await _exerciseService.UpdateExerciseAsync(exercise);
 
-        var existingExercise = await _dataContext.Exercises.SingleOrDefaultAsync(e => e.Id == exercise.id);
-        if (existingExercise is null)
-            return NotFound("Exercise not found");
-
-        if (profile.Id != existingExercise.Owner)
-            return Unauthorized("Not allowed to update this exercise");
-
-        existingExercise.IsPublic = exercise.isPublic;
-        existingExercise.Name = exercise.name;
-        existingExercise.Description = exercise.description;
-        existingExercise.ImageUrl = exercise.imageUrl;
-        existingExercise.MuscleGroups = exercise.muscleGroups;
-        await _dataContext.SaveChangesAsync();
-
-        return Ok(existingExercise.ToExerciseDto());
+        return updatedExercise.Match(
+            (exercise) => Ok(exercise),
+            (err) => Problem(
+                statusCode: (int)err.StatusCode,
+                detail: err.UserFriendlyErrorDescription,
+                instance: err.Value?.ToString()
+            )
+        );
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ExerciseDto>> DeleteExercise([FromRoute][Required] Guid id)
+    public async Task<ActionResult<ExerciseDto>> DeleteExercise(
+        [FromRoute][Required] Guid exerciseId)
     {
-        var profile = _profileService.GetProfile();
-        if (profile is null)
-            return Unauthorized();
+        var deletedExercise = await _exerciseService.DeleteExerciseAsync(exerciseId);
 
-        var exerciseDto = await _dataContext.Exercises.SingleOrDefaultAsync(e => e.Id == id);
-        if (exerciseDto is null)
-            return NotFound("Exercise not found");
-
-        if (profile.Id != exerciseDto.Owner)
-            return Unauthorized();
-
-        var result = _dataContext.Remove(exerciseDto);
-        var response = result.Entity.ToExerciseDto();
-        await _dataContext.SaveChangesAsync();
-        return Ok(response);
+        return deletedExercise.Match(
+            (exercise) => Ok(exercise),
+            (err) => Problem(
+                statusCode: (int)err.StatusCode,
+                detail: err.UserFriendlyErrorDescription,
+                instance: err.Value?.ToString()
+            )
+        );
     }
 }
