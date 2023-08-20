@@ -5,16 +5,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
 using workouts;
 using FirebaseAdmin;
-using Microsoft.OpenApi.Models;
 using WorkoutBuddy.Authentication;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Interfaces;
-using WorkoutBuddy.Controllers;
 using Google.Apis.Auth.OAuth2;
 using WorkoutBuddy.Services;
-using WorkoutBuddy.Features.WorkoutModel;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.Extensions.Options;
+using WorkoutBuddy.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,17 +44,14 @@ if (shouldUseKeyVault)
     builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredentials);
 }
 
-// Setup EF Core to Cosmos db connection
-var endpoint = builder.Configuration.GetValue<string>("Cosmos:Uri"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:Uri");
-var primaryKey = builder.Configuration.GetValue<string>("Cosmos:Key"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:Key");
-var dbname = builder.Configuration.GetValue<string>("Cosmos:DbName"); // ?? throw new ArgumentNullException("Missing configuration: Cosmos:DbName");
+// Setup EF Core to SQL db connection
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseCosmos(
-        endpoint,
-        primaryKey,
-        dbname
-    );
+    var sqlDbConnectionString = builder.Configuration.GetConnectionString("SQL") ?? throw new ArgumentNullException("Missing SQL connectionstring");
+    options.UseSqlServer(sqlDbConnectionString, sqlServerOptions =>
+    {
+        sqlServerOptions.CommandTimeout(30);
+    });
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -97,7 +90,8 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-builder.Services.AddScoped<WorkoutService, WorkoutService>();
+builder.Services.AddScoped<WorkoutDetailService, WorkoutDetailService>();
+builder.Services.AddOutputCache(); // can be faulty if multiple instances
 
 var app = builder.Build();
 
@@ -122,6 +116,7 @@ static void RunApp(WebApplication app)
         });
 
     app.UseHttpsRedirection();
+    app.UseOutputCache(); // can be faulty if multiple instances
 
     app.UseAuthentication();
     app.UseAuthorization();

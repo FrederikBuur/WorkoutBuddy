@@ -18,7 +18,7 @@ public class TestSuite
     public void CanReferenceProject()
     {
         var creatorId = Guid.NewGuid();
-        var item = new Exercise(
+        var item = new ExerciseDetail(
             id: null,
             owner: creatorId,
             creatorId: creatorId,

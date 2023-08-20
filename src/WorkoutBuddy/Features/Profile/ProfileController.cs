@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WorkoutBuddy.Controllers.ProfileModel;
+namespace WorkoutBuddy.Features;
 
 [Authorize]
 [ApiController]

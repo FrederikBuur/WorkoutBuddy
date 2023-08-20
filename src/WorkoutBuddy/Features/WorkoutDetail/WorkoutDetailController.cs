@@ -1,33 +1,27 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WorkoutBuddy.Controllers.ExerciseModel;
-using WorkoutBuddy.Features.WorkoutModel;
 
-namespace WorkoutBuddy.Controllers.WorkoutModel;
+namespace WorkoutBuddy.Features;
 
 [Authorize]
 [ApiController]
-[Route("api/workout")]
-public class WorkoutController : ControllerBase
+[Route("api/workout-detail")]
+public class WorkoutDetailController : ControllerBase
 {
-    private readonly ILogger<WorkoutController> _logger;
-    private readonly DataContext _dataContext;
-    private readonly WorkoutService _workoutService;
+    private readonly ILogger<WorkoutDetailController> _logger;
+    private readonly WorkoutDetailService _workoutService;
 
-    public WorkoutController(
-        ILogger<WorkoutController> logger,
-        DataContext dataContext,
-        WorkoutService workoutService)
+    public WorkoutDetailController(
+        ILogger<WorkoutDetailController> logger,
+        WorkoutDetailService workoutService)
     {
         _logger = logger;
-        _dataContext = dataContext;
         _workoutService = workoutService;
     }
 
     [HttpGet()]
-    public async Task<ActionResult<IEnumerable<WorkoutDto>>> GetWorkouts(
+    public async Task<ActionResult<IEnumerable<WorkoutDetailDto>>> GetWorkoutDetails(
         [FromQuery] VisibilityFilter visibilityFilter = VisibilityFilter.OWNED,
         [FromQuery] string? searchQuery = null,
         [FromQuery] int pageNumber = 0,
@@ -46,7 +40,7 @@ public class WorkoutController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<WorkoutDto>> GetWorkoutById([FromRoute][Required] Guid id)
+    public async Task<ActionResult<WorkoutDetailDto>> GetWorkoutDetailById([FromRoute][Required] Guid id)
     {
         var workoutResult = await _workoutService.GetWorkoutDtoById(id);
         return workoutResult.Match(
@@ -59,8 +53,8 @@ public class WorkoutController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<WorkoutDto>> PostWorkout(
-        [FromBody] WorkoutDto workoutDto
+    public async Task<ActionResult<WorkoutDetailDto>> PostWorkoutDetail(
+        [FromBody] WorkoutDetailDto workoutDto
     )
     {
         var workoutResult = await _workoutService.CreateWorkoutDto(workoutDto);
@@ -74,7 +68,7 @@ public class WorkoutController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<WorkoutDto>> PutWorkout([FromBody][Required] WorkoutDto workoutDto)
+    public async Task<ActionResult<WorkoutDetailDto>> PutWorkoutDetail([FromBody][Required] WorkoutDetailDto workoutDto)
     {
         var workoutResult = await _workoutService.UpdateWorkoutDto(workoutDto);
         return workoutResult.Match(
@@ -87,9 +81,9 @@ public class WorkoutController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<WorkoutDto>> DeleteWorkout([FromRoute][Required] Guid workoutId)
+    public async Task<ActionResult<WorkoutDetailDto>> DeleteWorkoutDetail([FromRoute][Required] Guid workoutDetailId)
     {
-        var workoutResult = await _workoutService.DeleteWorkoutDto(workoutId);
+        var workoutResult = await _workoutService.DeleteWorkoutDto(workoutDetailId);
         return workoutResult.Match(
             (workout) => Ok(workout),
             (err) => Problem(

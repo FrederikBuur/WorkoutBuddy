@@ -1,10 +1,9 @@
-﻿using WorkoutBuddy.Data.Model;
-using WorkoutBuddy.Features.ErrorHandling;
+﻿using WorkoutBuddy.Features.ErrorHandling;
 
-namespace WorkoutBuddy.Controllers;
+namespace WorkoutBuddy.Features;
 
 public interface IProfileService
 {
-    Profile? GetProfile();
-    HttpResponseException? ProfileMissingAsException(out Profile? profile);
+    Data.Model.Profile? GetProfile();
+    HttpResponseException? ProfileMissingAsException(out Data.Model.Profile? profile);
 }

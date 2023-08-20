@@ -1,29 +1,31 @@
-
 namespace WorkoutBuddy.Data.Model;
 
-public class Workout : IEntityBase
+public class ExerciseDetail : IEntityBase
 {
     public Guid Owner { get; set; }
     public Guid CreatorId { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = "";
     public string? Description { get; set; }
+    public string? ImageUrl { get; set; }
     public bool IsPublic { get; set; }
-    public DateTime LastPerformed { get; set; }
-    public IList<WorkoutExerciseEntry> ExerciseEntries { get; set; } = new List<WorkoutExerciseEntry>();
+    /// <summary>
+    /// Comma seperated string of Enum type <see cref="MuscleGroups"/>
+    /// </summary>
+    public string MuscleGroups { get; set; } = ""; // comma seperated
 
     // EF Core needs empty constructor
-    public Workout() { }
+    protected ExerciseDetail() { }
 
-    public Workout(Guid? id, Guid owner, Guid creatorId, string name, string? description, bool isPublic, DateTime lastPerformed, IList<WorkoutExerciseEntry> exerciseEntries)
+    public ExerciseDetail(Guid? id, Guid owner, Guid creatorId, string name, string? description, string? imageUrl, bool isPublic, string muscleGroups)
     {
         Id = id ?? Guid.NewGuid();
         Owner = owner;
         CreatorId = creatorId;
         Name = name;
         Description = description;
+        ImageUrl = imageUrl;
         IsPublic = isPublic;
-        LastPerformed = lastPerformed;
-        ExerciseEntries = exerciseEntries;
+        MuscleGroups = muscleGroups;
     }
 
     public override bool Equals(object? obj)
@@ -32,16 +34,16 @@ public class Workout : IEntityBase
             return false;
         if (ReferenceEquals(this, obj))
             return true;
-        if (obj is not Workout other) return false;
+        if (obj is not ExerciseDetail other) return false;
 
         return Id == other.Id
             && Owner == other.Owner
             && CreatorId == other.CreatorId
             && Name == other.Name
             && Description == other.Description
+            && ImageUrl == other.ImageUrl
             && IsPublic == other.IsPublic
-            && LastPerformed == other.LastPerformed
-            && Enumerable.SequenceEqual(ExerciseEntries, other.ExerciseEntries);
+            && MuscleGroups == other.MuscleGroups;
     }
 
     public override int GetHashCode()
@@ -52,9 +54,9 @@ public class Workout : IEntityBase
         hash.Add(CreatorId);
         hash.Add(Name);
         hash.Add(Description);
+        hash.Add(ImageUrl);
         hash.Add(IsPublic);
-        hash.Add(LastPerformed);
-        hash.Add(ExerciseEntries);
+        hash.Add(MuscleGroups);
         return hash.ToHashCode();
     }
 }

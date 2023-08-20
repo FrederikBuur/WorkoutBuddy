@@ -1,7 +1,7 @@
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace WorkoutBuddy.Controllers.ExerciseModel;
+namespace WorkoutBuddy.Features;
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum VisibilityFilter

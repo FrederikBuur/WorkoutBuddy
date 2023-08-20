@@ -1,31 +1,28 @@
+
 namespace WorkoutBuddy.Data.Model;
 
-public class Exercise : IEntityBase
+public class WorkoutDetail : IEntityBase
 {
     public Guid Owner { get; set; }
     public Guid CreatorId { get; set; }
-    public string Name { get; set; } = "";
+    public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
-    public string? ImageUrl { get; set; }
     public bool IsPublic { get; set; }
-    /// <summary>
-    /// Comma seperated string of Enum type <see cref="MuscleGroups"/>
-    /// </summary>
-    public string MuscleGroups { get; set; } = ""; // comma seperated
+
+    // navigation properties
+    public ICollection<ExerciseDetail> Exercises { get; set; } = new List<ExerciseDetail>();
 
     // EF Core needs empty constructor
-    public Exercise() { }
+    protected WorkoutDetail() { }
 
-    public Exercise(Guid? id, Guid owner, Guid creatorId, string name, string? description, string? imageUrl, bool isPublic, string muscleGroups)
+    public WorkoutDetail(Guid? id, Guid owner, Guid creatorId, string name, string? description, bool isPublic)
     {
         Id = id ?? Guid.NewGuid();
         Owner = owner;
         CreatorId = creatorId;
         Name = name;
         Description = description;
-        ImageUrl = imageUrl;
         IsPublic = isPublic;
-        MuscleGroups = muscleGroups;
     }
 
     public override bool Equals(object? obj)
@@ -34,16 +31,14 @@ public class Exercise : IEntityBase
             return false;
         if (ReferenceEquals(this, obj))
             return true;
-        if (obj is not Exercise other) return false;
+        if (obj is not WorkoutDetail other) return false;
 
         return Id == other.Id
             && Owner == other.Owner
             && CreatorId == other.CreatorId
             && Name == other.Name
             && Description == other.Description
-            && ImageUrl == other.ImageUrl
-            && IsPublic == other.IsPublic
-            && MuscleGroups == other.MuscleGroups;
+            && IsPublic == other.IsPublic;
     }
 
     public override int GetHashCode()
@@ -54,9 +49,8 @@ public class Exercise : IEntityBase
         hash.Add(CreatorId);
         hash.Add(Name);
         hash.Add(Description);
-        hash.Add(ImageUrl);
         hash.Add(IsPublic);
-        hash.Add(MuscleGroups);
+        hash.Add(Exercises);
         return hash.ToHashCode();
     }
 }

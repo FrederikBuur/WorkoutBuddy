@@ -1,12 +1,10 @@
 using System.Linq.Expressions;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WorkoutBuddy.Controllers;
-using WorkoutBuddy.Controllers.ExerciseModel;
 using WorkoutBuddy.Data.Model;
 using WorkoutBuddy.Features.ErrorHandling;
 
-namespace WorkoutBuddy.Features.ExerciseModel;
+namespace WorkoutBuddy.Features;
 
 public class ExerciseService
 {
@@ -24,7 +22,7 @@ public class ExerciseService
         _profileService = profileService;
     }
 
-    public async Task<Result<IEnumerable<ExerciseDto>>> GetExercisesAsync(
+    public async Task<Result<IEnumerable<ExerciseDetailDto>>> GetExercisesAsync(
         VisibilityFilter visibilityFilter,
         MuscleGroupType? muscleGroupType,
         string? searchQuery,
@@ -34,27 +32,27 @@ public class ExerciseService
 
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)
-            return new Result<IEnumerable<ExerciseDto>>(profileErr);
+            return new Result<IEnumerable<ExerciseDetailDto>>(profileErr);
 
 
         #region predicates
-        Expression<Func<Exercise, bool>> visibilityPredicate = (e) =>
+        Expression<Func<ExerciseDetail, bool>> visibilityPredicate = (e) =>
             (visibilityFilter == VisibilityFilter.PUBLIC && e.IsPublic)
             || visibilityFilter == VisibilityFilter.OWNED && e.Owner == profile!.Id
             || visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profile!.Id);
 
-        Expression<Func<Exercise, bool>> muscleGroupPredicate = (e) =>
+        Expression<Func<ExerciseDetail, bool>> muscleGroupPredicate = (e) =>
             muscleGroupType != null
                 &&
                 e.MuscleGroups.ToLower().Contains(muscleGroupType!.ToString()!.ToLower() ?? "");
 
-        Expression<Func<Exercise, bool>> searchQueryPredicate = (e) =>
+        Expression<Func<ExerciseDetail, bool>> searchQueryPredicate = (e) =>
             string.IsNullOrWhiteSpace(searchQuery)
             || e.Name.ToLower().Contains(searchQuery!.ToLower() ?? "");
 
         #endregion
 
-        var exercises = await _dataContext.Exercises
+        var exercises = await _dataContext.ExerciseDetails
             .Where(visibilityPredicate)
             .Where(muscleGroupPredicate)
             .Where(searchQueryPredicate)
@@ -62,62 +60,62 @@ public class ExerciseService
             .Take(pageSize)
             .ToListAsync();
 
-        return exercises.Select(e => e.ToExerciseDto()).ToList();
+        return exercises.Select(e => e.ToExerciseDetailDto()).ToList();
     }
 
-    public async Task<Result<ExerciseDto>> GetExerciseAsync(Guid exerciseId)
+    public async Task<Result<ExerciseDetailDto>> GetExerciseAsync(Guid exerciseId)
     {
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)
-            return new Result<ExerciseDto>(profileErr);
+            return new Result<ExerciseDetailDto>(profileErr);
 
-        var exercise = (await _dataContext.Exercises
+        var exercise = (await _dataContext.ExerciseDetails
             .SingleOrDefaultAsync(e => e.Id == exerciseId && e.Owner == profile!.Id)
-        )?.ToExerciseDto();
+        )?.ToExerciseDetailDto();
 
         if (exercise is null)
-            return new Result<ExerciseDto>(
+            return new Result<ExerciseDetailDto>(
                 new HttpResponseException(HttpStatusCode.NotFound, "Your workout could not be found")
             );
 
         if (exercise?.IsPublic != true && exercise?.Owner != profile!.Id)
-            return new Result<ExerciseDto>(
+            return new Result<ExerciseDetailDto>(
                 new HttpResponseException(HttpStatusCode.Unauthorized, "You dont have access to this workout")
             );
 
         return exercise;
     }
 
-    public async Task<Result<ExerciseDto>> CreateExerciseAsync(ExerciseDto exerciseDto)
+    public async Task<Result<ExerciseDetailDto>> CreateExerciseAsync(ExerciseDetailDto exerciseDto)
     {
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)
-            return new Result<ExerciseDto>(profileErr);
+            return new Result<ExerciseDetailDto>(profileErr);
 
-        var e = exerciseDto.ToExercise();
+        var e = exerciseDto.ToExerciseDetail();
         e.CreatorId = profile!.Id;
         e.Owner = profile.Id;
         var result = _dataContext.Add(e);
         await _dataContext.SaveChangesAsync();
 
-        return result.Entity.ToExerciseDto();
+        return result.Entity.ToExerciseDetailDto();
     }
 
-    public async Task<Result<ExerciseDto>> UpdateExerciseAsync(ExerciseDto exercise)
+    public async Task<Result<ExerciseDetailDto>> UpdateExerciseAsync(ExerciseDetailDto exercise)
     {
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)
-            return new Result<ExerciseDto>(profileErr);
+            return new Result<ExerciseDetailDto>(profileErr);
 
-        var existingExercise = await _dataContext.Exercises.SingleOrDefaultAsync(e => e.Id == exercise.Id);
+        var existingExercise = await _dataContext.ExerciseDetails.SingleOrDefaultAsync(e => e.Id == exercise.Id);
 
         if (existingExercise is null)
-            return new Result<ExerciseDto>(
+            return new Result<ExerciseDetailDto>(
                 new HttpResponseException(HttpStatusCode.NotFound, "Your workout could not be found")
             );
 
         if (existingExercise.Owner != profile!.Id)
-            return new Result<ExerciseDto>(
+            return new Result<ExerciseDetailDto>(
                 new HttpResponseException(HttpStatusCode.NotFound, "You are not allowed to update this exercise")
             );
 
@@ -129,28 +127,28 @@ public class ExerciseService
 
         await _dataContext.SaveChangesAsync();
 
-        return existingExercise.ToExerciseDto();
+        return existingExercise.ToExerciseDetailDto();
     }
 
-    public async Task<Result<ExerciseDto>> DeleteExerciseAsync(Guid exerciseId)
+    public async Task<Result<ExerciseDetailDto>> DeleteExerciseAsync(Guid exerciseId)
     {
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)
-            return new Result<ExerciseDto>(profileErr);
+            return new Result<ExerciseDetailDto>(profileErr);
 
-        var exercise = await _dataContext.Exercises.SingleOrDefaultAsync(e => e.Id == exerciseId);
+        var exercise = await _dataContext.ExerciseDetails.SingleOrDefaultAsync(e => e.Id == exerciseId);
         if (exercise is null)
-            return new Result<ExerciseDto>(
+            return new Result<ExerciseDetailDto>(
                 new HttpResponseException(HttpStatusCode.NotFound, "Your workout could not be found")
             );
 
         if (exercise.Owner != profile!.Id)
-            return new Result<ExerciseDto>(
+            return new Result<ExerciseDetailDto>(
                 new HttpResponseException(HttpStatusCode.NotFound, "You are not allowed to update this exercise")
             );
 
         var result = _dataContext.Remove(exercise);
-        var deletedExercise = result.Entity.ToExerciseDto();
+        var deletedExercise = result.Entity.ToExerciseDetailDto();
         await _dataContext.SaveChangesAsync();
 
         return deletedExercise;

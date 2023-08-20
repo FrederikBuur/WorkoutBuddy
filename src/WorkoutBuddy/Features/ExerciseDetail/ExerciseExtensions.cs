@@ -1,10 +1,10 @@
 ﻿using WorkoutBuddy.Data.Model;
 
-namespace WorkoutBuddy.Controllers.ExerciseModel;
+namespace WorkoutBuddy.Features;
 
-public static class ExerciseExtensions
+public static class ExerciseDetailExtensions
 {
-    public static ExerciseDto ToExerciseDto(this Exercise e) => new(
+    public static ExerciseDetailDto ToExerciseDetailDto(this ExerciseDetail e) => new(
         e.Id,
         e.Owner,
         e.CreatorId,
@@ -15,7 +15,7 @@ public static class ExerciseExtensions
         e.MuscleGroups
     );
 
-    public static Exercise ToExercise(this ExerciseDto e) => new(
+    public static ExerciseDetail ToExerciseDetail(this ExerciseDetailDto e) => new(
         id: e.Id,
         owner: e.Owner,
         creatorId: e.CreatorId,

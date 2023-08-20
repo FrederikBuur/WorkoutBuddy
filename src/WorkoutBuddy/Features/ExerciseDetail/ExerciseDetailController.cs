@@ -1,30 +1,26 @@
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WorkoutBuddy.Data.Model;
-using WorkoutBuddy.Features.ExerciseModel;
-using WorkoutBuddy.Features.WorkoutModel;
 
-namespace WorkoutBuddy.Controllers.ExerciseModel;
+namespace WorkoutBuddy.Features;
 
 [Authorize]
 [ApiController]
-[Route("api/exercise")]
-public partial class ExerciseController : ControllerBase
+[Route("api/exercise-detail")]
+public partial class ExerciseDetailController : ControllerBase
 {
-    private readonly ILogger<ExerciseController> _logger;
+    private readonly ILogger<ExerciseDetailController> _logger;
     private readonly DataContext _dataContext;
     private readonly ExerciseService _exerciseService;
-    public ExerciseController(ILogger<ExerciseController> logger, DataContext dataContext, ExerciseService exerciseService)
+    public ExerciseDetailController(ILogger<ExerciseDetailController> logger, DataContext dataContext, ExerciseService exerciseService)
     {
         _logger = logger;
         _dataContext = dataContext;
         _exerciseService = exerciseService;
     }
     [HttpGet]
-    public async Task<ActionResult<List<ExerciseDto>>> GetExercises(
+    public async Task<ActionResult<List<ExerciseDetailDto>>> GetExercises(
         [FromQuery] VisibilityFilter visibilityFilter = VisibilityFilter.OWNED,
         [FromQuery] MuscleGroupType? muscleGroupType = null,
         [FromQuery] string? searchQuery = null,
@@ -51,7 +47,7 @@ public partial class ExerciseController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Exercise>> GetExercise([FromRoute][Required] Guid id)
+    public async Task<ActionResult<ExerciseDetail>> GetExercise([FromRoute][Required] Guid id)
     {
         var exercise = await _exerciseService.GetExerciseAsync(id);
 
@@ -66,7 +62,7 @@ public partial class ExerciseController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ExerciseDto>> PostExercise([FromBody] ExerciseDto exerciseDto)
+    public async Task<ActionResult<ExerciseDetailDto>> PostExercise([FromBody] ExerciseDetailDto exerciseDto)
     {
         var exercise = await _exerciseService.CreateExerciseAsync(exerciseDto);
 
@@ -81,8 +77,8 @@ public partial class ExerciseController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<ExerciseDto>> PutExercise(
-        [FromBody] ExerciseDto exercise
+    public async Task<ActionResult<ExerciseDetailDto>> PutExercise(
+        [FromBody] ExerciseDetailDto exercise
     )
     {
         var updatedExercise = await _exerciseService.UpdateExerciseAsync(exercise);
@@ -98,7 +94,7 @@ public partial class ExerciseController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ExerciseDto>> DeleteExercise(
+    public async Task<ActionResult<ExerciseDetailDto>> DeleteExercise(
         [FromRoute][Required] Guid exerciseId)
     {
         var deletedExercise = await _exerciseService.DeleteExerciseAsync(exerciseId);

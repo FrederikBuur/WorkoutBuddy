@@ -2,10 +2,12 @@ Todo list:
 
 - tilføj flere endpoints
     - lav et workoutset
-    - lav exercise set
+    - lav exerciseset
 - add page model to responses
     - Workouts
     - exercise
+- write automated tests
+    - add logger and insights
 - setup healthcheck - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
 - svelte app root path giver 404, bliver ikke deployed
 - tilføj mere seed data

@@ -1,4 +1,4 @@
-﻿namespace WorkoutBuddy.Controllers.ExerciseModel;
+﻿namespace WorkoutBuddy.Features;
 
 public record ProfileDto(
     Guid id,

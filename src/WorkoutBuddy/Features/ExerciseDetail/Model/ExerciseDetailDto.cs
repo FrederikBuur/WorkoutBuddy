@@ -1,7 +1,7 @@
 
-namespace WorkoutBuddy.Controllers.ExerciseModel;
+namespace WorkoutBuddy.Features;
 
-public record ExerciseDto(
+public record ExerciseDetailDto(
     Guid Id,
     Guid Owner,
     Guid CreatorId,

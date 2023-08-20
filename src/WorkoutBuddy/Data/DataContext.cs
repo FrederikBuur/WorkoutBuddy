@@ -15,28 +15,36 @@ public class DataContext : DbContext
     }
 
     public DbSet<Profile> Profiles => Set<Profile>();
-    public DbSet<Exercise> Exercises => Set<Exercise>();
-    public DbSet<Workout> Workouts => Set<Workout>();
-    public DbSet<WorkoutExerciseEntry> WorkoutExerciseEnties => Set<WorkoutExerciseEntry>();
+    public DbSet<ExerciseDetail> ExerciseDetails => Set<ExerciseDetail>();
+    public DbSet<WorkoutDetail> WorkoutDetails => Set<WorkoutDetail>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Profile
-        modelBuilder.Entity<Profile>()
-            .ToContainer("Profiles")
-            .HasPartitionKey(nameof(Profile.UserId));
-
-        // Exercise
-        modelBuilder.Entity<Exercise>()
-            .ToContainer("Exercises")
-            .HasPartitionKey(e => e.CreatorId);
-
-        // Workout
-        modelBuilder.Entity<Workout>(entity =>
+        modelBuilder.Entity<Profile>(entity =>
         {
-            entity.ToContainer("Workouts")
-                .HasPartitionKey(nameof(Workout.Id))
-                .OwnsMany(w => w.ExerciseEntries);
+            entity.ToTable("Profiles")
+            .HasKey(p => p.Id);
+
+            entity.HasIndex(p => p.UserId);
+        });
+
+        // Exercise Detail
+        modelBuilder.Entity<ExerciseDetail>(entity =>
+        {
+            entity.ToTable("ExerciseDetails")
+            .HasKey(ed => ed.Id);
+        });
+
+        // Workout Detail
+        modelBuilder.Entity<WorkoutDetail>(entity =>
+        {
+            entity.ToTable("WorkoutDetails")
+            .HasKey(wd => wd.Id);
+
+            entity.HasMany(w => w.Exercises)
+            .WithMany()
+            .UsingEntity<ExerciseDetailWorkoutDetail>();
         });
     }
 
@@ -63,7 +71,9 @@ public class DataContext : DbContext
 
         foreach (var changedEntity in ChangeTracker.Entries())
         {
-            if (changedEntity.Entity is not IEntityBase entity) throw new Exception($"Entity must implement: {nameof(IEntityBase)}");
+            if (changedEntity is null) continue;
+            if (changedEntity.Entity is not IEntityBase entity)
+                throw new Exception($"Entity must implement: {nameof(IEntityBase)}");
 
             switch (changedEntity.State)
             {

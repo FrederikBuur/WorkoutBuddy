@@ -32,7 +32,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.5"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -42,15 +41,14 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0"/>
         <PackageReference Include="Macross.Json.Extensions" Version="3.0.0"/>
         <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="7.0.0"/>
-        <PackageReference Include="AspNetCore.HealthChecks.CosmosDb" Version="7.0.0"/>
     </ItemGroup>
 
     <!-- <ItemGroup>
-                    <None Update="local.settings.json">
-                      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-                      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-                    </None>
-                  </ItemGroup> -->
+                        <None Update="local.settings.json">
+                          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+                          <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+                        </None>
+                      </ItemGroup> -->
 
 
     <ItemGroup>
