@@ -116,7 +116,7 @@ static void RunApp(WebApplication app)
         });
 
     app.UseHttpsRedirection();
-    app.UseOutputCache(); // can be faulty if multiple instances
+    app.UseOutputCache(); // can be faulty if multiple instances of app running
 
     app.UseAuthentication();
     app.UseAuthorization();

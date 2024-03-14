@@ -1,8 +1,22 @@
 Todo list:
 
 - tilføj flere endpoints
-    - lav et workoutset
+    - lav workout
+        service
+        controller
+        exctension
+    - lav exercise
+        service
+        controller
+        exctension
+    - lav workoutset
+        service
+        controller
+        exctension
     - lav exerciseset
+        service
+        controller
+        exctension
 - add page model to responses
     - Workouts
     - exercise

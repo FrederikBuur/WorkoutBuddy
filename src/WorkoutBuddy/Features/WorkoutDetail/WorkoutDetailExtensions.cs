@@ -2,7 +2,7 @@ using WorkoutBuddy.Data.Model;
 
 namespace WorkoutBuddy.Features;
 
-public static class WorkoutExtensions
+public static class WorkoutDetailExtensions
 {
     public static WorkoutDetailDto ToWorkoutDetailDto(this WorkoutDetail w) => new(
         w.Id,

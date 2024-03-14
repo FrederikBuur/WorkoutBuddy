@@ -18,6 +18,8 @@ public class DataContext : DbContext
     public DbSet<ExerciseDetail> ExerciseDetails => Set<ExerciseDetail>();
     public DbSet<WorkoutDetail> WorkoutDetails => Set<WorkoutDetail>();
 
+    public DbSet<Workout> Workouts => Set<Workout>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Profile
@@ -45,6 +47,22 @@ public class DataContext : DbContext
             entity.HasMany(w => w.Exercises)
             .WithMany()
             .UsingEntity<ExerciseDetailWorkoutDetail>();
+
+        });
+
+        // Workout
+        modelBuilder.Entity<Workout>(entity =>
+        {
+            entity.ToTable("Workouts")
+            .HasKey(w => w.Id);
+
+            entity.HasOne(w => w.Profile)
+            .WithOne()
+            .HasForeignKey<Workout>(w => w.ProfileId);
+
+            entity.HasOne(w => w.WorkoutDetail)
+            .WithOne()
+            .HasForeignKey<Workout>(w => w.WorkoutDetailId);
         });
     }
 

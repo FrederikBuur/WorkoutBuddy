@@ -21,7 +21,7 @@ public class WorkoutDetailService
         _profileService = profileService;
     }
 
-    public async Task<Result<IEnumerable<WorkoutDetailDto>>> SearchWorkouts(
+    public async Task<Result<IEnumerable<WorkoutDetailDto>>> SearchWorkoutDetails(
         VisibilityFilter visibilityFilter,
         string? searchQuery,
         int pageNumber,
@@ -53,7 +53,7 @@ public class WorkoutDetailService
         return workouts.Select(w => w.ToWorkoutDetailDto()).ToList();
     }
 
-    public async Task<Result<WorkoutDetailDto>> GetWorkoutDtoById(Guid workoutId)
+    public async Task<Result<WorkoutDetailDto>> GetWorkoutDetailById(Guid workoutId)
     {
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)
@@ -76,7 +76,7 @@ public class WorkoutDetailService
         return workout;
     }
 
-    public async Task<Result<WorkoutDetailDto>> CreateWorkoutDto(WorkoutDetailDto workoutDto)
+    public async Task<Result<WorkoutDetailDto>> CreateWorkoutDetail(WorkoutDetailDto workoutDto)
     {
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)
@@ -91,7 +91,7 @@ public class WorkoutDetailService
         return result.Entity.ToWorkoutDetailDto();
     }
 
-    public async Task<Result<WorkoutDetailDto>> UpdateWorkoutDto(WorkoutDetailDto workoutDto)
+    public async Task<Result<WorkoutDetailDto>> UpdateWorkoutDetail(WorkoutDetailDto workoutDto)
     {
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)
@@ -120,7 +120,7 @@ public class WorkoutDetailService
         return existingWorkout.ToWorkoutDetailDto();
     }
 
-    public async Task<Result<WorkoutDetailDto>> DeleteWorkoutDto(Guid workoutId)
+    public async Task<Result<WorkoutDetailDto>> DeleteWorkoutDetail(Guid workoutId)
     {
         var profileErr = _profileService.ProfileMissingAsException(out var profile);
         if (profileErr is not null)

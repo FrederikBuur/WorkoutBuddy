@@ -7,17 +7,17 @@ namespace WorkoutBuddy.Features;
 [Authorize]
 [ApiController]
 [Route("api/workout-detail")]
-public class WorkoutDetailController : ControllerBase
+public class WorkoutDetailController : CustomControllerBase
 {
     private readonly ILogger<WorkoutDetailController> _logger;
-    private readonly WorkoutDetailService _workoutService;
+    private readonly WorkoutDetailService _workoutDetailService;
 
     public WorkoutDetailController(
         ILogger<WorkoutDetailController> logger,
         WorkoutDetailService workoutService)
     {
         _logger = logger;
-        _workoutService = workoutService;
+        _workoutDetailService = workoutService;
     }
 
     [HttpGet()]
@@ -28,28 +28,15 @@ public class WorkoutDetailController : ControllerBase
         [FromQuery] int pageSize = 10
     )
     {
-        var workoutsResult = await _workoutService.SearchWorkouts(visibilityFilter, searchQuery, pageNumber, pageSize);
-
-        return workoutsResult.Match(
-            (workouts) => Ok(workouts),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString())
-        );
+        var workoutDetailsResult = await _workoutDetailService.SearchWorkoutDetails(visibilityFilter, searchQuery, pageNumber, pageSize);
+        return GetDataOrError(workoutDetailsResult);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<WorkoutDetailDto>> GetWorkoutDetailById([FromRoute][Required] Guid id)
     {
-        var workoutResult = await _workoutService.GetWorkoutDtoById(id);
-        return workoutResult.Match(
-            (workout) => Ok(workout),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString())
-        );
+        var workoutDetailResult = await _workoutDetailService.GetWorkoutDetailById(id);
+        return GetDataOrError(workoutDetailResult);
     }
 
     [HttpPost]
@@ -57,40 +44,22 @@ public class WorkoutDetailController : ControllerBase
         [FromBody] WorkoutDetailDto workoutDto
     )
     {
-        var workoutResult = await _workoutService.CreateWorkoutDto(workoutDto);
-        return workoutResult.Match(
-            (workout) => Ok(workout),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString())
-        );
+        var workoutDetailResult = await _workoutDetailService.CreateWorkoutDetail(workoutDto);
+        return GetDataOrError(workoutDetailResult);
     }
 
     [HttpPut]
     public async Task<ActionResult<WorkoutDetailDto>> PutWorkoutDetail([FromBody][Required] WorkoutDetailDto workoutDto)
     {
-        var workoutResult = await _workoutService.UpdateWorkoutDto(workoutDto);
-        return workoutResult.Match(
-            (workout) => Ok(workout),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString())
-        );
+        var workoutDetailResult = await _workoutDetailService.UpdateWorkoutDetail(workoutDto);
+        return GetDataOrError(workoutDetailResult);
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult<WorkoutDetailDto>> DeleteWorkoutDetail([FromRoute][Required] Guid workoutDetailId)
     {
-        var workoutResult = await _workoutService.DeleteWorkoutDto(workoutDetailId);
-        return workoutResult.Match(
-            (workout) => Ok(workout),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString())
-        );
+        var workoutDetailResult = await _workoutDetailService.DeleteWorkoutDetail(workoutDetailId);
+        return GetDataOrError(workoutDetailResult);
     }
 
     // dublicate workout
