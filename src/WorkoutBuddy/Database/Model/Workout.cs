@@ -4,6 +4,7 @@ namespace WorkoutBuddy.Data;
 
 public class Workout : IEntityBase
 {
+    public string Name { get; set; }
     public DateTime LastPerformed { get; set; }
     public int Count { get; set; }
 
@@ -14,9 +15,10 @@ public class Workout : IEntityBase
     public WorkoutDetail? WorkoutDetail { get; set; }
     public ICollection<WorkoutSet> WorkoutSets { get; set; } = new List<WorkoutSet>();
 
-    public Workout(Guid? id, DateTime lastPerformed, int count)
+    public Workout(Guid? id, string name, DateTime lastPerformed, int count)
     {
         Id = id ?? Guid.NewGuid();
+        Name = name;
         LastPerformed = lastPerformed;
         Count = count;
     }

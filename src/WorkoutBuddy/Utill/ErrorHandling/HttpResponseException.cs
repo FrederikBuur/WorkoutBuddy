@@ -1,11 +1,11 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc;
 
 namespace WorkoutBuddy.Features.ErrorHandling;
 
-public class HttpResponseException : Exception
+[Obsolete("Use Error type instead")]
+public class HttpResponceException : Exception
 {
-    public HttpResponseException(
+    public HttpResponceException(
         HttpStatusCode statusCode,
         string userFriendlyErrorDescription,
         object? value = null) =>

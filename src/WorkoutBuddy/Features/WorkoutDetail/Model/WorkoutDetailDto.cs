@@ -7,5 +7,5 @@ public record WorkoutDetailDto(
     string Name,
     string? Description,
     bool IsPublic,
-    IEnumerable<ExerciseDetailDto> Exercises
+    IEnumerable<ExerciseDetailResponse> Exercises
 );

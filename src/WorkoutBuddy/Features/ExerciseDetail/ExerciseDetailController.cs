@@ -8,19 +8,19 @@ namespace WorkoutBuddy.Features;
 [Authorize]
 [ApiController]
 [Route("api/exercise-detail")]
-public partial class ExerciseDetailController : ControllerBase
+public partial class ExerciseDetailController : CustomControllerBase
 {
     private readonly ILogger<ExerciseDetailController> _logger;
     private readonly DataContext _dataContext;
-    private readonly ExerciseService _exerciseService;
-    public ExerciseDetailController(ILogger<ExerciseDetailController> logger, DataContext dataContext, ExerciseService exerciseService)
+    private readonly ExerciseDetailService _exerciseService;
+    public ExerciseDetailController(ILogger<ExerciseDetailController> logger, DataContext dataContext, ExerciseDetailService exerciseService)
     {
         _logger = logger;
         _dataContext = dataContext;
         _exerciseService = exerciseService;
     }
     [HttpGet]
-    public async Task<ActionResult<List<ExerciseDetailDto>>> GetExercises(
+    public async Task<ActionResult<List<ExerciseDetailResponse>>> GetExercises(
         [FromQuery] VisibilityFilter visibilityFilter = VisibilityFilter.OWNED,
         [FromQuery] MuscleGroupType? muscleGroupType = null,
         [FromQuery] string? searchQuery = null,
@@ -36,76 +36,58 @@ public partial class ExerciseDetailController : ControllerBase
             pageSize
         );
 
-        return exercises.Match(
-            (exercises) => Ok(exercises),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString()
-            )
+        return GetDataOrError(
+            exercises,
+            (e) => e.Select((ed) => new ExerciseDetailResponse(ed))
         );
+
+        // ERROR handling: https://www.youtube.com/watch?v=YBK93gkGRj8&ab_channel=MilanJovanovi%C4%87
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ExerciseDetail>> GetExercise([FromRoute][Required] Guid id)
+    public async Task<ActionResult<ExerciseDetailResponse>> GetExercise([FromRoute][Required] Guid id)
     {
         var exercise = await _exerciseService.GetExerciseAsync(id);
 
-        return exercise.Match(
-            (exercise) => Ok(exercise),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString()
-            )
+        return GetDataOrError(
+            exercise,
+            (ed) => new ExerciseDetailResponse(ed)
         );
     }
 
     [HttpPost]
-    public async Task<ActionResult<ExerciseDetailDto>> PostExercise([FromBody] ExerciseDetailDto exerciseDto)
+    public async Task<ActionResult<ExerciseDetailResponse>> CreateExercise([FromBody] CreateExerciseDetailRequest exerciseDto)
     {
         var exercise = await _exerciseService.CreateExerciseAsync(exerciseDto);
 
-        return exercise.Match(
-            (exercise) => Ok(exercise),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString()
-            )
+        return GetDataOrError(
+            exercise,
+            (ed) => new ExerciseDetailResponse(ed)
         );
     }
 
     [HttpPut]
-    public async Task<ActionResult<ExerciseDetailDto>> PutExercise(
-        [FromBody] ExerciseDetailDto exercise
+    public async Task<ActionResult<ExerciseDetailResponse>> UpdateExercise(
+        [FromBody] ExerciseDetailResponse exercise
     )
     {
         var updatedExercise = await _exerciseService.UpdateExerciseAsync(exercise);
 
-        return updatedExercise.Match(
-            (exercise) => Ok(exercise),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString()
-            )
+        return GetDataOrError(
+            updatedExercise,
+            (ed) => new ExerciseDetailResponse(ed)
         );
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ExerciseDetailDto>> DeleteExercise(
+    public async Task<ActionResult<ExerciseDetailResponse>> DeleteExercise(
         [FromRoute][Required] Guid exerciseId)
     {
         var deletedExercise = await _exerciseService.DeleteExerciseAsync(exerciseId);
 
-        return deletedExercise.Match(
-            (exercise) => Ok(exercise),
-            (err) => Problem(
-                statusCode: (int)err.StatusCode,
-                detail: err.UserFriendlyErrorDescription,
-                instance: err.Value?.ToString()
-            )
+        return GetDataOrError(
+            deletedExercise,
+            (ed) => new ExerciseDetailResponse(ed)
         );
     }
 }

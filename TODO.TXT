@@ -1,5 +1,6 @@
 Todo list:
 
+- fix errors efter refactor error handling
 - tilføj flere endpoints
     - lav workout
         service
@@ -23,7 +24,7 @@ Todo list:
 - write automated tests
     - add logger and insights
 - setup healthcheck - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
-- svelte app root path giver 404, bliver ikke deployed
+- svelte app root path giver 404, bliver ikke deployed 
 - tilføj mere seed data
     - en ny profil (min egen) + exercises
     - flere exercises

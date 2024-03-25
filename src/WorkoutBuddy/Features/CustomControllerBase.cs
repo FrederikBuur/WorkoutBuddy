@@ -4,14 +4,15 @@ namespace WorkoutBuddy.Features;
 
 public class CustomControllerBase : ControllerBase
 {
-    public ObjectResult GetDataOrError<T>(Result<T> result)
+    public ObjectResult GetDataOrError<T, R>(Result<T> result, Func<T, R> resolveResponse)
     {
         return result.Match(
-                    (data) => Ok(data),
+                    (data) =>
+                         Ok(resolveResponse(data)),
                     (err) => Problem(
-                        statusCode: (int)err.StatusCode,
-                        detail: err.UserFriendlyErrorDescription,
-                        instance: err.Value?.ToString())
+                        title: err.Name,
+                        statusCode: err.StatusCode,
+                        detail: err.Description)
                 );
     }
 }

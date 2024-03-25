@@ -89,7 +89,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserService, UserService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<ProfileService, ProfileService>();
 builder.Services.AddScoped<WorkoutDetailService, WorkoutDetailService>();
 builder.Services.AddOutputCache(); // can be faulty if multiple instances
 

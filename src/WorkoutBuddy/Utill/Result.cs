@@ -5,19 +5,19 @@ public readonly struct Result<A>
 {
     internal readonly ResultState State;
     internal readonly A? Value;
-    readonly HttpResponseException? exception;
+    internal readonly Error? Error;
 
     public Result(A value)
     {
         State = ResultState.Success;
         Value = value;
-        exception = null;
+        Error = null;
     }
 
-    public Result(HttpResponseException e)
+    public Result(Error e)
     {
         State = ResultState.Faulted;
-        exception = e;
+        Error = e;
         Value = default(A);
     }
 
@@ -32,9 +32,9 @@ public readonly struct Result<A>
         State == ResultState.Success;
 
     [Pure]
-    public R Match<R>(Func<A, R> Succ, Func<HttpResponseException, R> Fail) =>
+    public R Match<R>(Func<A, R> Succ, Func<Error, R> Fail) =>
     IsFaulted
-        ? Fail(exception!)
+        ? Fail(Error!)
         : Succ(Value!);
 }
 
