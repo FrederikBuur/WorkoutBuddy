@@ -11,12 +11,10 @@ namespace WorkoutBuddy.Features;
 public partial class ExerciseDetailController : CustomControllerBase
 {
     private readonly ILogger<ExerciseDetailController> _logger;
-    private readonly DataContext _dataContext;
     private readonly ExerciseDetailService _exerciseService;
-    public ExerciseDetailController(ILogger<ExerciseDetailController> logger, DataContext dataContext, ExerciseDetailService exerciseService)
+    public ExerciseDetailController(ILogger<ExerciseDetailController> logger, ExerciseDetailService exerciseService)
     {
         _logger = logger;
-        _dataContext = dataContext;
         _exerciseService = exerciseService;
     }
     [HttpGet]
@@ -56,19 +54,21 @@ public partial class ExerciseDetailController : CustomControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ExerciseDetailResponse>> CreateExercise([FromBody] CreateExerciseDetailRequest exerciseDto)
+    public async Task<ActionResult<ExerciseDetailResponse>> CreateExercise(
+        [FromBody] CreateExerciseDetailRequest createExerciseRequest
+        )
     {
-        var exercise = await _exerciseService.CreateExerciseAsync(exerciseDto);
+        var exercise = await _exerciseService.CreateExerciseAsync(createExerciseRequest);
 
         return GetDataOrError(
-            exercise,
-            (ed) => new ExerciseDetailResponse(ed)
+            result: exercise,
+            resolveResponse: (ed) => new ExerciseDetailResponse(ed)
         );
     }
 
     [HttpPut]
     public async Task<ActionResult<ExerciseDetailResponse>> UpdateExercise(
-        [FromBody] ExerciseDetailResponse exercise
+        [FromBody] UpdateExerciseDetailRequest exercise
     )
     {
         var updatedExercise = await _exerciseService.UpdateExerciseAsync(exercise);

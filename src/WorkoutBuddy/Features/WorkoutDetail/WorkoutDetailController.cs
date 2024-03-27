@@ -21,7 +21,7 @@ public class WorkoutDetailController : CustomControllerBase
     }
 
     [HttpGet()]
-    public async Task<ActionResult<IEnumerable<WorkoutDetailDto>>> GetWorkoutDetails(
+    public async Task<ActionResult<IEnumerable<WorkoutDetailResponse>>> GetWorkoutDetails(
         [FromQuery] VisibilityFilter visibilityFilter = VisibilityFilter.OWNED,
         [FromQuery] string? searchQuery = null,
         [FromQuery] int pageNumber = 0,
@@ -29,37 +29,63 @@ public class WorkoutDetailController : CustomControllerBase
     )
     {
         var workoutDetailsResult = await _workoutDetailService.SearchWorkoutDetails(visibilityFilter, searchQuery, pageNumber, pageSize);
-        return GetDataOrError(workoutDetailsResult);
+
+        return GetDataOrError(
+            result: workoutDetailsResult,
+            resolveResponse: (wd) => wd.Select(e => new WorkoutDetailResponse(e))
+        );
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<WorkoutDetailDto>> GetWorkoutDetailById([FromRoute][Required] Guid id)
+    public async Task<ActionResult<WorkoutDetailResponse>> GetWorkoutDetailById(
+        [FromRoute][Required] Guid id
+    )
     {
         var workoutDetailResult = await _workoutDetailService.GetWorkoutDetailById(id);
-        return GetDataOrError(workoutDetailResult);
+
+        return GetDataOrError(
+            result: workoutDetailResult,
+            resolveResponse: (wd) => new WorkoutDetailResponse(wd)
+            );
     }
 
     [HttpPost]
-    public async Task<ActionResult<WorkoutDetailDto>> PostWorkoutDetail(
-        [FromBody] WorkoutDetailDto workoutDto
+    public async Task<ActionResult<WorkoutDetailResponse>> CreateWorkoutDetail(
+        [FromBody] CreateWorkoutDetailRequest createWorkoutRequest
     )
     {
-        var workoutDetailResult = await _workoutDetailService.CreateWorkoutDetail(workoutDto);
-        return GetDataOrError(workoutDetailResult);
+        var workoutDetailResult = await _workoutDetailService.CreateWorkoutDetail(createWorkoutRequest);
+
+        return GetDataOrError(
+            result: workoutDetailResult,
+            resolveResponse: (wd) => new WorkoutDetailResponse(wd)
+            );
     }
 
     [HttpPut]
-    public async Task<ActionResult<WorkoutDetailDto>> PutWorkoutDetail([FromBody][Required] WorkoutDetailDto workoutDto)
+    public async Task<ActionResult<WorkoutDetailResponse>> UpdateWorkoutDetail(
+        [FromBody][Required] UpdateWorkoutDetailRequest workout
+    )
     {
-        var workoutDetailResult = await _workoutDetailService.UpdateWorkoutDetail(workoutDto);
-        return GetDataOrError(workoutDetailResult);
+        var workoutDetailResult = await _workoutDetailService.UpdateWorkoutDetail(workout);
+
+        return GetDataOrError(
+            result: workoutDetailResult,
+            resolveResponse: (wd) => new WorkoutDetailResponse(wd)
+            );
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<WorkoutDetailDto>> DeleteWorkoutDetail([FromRoute][Required] Guid workoutDetailId)
+    public async Task<ActionResult<WorkoutDetailResponse>> DeleteWorkoutDetail(
+        [FromRoute][Required] Guid workoutDetailId
+    )
     {
         var workoutDetailResult = await _workoutDetailService.DeleteWorkoutDetail(workoutDetailId);
-        return GetDataOrError(workoutDetailResult);
+
+        return GetDataOrError(
+            result: workoutDetailResult,
+            resolveResponse: (wd) => new WorkoutDetailResponse(wd)
+            );
     }
 
     // dublicate workout

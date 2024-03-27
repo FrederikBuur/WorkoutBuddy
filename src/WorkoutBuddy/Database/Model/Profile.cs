@@ -2,6 +2,9 @@
 {
     public class Profile : IEntityBase
     {
+        /// <summary>
+        /// This id comes from firebase / JWT token
+        /// </summary>
         public string UserId { get; set; } = "";
         public string? Name { get; set; }
         public string? Email { get; set; }

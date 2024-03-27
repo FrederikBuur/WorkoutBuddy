@@ -1,6 +1,7 @@
 Todo list:
 
 - fix errors efter refactor error handling
+    - mangler for workout detail service
 - tilføj flere endpoints
     - lav workout
         service

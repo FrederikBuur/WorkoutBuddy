@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
 using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WorkoutBuddy.Data.Model;
 using WorkoutBuddy.Features.ErrorHandling;
 
@@ -11,14 +13,17 @@ public class WorkoutDetailService
     private readonly ILogger<WorkoutDetailService> _logger;
     private readonly DataContext _dataContext;
     private readonly ProfileService _profileService;
+    private readonly ExerciseDetailService _exerciseDetailService;
 
     public WorkoutDetailService(ILogger<WorkoutDetailService> logger,
     DataContext dataContext,
-    ProfileService profileService)
+    ProfileService profileService,
+    ExerciseDetailService exerciseDetailService)
     {
         _logger = logger;
         _dataContext = dataContext;
         _profileService = profileService;
+        _exerciseDetailService = exerciseDetailService;
     }
 
     public async Task<Result<IEnumerable<WorkoutDetail>>> SearchWorkoutDetails(
@@ -74,48 +79,71 @@ public class WorkoutDetailService
         return workout;
     }
 
-    public async Task<Result<WorkoutDetail>> CreateWorkoutDetail(WorkoutDetail workout)
+    public async Task<Result<WorkoutDetail>> CreateWorkoutDetail(
+        [FromBody] CreateWorkoutDetailRequest workoutRequest
+    )
     {
+        // checks that user exists
         var profileResult = _profileService.GetProfileResult();
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
-        var w = workout;
-        w.CreatorId = profileResult.Value?.Id ?? default;
-        w.Owner = profileResult.Value?.Id ?? default;
+        // creates workout detail
+        var workoutDetail = new WorkoutDetail(
+            null,
+            profileResult.Value!.Id,
+            profileResult.Value!.Id,
+            workoutRequest.Name,
+            workoutRequest.Description,
+            workoutRequest.IsPublic
+        );
 
-        var result = _dataContext.Add(w);
+        // adds existing exercise details to the new workout detial
+        var exercises = new List<ExerciseDetail>();
+        foreach (var exerciseId in workoutRequest.ExerciseIds)
+        {
+            var exercise = await _dataContext.ExerciseDetails.FindAsync(exerciseId);
+
+            if (exercise is not null)
+                exercises.Add(exercise);
+            else
+                Console.WriteLine($"exercise id: '{exerciseId}' do not exist");
+        }
+
+        // saves data to db
+        workoutDetail.Exercises = exercises;
+        var result = _dataContext.WorkoutDetails.Add(workoutDetail);
         await _dataContext.SaveChangesAsync();
+
         return result.Entity;
     }
 
-    public async Task<Result<WorkoutDetail>> UpdateWorkoutDetail(WorkoutDetail workout)
+    public async Task<Result<WorkoutDetail>> UpdateWorkoutDetail(
+        [FromBody] UpdateWorkoutDetailRequest workoutRequest
+    )
     {
         var profileResult = _profileService.GetProfileResult();
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
-        var existingWorkout = await _dataContext.WorkoutDetails.SingleOrDefaultAsync(w => w.Id == workout.Id && w.Owner == profileResult.Value!.Id);
+        var existingWorkoutDetail = await _dataContext.WorkoutDetails.SingleOrDefaultAsync(w =>
+            w.Id == workoutRequest.Id
+            && w.Owner == workoutRequest.Owner
+            && w.Owner == profileResult.Value!.Id
+        );
 
-        if (existingWorkout is null)
+        if (existingWorkoutDetail is null)
             return new Result<WorkoutDetail>(
                 Error.NotFound("Your workout could not be found")
             );
 
-        if (existingWorkout.Owner != profileResult.Value!.Id)
-            return new Result<WorkoutDetail>(
-                Error.Unauthorized("You are not allowed to update this workout")
-            );
-
-        // update existing workout fields
-        existingWorkout.Name = workout.Name;
-        existingWorkout.Description = workout.Description;
-        existingWorkout.IsPublic = workout.IsPublic;
-        existingWorkout.Exercises = workout.Exercises;
+        existingWorkoutDetail.Name = workoutRequest.Name;
+        existingWorkoutDetail.Description = workoutRequest.Description;
+        existingWorkoutDetail.IsPublic = workoutRequest.IsPublic;
 
         await _dataContext.SaveChangesAsync();
 
-        return existingWorkout;
+        return existingWorkoutDetail;
     }
 
     public async Task<Result<WorkoutDetail>> DeleteWorkoutDetail(Guid workoutId)

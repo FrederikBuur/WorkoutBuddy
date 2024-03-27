@@ -85,25 +85,36 @@ public class ExerciseDetailService
         return exercise;
     }
 
-    public async Task<Result<ExerciseDetail>> CreateExerciseAsync(ExerciseDetail exercise)
+    public async Task<Result<ExerciseDetail>> CreateExerciseAsync(CreateExerciseDetailRequest exerciseRequest)
     {
         var profileResult = _profileService.GetProfileResult();
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 
-        var result = _dataContext.Add(exercise);
+        var newExercise = new ExerciseDetail(
+            null,
+            exerciseRequest.owner,
+            exerciseRequest.creatorId,
+            exerciseRequest.name,
+            exerciseRequest.description,
+            exerciseRequest.imageUrl,
+            exerciseRequest.isPublic,
+            exerciseRequest.muscleGroup
+        );
+
+        var result = _dataContext.Add(newExercise);
         await _dataContext.SaveChangesAsync();
 
         return result.Entity;
     }
 
-    public async Task<Result<ExerciseDetail>> UpdateExerciseAsync(ExerciseDetail exercise)
+    public async Task<Result<ExerciseDetail>> UpdateExerciseAsync(UpdateExerciseDetailRequest exerciseRequest)
     {
         var profileResult = _profileService.GetProfileResult();
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 
-        var existingExercise = await _dataContext.ExerciseDetails.SingleOrDefaultAsync(e => e.Id == exercise.Id);
+        var existingExercise = await _dataContext.ExerciseDetails.SingleOrDefaultAsync(e => e.Id == exerciseRequest.id);
 
         if (existingExercise is null)
             return new Result<ExerciseDetail>(
@@ -115,11 +126,11 @@ public class ExerciseDetailService
                 Error.Unauthorized("You are not allowed to update this exercise")
             );
 
-        existingExercise.IsPublic = exercise.IsPublic;
-        existingExercise.Name = exercise.Name;
-        existingExercise.Description = exercise.Description;
-        existingExercise.ImageUrl = exercise.ImageUrl;
-        existingExercise.MuscleGroups = exercise.MuscleGroups;
+        existingExercise.IsPublic = exerciseRequest.isPublic;
+        existingExercise.Name = exerciseRequest.name;
+        existingExercise.Description = exerciseRequest.description;
+        existingExercise.ImageUrl = exerciseRequest.imageUrl;
+        existingExercise.MuscleGroups = exerciseRequest.muscleGroups;
 
         await _dataContext.SaveChangesAsync();
 
