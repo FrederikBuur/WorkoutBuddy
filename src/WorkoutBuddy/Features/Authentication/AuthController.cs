@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.ComponentModel.DataAnnotations;
+using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using WorkoutBuddy.Features;
 
 namespace WorkoutBuddy.Authentication;
 
@@ -11,78 +13,36 @@ namespace WorkoutBuddy.Authentication;
 
 [AllowAnonymous]
 [ApiController]
-[ApiExplorerSettings(IgnoreApi = true)]
-[Route("v1/auth")]
+[Route("auth")]
 public class AuthController : Controller
 {
-    private readonly FirebaseAuthOptions _settings;
+    private readonly GoogleJwtProvider _googleJwtProvider;
 
-    public AuthController(IOptions<FirebaseAuthOptions> settings)
+    public AuthController(GoogleJwtProvider googleJwtProvider)
     {
-        _settings = settings.Value;
+        _googleJwtProvider = googleJwtProvider;
     }
 
-    [HttpPost]
-    public async Task<ActionResult> GetTokenFromGoogle([FromForm] LoginInfo loginInfo)
+    [HttpPost("register")]
+    public async Task<ActionResult> RegisterUser([FromBody][Required] LoginInfo loginInfo)
     {
-        var apiKey = _settings.FirebaseApiKey ?? throw new ArgumentException("Missing firebase api key");
-        string uri = $"https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key={apiKey}";
-        using (HttpClient client = new HttpClient())
+
+        var userArgs = new UserRecordArgs
         {
-            var fireBaseLoginInfo = new FireBaseLoginInfo
-            {
-                Email = loginInfo.Username,
-                Password = loginInfo.Password
-            };
-            var result = await client.PostAsJsonAsync<FireBaseLoginInfo, GoogleToken>(uri, fireBaseLoginInfo);
-            var token = new Token
-            {
-                token_type = "Bearer",
-                access_token = result?.idToken,
-                id_token = result?.idToken,
-                expires_in = int.Parse(result?.expiresIn ?? "0"),
-                refresh_token = result?.refreshToken
+            Email = loginInfo.Username,
+            Password = loginInfo.Password
+        };
 
-            };
-            return Ok(token);
-        }
+        var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
+
+        return Ok(userRecord.Uid);
     }
-}
 
-public class LoginInfo
-{
-    public string Username { get; set; } = "";
-    public string Password { get; set; } = "";
+    [HttpPost("login/email-password")]
+    public async Task<ActionResult> LoginWithEmailPassword([FromBody][Required] LoginInfo loginInfo)
+    {
+        var token = await _googleJwtProvider.GetForCredentialsAsync(loginInfo.Username, loginInfo.Password);
 
-}
-
-public class FireBaseLoginInfo
-{
-    public string? Email { get; set; }
-    public string? Password { get; set; }
-    public bool ReturnSecureToken { get; set; } = true;
-
-}
-
-public class GoogleToken
-{
-    public string? kind { get; set; }
-    public string? localId { get; set; }
-    public string? email { get; set; }
-    public string? displayName { get; set; }
-    public string? idToken { get; set; }
-    public bool registered { get; set; }
-    public string? refreshToken { get; set; }
-    public string? expiresIn { get; set; }
-}
-
-
-public class Token
-{
-    internal string? refresh_token;
-    public string? token_type { get; set; }
-    public int expires_in { get; set; }
-    public int ext_expires_in { get; set; }
-    public string? access_token { get; set; }
-    public string? id_token { get; set; }
+        return Ok(token);
+    }
 }

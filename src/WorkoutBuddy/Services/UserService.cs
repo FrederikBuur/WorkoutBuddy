@@ -15,7 +15,7 @@ public class UserService
 
     private ClaimsPrincipal? User => HttpContext?.User;
 
-    public string? Id => User?.FindFirstValue("id");
+    public string? Id => User?.FindFirstValue("user_id");
 
     public string? Email => User?.FindFirstValue("email");
 

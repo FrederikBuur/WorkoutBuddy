@@ -1,33 +1,35 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using WorkoutBuddy.Authentication;
 
 public class ConfigureSwaggerAuthOptions : IConfigureOptions<SwaggerGenOptions>
 {
-    public void Configure(SwaggerGenOptions c)
+    public void Configure(SwaggerGenOptions options)
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Time To Work", Version = "v1" });
-        c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Time To Work", Version = "v1" });
+        options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
         {
             In = ParameterLocation.Header,
             Name = "Authorization",
-            Description = "Provide valid login for WorkoutBuddy",
-            Type = SecuritySchemeType.OAuth2,
-            Flows = new OpenApiOAuthFlows
-            {
-                Password = new OpenApiOAuthFlow
-                {
-                    TokenUrl = new Uri("/v1/auth", UriKind.Relative),
-                    Extensions = new Dictionary<string, IOpenApiExtension>
-                    {
-                        { "returnSecureToken", new OpenApiBoolean(true) },
-                    },
-                }
-            }
+            Description = "Provide JWT token",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = JwtBearerDefaults.AuthenticationScheme
         });
-        c.OperationFilter<AuthorizeCheckOperationFilter>();
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement{
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+        // c.OperationFilter<AuthorizeCheckOperationFilter>();
     }
 }

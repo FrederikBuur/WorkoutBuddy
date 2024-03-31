@@ -1,7 +1,7 @@
 Todo list:
 
-- fix errors efter refactor error handling
-    - mangler for workout detail service
+- fix firebase auth
+    - swagger bliver ved med at give 401
 - tilføj flere endpoints
     - lav workout
         service

@@ -2,8 +2,6 @@ global using WorkoutBuddy.Data;
 using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication;
-using workouts;
 using FirebaseAdmin;
 using WorkoutBuddy.Authentication;
 using Google.Apis.Auth.OAuth2;
@@ -11,6 +9,7 @@ using WorkoutBuddy.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.Extensions.Options;
 using WorkoutBuddy.Features;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,8 +57,34 @@ builder.Services.AddEndpointsApiExplorer();
 
 // setup swagger options
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerAuthOptions>();
+// https://www.youtube.com/watch?v=z46lqVOv1hQ&ab_channel=ThumbIKR-ProgrammingExamples
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "WorkoutBuddy", Version = "v1" });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Provide JWT token",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement{
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+// builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerAuthOptions>();
 
 // setup application insight logging
 if (env.EnvironmentName != "Local")
@@ -74,16 +99,32 @@ if (env.EnvironmentName != "Local")
 // setup firebase authentication
 // Convert firebase config json to string: https://tools.knowledgewalls.com/json-to-string
 var firebaseConfig = builder.Configuration.GetValue<string>("Auth:FirebaseConfig"); // ?? throw new ArgumentNullException("missing firebase config");
-builder.Services.Configure<FirebaseAuthOptions>(builder.Configuration.GetSection("Auth"));
-builder.Services.AddSingleton(FirebaseApp.Create(new AppOptions()
+FirebaseApp.Create(new AppOptions()
 {
     Credential = GoogleCredential.FromJson(firebaseConfig)
-}));
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddScheme<AuthenticationSchemeOptions, FirebaseAuthenticationHandler>(
-        JwtBearerDefaults.AuthenticationScheme,
-        (options) => { }
-    );
+});
+
+builder.Services.AddHttpClient<GoogleJwtProvider, GoogleJwtProvider>(httpClient =>
+{
+    var baseAddress = builder.Configuration["Auth:TokenUri"] ?? throw new ArgumentNullException("Missing: Auth:TokenUri");
+    var apiKey = builder.Configuration["Auth:FirebaseApiKey"] ?? throw new ArgumentException("Missing firebase api key");
+    httpClient.BaseAddress = new Uri($"{baseAddress}?key={apiKey}");
+});
+
+builder.Services
+    .AddAuthentication()
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
+    {
+        jwtOptions.Authority = builder.Configuration["Auth:ValidIssuer"];
+        jwtOptions.Audience = builder.Configuration["Auth:Audience"];
+        jwtOptions.TokenValidationParameters.ValidIssuer = builder.Configuration["Auth:ValidIssuer"];
+    });
+
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddScheme<AuthenticationSchemeOptions, FirebaseAuthenticationHandler>(
+//         JwtBearerDefaults.AuthenticationScheme,
+//         (options) => { }
+//     );
 
 // setup services
 builder.Services.AddControllers();
@@ -91,6 +132,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<ProfileService, ProfileService>();
 builder.Services.AddScoped<WorkoutDetailService, WorkoutDetailService>();
+builder.Services.AddScoped<ExerciseDetailService, ExerciseDetailService>();
 builder.Services.AddOutputCache(); // can be faulty if multiple instances
 
 var app = builder.Build();
@@ -114,6 +156,8 @@ static void RunApp(WebApplication app)
         {
             c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Chivado Api");
         });
+
+    app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
     app.UseHttpsRedirection();
     app.UseOutputCache(); // can be faulty if multiple instances of app running

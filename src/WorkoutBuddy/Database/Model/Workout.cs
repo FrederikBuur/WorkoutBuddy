@@ -4,7 +4,7 @@ namespace WorkoutBuddy.Data;
 
 public class Workout : IEntityBase
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public DateTime LastPerformed { get; set; }
     public int Count { get; set; }
 
@@ -14,6 +14,9 @@ public class Workout : IEntityBase
     public Guid WorkoutDetailId { get; set; }
     public WorkoutDetail? WorkoutDetail { get; set; }
     public ICollection<WorkoutSet> WorkoutSets { get; set; } = new List<WorkoutSet>();
+
+    // EF Core needs empty constructor
+    protected Workout() { }
 
     public Workout(Guid? id, string name, DateTime lastPerformed, int count)
     {
