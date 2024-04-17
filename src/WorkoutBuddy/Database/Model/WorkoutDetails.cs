@@ -13,7 +13,7 @@ public class WorkoutDetail : IEntityBase
     public ICollection<ExerciseDetail> Exercises { get; set; } = new List<ExerciseDetail>();
 
     // EF Core needs empty constructor
-    protected WorkoutDetail() { }
+    public WorkoutDetail() { }
 
     public WorkoutDetail(Guid? id, Guid owner, Guid creatorId, string name, string? description, bool isPublic)
     {

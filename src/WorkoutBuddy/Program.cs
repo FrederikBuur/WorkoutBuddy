@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using FirebaseAdmin;
-using WorkoutBuddy.Authentication;
 using Google.Apis.Auth.OAuth2;
 using WorkoutBuddy.Services;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.Extensions.Options;
 using WorkoutBuddy.Features;
 using Microsoft.OpenApi.Models;
 
@@ -80,11 +77,10 @@ builder.Services.AddSwaggerGen(options =>
                     Id="Bearer"
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
     });
 });
-// builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerAuthOptions>();
 
 // setup application insight logging
 if (env.EnvironmentName != "Local")
@@ -133,6 +129,7 @@ builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<ProfileService, ProfileService>();
 builder.Services.AddScoped<WorkoutDetailService, WorkoutDetailService>();
 builder.Services.AddScoped<ExerciseDetailService, ExerciseDetailService>();
+builder.Services.AddScoped<WorkoutService, WorkoutService>();
 builder.Services.AddOutputCache(); // can be faulty if multiple instances
 
 var app = builder.Build();
@@ -154,7 +151,7 @@ static void RunApp(WebApplication app)
         .UseSwagger()
         .UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Chivado Api");
+            c.SwaggerEndpoint($"/swagger/v1/swagger.json", "WorkoutBuddy Api");
         });
 
     app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());

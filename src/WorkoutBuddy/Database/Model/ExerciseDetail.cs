@@ -14,7 +14,7 @@ public class ExerciseDetail : IEntityBase
     public string MuscleGroups { get; set; } = ""; // comma seperated
 
     // EF Core needs empty constructor
-    protected ExerciseDetail() { }
+    public ExerciseDetail() { }
 
     public ExerciseDetail(Guid? id, Guid owner, Guid creatorId, string name, string? description, string? imageUrl, bool isPublic, string muscleGroups)
     {

@@ -10,14 +10,13 @@ public class DataContext : DbContext
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
         // seems like migrations are not supported for cosmos. makes sence since it is document based
-        //Database.EnsureDeleted();
-        //Database.EnsureCreated();
+        // Database.EnsureDeleted();
+        // Database.EnsureCreated();
     }
 
     public DbSet<Profile> Profiles => Set<Profile>();
     public DbSet<ExerciseDetail> ExerciseDetails => Set<ExerciseDetail>();
     public DbSet<WorkoutDetail> WorkoutDetails => Set<WorkoutDetail>();
-
     public DbSet<Workout> Workouts => Set<Workout>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

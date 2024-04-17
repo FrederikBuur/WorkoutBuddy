@@ -14,7 +14,7 @@ public static class ExerciseDetailSeeder
         // https://exrx.net/Lists/Directory
         // https://www.bodybuilding.com/exercises/
 
-        var json = await File.ReadAllTextAsync("Data/Seed/Json/exercises.json");
+        var json = await File.ReadAllTextAsync("Database/Seed/Json/exercises.json");
         IEnumerable<ExerciseDetail> initialExerciseDetails = JsonSerializer.Deserialize<IEnumerable<ExerciseDetail>>(json)
             ?? throw new Exception("Failed to deserialize exercieses.json");
 
