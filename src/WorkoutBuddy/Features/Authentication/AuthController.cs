@@ -43,6 +43,9 @@ public class AuthController : Controller
     {
         var token = await _googleJwtProvider.GetForCredentialsAsync(loginInfo.Username, loginInfo.Password);
 
+        if (token is null)
+            return BadRequest("Getting token failed");
+
         return Ok(token);
     }
 }

@@ -11,7 +11,7 @@ public class GoogleJwtProvider
         _httpClient = httpClient;
     }
 
-    public async Task<string> GetForCredentialsAsync(string email, string password)
+    public async Task<AuthToken?> GetForCredentialsAsync(string email, string password)
     {
         var request = new
         {
@@ -24,6 +24,6 @@ public class GoogleJwtProvider
 
         var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
 
-        return authToken?.idToken ?? "no-token";
+        return authToken;
     }
 }

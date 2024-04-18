@@ -49,6 +49,7 @@ public class WorkoutDetailService
         #endregion
 
         var workouts = await _dataContext.WorkoutDetails
+            .Include(wd => wd.Exercises)
             .Where(visibilityPredicate)
             .Where(searchQueryPredicate)
             .Skip(pageNumber * pageSize)
