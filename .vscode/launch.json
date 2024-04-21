@@ -12,47 +12,13 @@
       "console": "integratedTerminal",
       "stopAtEntry": false,
       // open swagger on launch:
-      // "serverReadyAction": {
-      //   "action": "openExternally",
-      //   "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-      //   "uriFormat": "%s/swagger"
-      // },
-      // open web app on launch:
       "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(http?://\\S+)",
-        "uriFormat": "%s/"
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/swagger"
       },
       "env": {
-        "ASPNETCORE_ENVIRONMENT": "Local",
-        "GOOGLE_APPLICATION_CREDENTIALS": "./firebase-config.json"
-      }
-    },
-    {
-      "name": "Watch Workout Buddy",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "watch",
-      "program": "${workspaceFolder}/src/WorkoutBuddy/bin/Debug/net7.0/WorkoutBuddy.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}/src/WorkoutBuddy",
-      "console": "integratedTerminal",
-      "stopAtEntry": false,
-      // open swagger on launch:
-      // "serverReadyAction": {
-      //   "action": "openExternally",
-      //   "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-      //   "uriFormat": "%s/swagger"
-      // },
-      // open web app on launch:
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(http?://\\S+)",
-        "uriFormat": "%s/"
-      },
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Local",
-        "GOOGLE_APPLICATION_CREDENTIALS": "./firebase-config.json"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     {
@@ -66,8 +32,7 @@
       "console": "integratedTerminal",
       "stopAtEntry": false,
       "env": {
-        "ASPNETCORE_ENVIRONMENT": "Local",
-        "GOOGLE_APPLICATION_CREDENTIALS": "./firebase-config.json"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     {
