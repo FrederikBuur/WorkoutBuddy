@@ -8,6 +8,7 @@ using WorkoutBuddy.Services;
 using WorkoutBuddy.Features;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,42 +55,44 @@ builder.Services.AddDbContext<DataContext>(options =>
 // setup swagger options
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 // https://www.youtube.com/watch?v=z46lqVOv1hQ&ab_channel=ThumbIKR-ProgrammingExamples
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "WorkoutBuddy", Version = "v1" });
-    // options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    // {
-    //     In = ParameterLocation.Header,
-    //     Name = "Authorization",
-    //     Description = "Provide JWT token",
-    //     Type = SecuritySchemeType.Http,
-    //     BearerFormat = "JWT",
-    //     Scheme = "bearer"
-    // });
-    // options.AddSecurityRequirement(new OpenApiSecurityRequirement{
-    //     {
-    //         new OpenApiSecurityScheme
-    //         {
-    //             Reference = new OpenApiReference
-    //             {
-    //                 Type=ReferenceType.SecurityScheme,
-    //                 Id="Bearer"
-    //             }
-    //         },
-    //         Array.Empty<string>()
-    //     }
-    // });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Provide JWT token",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement{
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 // setup application insight logging
-if (env.EnvironmentName != "Local")
-{
-    builder.Services.AddApplicationInsightsTelemetry(options =>
-    {
-        options.DeveloperMode = false;
-        options.ConnectionString = builder.Configuration.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING") ?? throw new ArgumentNullException("Missing: APPLICATIONINSIGHTS_CONNECTION_STRING");
-    });
-}
+// if (env.EnvironmentName != "Local")
+// {
+//     builder.Services.AddApplicationInsightsTelemetry(options =>
+//     {
+//         options.DeveloperMode = false;
+//         options.ConnectionString = builder.Configuration.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING") ?? throw new ArgumentNullException("Missing: APPLICATIONINSIGHTS_CONNECTION_STRING");
+//     });
+// }
 
 // setup firebase authentication
 // Convert firebase config json to string: https://tools.knowledgewalls.com/json-to-string
@@ -124,10 +127,8 @@ builder.Services
     });
 
 // setup services
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddOutputCache(); // can be faulty if multiple instances
+// builder.Services.AddOutputCache(); // can be faulty if multiple instances
 
 builder.Services.AddHttpClient<GoogleJwtProvider, GoogleJwtProvider>(httpClient =>
 {
@@ -156,17 +157,23 @@ switch (args.FirstOrDefault())
 
 static void RunApp(WebApplication app)
 {
-    app.UseExceptionHandler("/error")
-        .UseSwagger()
-        .UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint($"/swagger/v1/swagger.json", "WorkoutBuddy Api");
-        });
+    // app.UseExceptionHandler("/error")
+    //     .UseSwagger()
+    //     .UseSwaggerUI(c =>
+    //     {
+    //         c.SwaggerEndpoint($"/swagger/v1/swagger.json", "WorkoutBuddy Api");
+    //     });
+
+    app.UseSwagger()
+    .UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint($"/swagger/v1/swagger.json", "WorkoutBuddy Api");
+    });
 
     app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
     app.UseHttpsRedirection();
-    app.UseOutputCache(); // can be faulty if multiple instances of app running
+    // app.UseOutputCache(); // can be faulty if multiple instances of app running
 
     app.UseAuthentication();
     app.UseAuthorization();
