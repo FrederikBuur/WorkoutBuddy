@@ -1,7 +1,5 @@
 Todo list:
 
-- fix firebase auth
-    - swagger bliver ved med at give 401
 - tilføj flere endpoints
     - lav workout
         service

@@ -11,23 +11,20 @@
   "profiles": {
     "WorkoutBuddy": {
       "commandName": "Project",
-      "launchBrowser": false,
-      //"launchUrl": "swagger",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5272;http://localhost:5173/",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "GOOGLE_APPLICATION_CREDENTIALS": "./firebase-config.json",
-        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": false,
-      //"launchUrl": "swagger",
+      "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

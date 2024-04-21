@@ -1,3 +1,8 @@
 {
-  "dotnet.defaultSolution": "src/WorkoutBuddy.sln"
+  "dotnet.defaultSolution": "src/WorkoutBuddy.sln",
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "editor.formatOnSave": true,
+  "omnisharp.useModernNet": true
 }

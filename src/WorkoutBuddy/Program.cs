@@ -8,18 +8,8 @@ using WorkoutBuddy.Services;
 using WorkoutBuddy.Features;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var env = builder.Environment;
-
-builder.Configuration
-       .SetBasePath(env.ContentRootPath)
-       .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-       .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-       .AddEnvironmentVariables()
-       .AddUserSecrets<Program>();
 
 var azureCredentials = new DefaultAzureCredential(new DefaultAzureCredentialOptions
 {
@@ -42,66 +32,25 @@ if (shouldUseKeyVault)
     builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredentials);
 }
 
-// Setup EF Core to SQL db connection
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    var sqlDbConnectionString = builder.Configuration.GetConnectionString("SQL") ?? throw new ArgumentNullException("Missing SQL connectionstring");
-    options.UseSqlServer(sqlDbConnectionString, sqlServerOptions =>
-    {
-        sqlServerOptions.CommandTimeout(30);
-    });
-});
-
-// setup swagger options
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-// https://www.youtube.com/watch?v=z46lqVOv1hQ&ab_channel=ThumbIKR-ProgrammingExamples
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "WorkoutBuddy", Version = "v1" });
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
         Name = "Authorization",
         Description = "Provide JWT token",
         Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
-        Scheme = "bearer"
+        Scheme = JwtBearerDefaults.AuthenticationScheme
     });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement{
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+    options.OperationFilter<BasicAuthOperationsFilter>();
 });
 
-// setup application insight logging
-// if (env.EnvironmentName != "Local")
-// {
-//     builder.Services.AddApplicationInsightsTelemetry(options =>
-//     {
-//         options.DeveloperMode = false;
-//         options.ConnectionString = builder.Configuration.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING") ?? throw new ArgumentNullException("Missing: APPLICATIONINSIGHTS_CONNECTION_STRING");
-//     });
-// }
 
-// setup firebase authentication
-// Convert firebase config json to string: https://tools.knowledgewalls.com/json-to-string
-var firebaseConfig = builder.Configuration.GetValue<string>("Auth:FirebaseConfig"); // ?? throw new ArgumentNullException("missing firebase config");
-FirebaseApp.Create(new AppOptions()
-{
-    Credential = GoogleCredential.FromJson(firebaseConfig)
-});
-
+// Setup authentication
 builder.Services
     .AddAuthentication()
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOptions =>
@@ -126,10 +75,28 @@ builder.Services
         };
     });
 
-// setup services
-builder.Services.AddHttpContextAccessor();
-// builder.Services.AddOutputCache(); // can be faulty if multiple instances
+// Setup EF Core to SQL db connection
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    var sqlDbConnectionString = builder.Configuration.GetConnectionString("SQL") ?? throw new ArgumentNullException("Missing SQL connectionstring");
+    options.UseSqlServer(sqlDbConnectionString, sqlServerOptions =>
+    {
+        sqlServerOptions.CommandTimeout(30);
+    });
+});
 
+// Setup Firebase
+var firebaseConfig = builder.Configuration.GetValue<string>("Auth:FirebaseConfig"); // ?? throw new ArgumentNullException("missing firebase config");
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromJson(firebaseConfig)
+});
+
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddOutputCache(); // can be faulty if multiple instances
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<GoogleJwtProvider, GoogleJwtProvider>(httpClient =>
 {
     var baseAddress = builder.Configuration["Auth:TokenUri"] ?? throw new ArgumentNullException("Missing: Auth:TokenUri");
@@ -157,12 +124,11 @@ switch (args.FirstOrDefault())
 
 static void RunApp(WebApplication app)
 {
-    // app.UseExceptionHandler("/error")
-    //     .UseSwagger()
-    //     .UseSwaggerUI(c =>
-    //     {
-    //         c.SwaggerEndpoint($"/swagger/v1/swagger.json", "WorkoutBuddy Api");
-    //     });
+    if (app.Environment.IsProduction())
+    {
+        // if unexcpected exception occurs, reroute to '/error' see ErrorController.cs
+        app.UseExceptionHandler("/error");
+    }
 
     app.UseSwagger()
     .UseSwaggerUI(c =>
@@ -173,7 +139,7 @@ static void RunApp(WebApplication app)
     app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
     app.UseHttpsRedirection();
-    // app.UseOutputCache(); // can be faulty if multiple instances of app running
+    app.UseOutputCache(); // can be faulty if multiple instances of app running
 
     app.UseAuthentication();
     app.UseAuthorization();
