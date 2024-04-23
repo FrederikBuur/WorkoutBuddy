@@ -35,11 +35,11 @@ stages:
   # rm bin/package.zip -f && (cd bin/publish && zip -r ../package.zip .)
   # (cd bin/publish && ConnectionStrings__SQL="Server=tcp:sql-fact-shared-we-del.database.windows.net;Authentication=Active Directory Device Code Flow; Database=42-devtest;" ./WorkoutBuddy migrate)
   # az webapp deployment source config-zip --src bin/package.zip -n app-42-devtest-we-del -g 42-devtest
-  - stage: DeployDev
+  - stage: DeployTest
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     jobs:
-      - deployment: WorkoutBuddyCodeToAzureDev
-        environment: workout-buddy-dev
+      - deployment: WorkoutBuddyCodeToAzureTest
+        environment: workout-buddy-test
         strategy:
           runOnce:
             deploy:
@@ -59,9 +59,9 @@ stages:
                     inlineScript: ./WorkoutBuddy initAndSeedDb
                     workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                   env:
-                    KeyVault__Url: https://kv-workoutbuddy-dev-we.vault.azure.net/
-                    Cosmos__Uri: https://cosdb-workoutbuddy-dev-we.documents.azure.com:443/
-                    Cosmos__DbName: workoutbuddy-dev
+                    KeyVault__Url: https://kv-workoutbuddy-test-we.vault.azure.net/
+                    Cosmos__Uri: https://cosdb-workoutbuddy-test-we.documents.azure.com:443/
+                    Cosmos__DbName: workoutbuddy-test
                 - task: AzureCLI@2
                   displayName: Deploy
                   inputs:
@@ -71,8 +71,8 @@ stages:
                     inlineScript: |
                       az webapp deployment source config-zip `
                         --src $env:PIPELINE_WORKSPACE/WorkoutBuddyCode/WorkoutBuddy.zip `
-                        --name app-workoutbuddy-dev-we `
-                        --resource-group workout-buddy-dev
+                        --name app-workoutbuddy-test-we `
+                        --resource-group workout-buddy-test
 
   - stage: DeployProd
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))

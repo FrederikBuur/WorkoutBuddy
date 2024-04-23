@@ -20,6 +20,7 @@ Todo list:
 - add page model to responses
     - Workouts
     - exercise
+- add sql to bicep + remove cosmos
 - write automated tests
     - add logger and insights
 - setup healthcheck - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas

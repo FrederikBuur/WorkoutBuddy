@@ -6,8 +6,7 @@
 // parameters
 @description('The name of the environment being deployed to.')
 @allowed([
-  'dev'
-  'stable'
+  'test'
   'prod'
 ])
 param deploymentEnvironment string

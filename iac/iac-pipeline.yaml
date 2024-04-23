@@ -8,10 +8,10 @@ stages:
   # Log in with your administrator account (The --use-device-code parameter allows you to choose a browser where you are logged in as the correct user instead of opening your default browser)
   # az account set --subscription "DK FACT - Microsoft Azure Enterprise (OS_EFF_BO)"
   # az deployment group create -g WorkoutBuddy-dev -f iac/deloitteWorkoutBuddyEnvironmentResources.bicep -p deploymentEnvironment=dev
-  - stage: DeployDev
+  - stage: DeployTest
     jobs:
       - deployment: DeployWorkoutBuddyEnvironmentInfrastructureToAzureDev
-        environment: workout-buddy-dev
+        environment: workout-buddy-test
         strategy:
           runOnce:
             deploy:
@@ -26,9 +26,9 @@ stages:
                     scriptLocation: inlineScript
                     inlineScript: |
                       az deployment group create `
-                        --resource-group workout-buddy-dev `
+                        --resource-group workout-buddy-test `
                         --template-file $(Build.SourcesDirectory)/iac/main-resources.bicep `
-                        --parameters deploymentEnvironment=dev
+                        --parameters deploymentEnvironment=test
 
   - stage: DeployProd
     jobs:
