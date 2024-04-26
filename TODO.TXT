@@ -1,5 +1,8 @@
 Todo list:
 
+
+- add page model to responses
+    - workouts
 - tilføj flere endpoints
     - lav workout
         service
@@ -17,17 +20,19 @@ Todo list:
         service
         controller
         exctension
-- add page model to responses
-    - Workouts
-    - exercise
 - add sql to bicep + remove cosmos
+- add index values
+- integrer noget AI
+    - brug large language models - GBT-4 i azure    
+    - 
 - write automated tests
     - add logger and insights
-- setup healthcheck - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
-- svelte app root path giver 404, bliver ikke deployed 
+- setup healthcheck 
+    - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
 - tilføj mere seed data
     - en ny profil (min egen) + exercises
     - flere exercises
     - flere workouts
 
   
+  ERROR handling: https://www.youtube.com/watch?v=YBK93gkGRj8&ab_channel=MilanJovanovi%C4%87

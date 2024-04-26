@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
-using System.Net;
 using Microsoft.EntityFrameworkCore;
 using WorkoutBuddy.Data.Model;
-using WorkoutBuddy.Features.ErrorHandling;
+using WorkoutBuddy.Util.ErrorHandling;
+using WorkoutBuddy.Util;
 
 namespace WorkoutBuddy.Features;
 
@@ -22,7 +22,7 @@ public class ExerciseDetailService
         _profileService = profileService;
     }
 
-    public async Task<Result<IEnumerable<ExerciseDetail>>> GetExercisesAsync(
+    public async Task<Result<Paginated<ExerciseDetail>>> GetExercisesAsync(
         VisibilityFilter visibilityFilter,
         MuscleGroupType? muscleGroupType,
         string? searchQuery,
@@ -32,34 +32,44 @@ public class ExerciseDetailService
 
         var profileResult = _profileService.GetProfileResult();
         if (profileResult.IsFaulted)
-            return new Result<IEnumerable<ExerciseDetail>>(profileResult.Error!);
+            return new Result<Paginated<ExerciseDetail>>(profileResult.Error!);
 
         #region predicates
         Expression<Func<ExerciseDetail, bool>> visibilityPredicate = (e) =>
-            (visibilityFilter == VisibilityFilter.PUBLIC && e.IsPublic)
-            || visibilityFilter == VisibilityFilter.OWNED && e.Owner == profileResult.Value!.Id
-            || visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileResult.Value!.Id);
+            (visibilityFilter == VisibilityFilter.PUBLIC && e.IsPublic) ||
+            visibilityFilter == VisibilityFilter.OWNED && e.Owner == profileResult.Value.Id ||
+            visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileResult.Value.Id);
 
         Expression<Func<ExerciseDetail, bool>> muscleGroupPredicate = (e) =>
-            muscleGroupType != null
-                &&
-                e.MuscleGroups.ToLower().Contains(muscleGroupType!.ToString()!.ToLower() ?? "");
+            muscleGroupType == null ||
+            e.MuscleGroups.ToLower().Contains(muscleGroupType!.ToString()!.ToLower() ?? "");
 
         Expression<Func<ExerciseDetail, bool>> searchQueryPredicate = (e) =>
-            string.IsNullOrWhiteSpace(searchQuery)
-            || e.Name.ToLower().Contains(searchQuery!.ToLower() ?? "");
+            string.IsNullOrWhiteSpace(searchQuery) ||
+            e.Name.ToLower().Contains(searchQuery!.ToLower() ?? "");
 
         #endregion
 
-        var exercises = await _dataContext.ExerciseDetails
+        var filteredExercises = _dataContext.ExerciseDetails
             .Where(visibilityPredicate)
             .Where(muscleGroupPredicate)
-            .Where(searchQueryPredicate)
-            .Skip(pageNumber * pageSize)
+            .Where(searchQueryPredicate);
+
+        var count = filteredExercises.Count();
+        var totalPages = count / pageSize;
+        if (count % pageSize != 0) totalPages++;
+
+        var pagedExercises = await filteredExercises.Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
-        return exercises;
+        return new Paginated<ExerciseDetail>(
+            totalPages: totalPages,
+            currentPage: pageNumber,
+            totalItems: count,
+            lastPage: totalPages == pageNumber,
+            items: pagedExercises
+        );
     }
 
     public async Task<Result<ExerciseDetail>> GetExerciseAsync(Guid exerciseId)
@@ -69,7 +79,7 @@ public class ExerciseDetailService
             return new Result<ExerciseDetail>(profileResult.Error!);
 
         var exercise = await _dataContext.ExerciseDetails
-            .SingleOrDefaultAsync(e => e.Id == exerciseId && e.Owner == profileResult.Value!.Id)
+            .SingleOrDefaultAsync(e => e.Id == exerciseId && e.Owner == profileResult.Value.Id)
         ;
 
         if (exercise is null)
@@ -77,7 +87,7 @@ public class ExerciseDetailService
                 Error.NotFound("Your workout could not be found")
             );
 
-        if (exercise?.IsPublic != true && exercise?.Owner != profileResult.Value!.Id)
+        if (exercise?.IsPublic != true && exercise?.Owner != profileResult.Value.Id)
             return new Result<ExerciseDetail>(
                 Error.Unauthorized("You dont have access to this workout")
             );
@@ -121,7 +131,7 @@ public class ExerciseDetailService
                 Error.NotFound("Your workout could not be found")
             );
 
-        if (existingExercise.Owner != profileResult.Value!.Id)
+        if (existingExercise.Owner != profileResult.Value.Id)
             return new Result<ExerciseDetail>(
                 Error.Unauthorized("You are not allowed to update this exercise")
             );
@@ -149,7 +159,7 @@ public class ExerciseDetailService
                 Error.NotFound("Your workout could not be found")
             );
 
-        if (exercise.Owner != profileResult.Value!.Id)
+        if (exercise.Owner != profileResult.Value.Id)
             return new Result<ExerciseDetail>(
                 Error.Unauthorized("You are not allowed to update this exercise")
             );

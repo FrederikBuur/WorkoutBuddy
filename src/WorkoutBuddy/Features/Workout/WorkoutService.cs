@@ -1,6 +1,5 @@
-using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WorkoutBuddy.Features.ErrorHandling;
+using WorkoutBuddy.Util.ErrorHandling;
 
 namespace WorkoutBuddy.Features;
 
@@ -26,7 +25,7 @@ public class WorkoutService
             return new Result<IEnumerable<Workout>>(profileResult.Error!);
 
         var workouts = await _dataContext.Workouts
-            .Where(w => w.ProfileId == profileResult.Value!.Id)
+            .Where(w => w.ProfileId == profileResult.Value.Id)
             .ToListAsync();
         return workouts.Select(w => w).ToList();
     }
@@ -39,7 +38,7 @@ public class WorkoutService
 
 
         var workout = await _dataContext.Workouts
-            .SingleOrDefaultAsync(w => w.ProfileId == profileResult.Value!.Id && w.Id == id);
+            .SingleOrDefaultAsync(w => w.ProfileId == profileResult.Value.Id && w.Id == id);
 
         if (workout is null)
             return new Result<Workout>(
@@ -55,7 +54,7 @@ public class WorkoutService
         if (profileResult.IsFaulted)
             return new Result<Workout>(profileResult.Error!);
 
-        var workout = await _dataContext.Workouts.SingleOrDefaultAsync(w => w.Id == workoutId && w.ProfileId == profileResult.Value!.Id);
+        var workout = await _dataContext.Workouts.SingleOrDefaultAsync(w => w.Id == workoutId && w.ProfileId == profileResult.Value.Id);
         if (workout is null)
             return new Result<Workout>(
                 Error.NotFound("Your workout detail could not be found")

@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace WorkoutBuddy.Features;
+namespace WorkoutBuddy.Util;
 
 public class CustomControllerBase : ControllerBase
 {
+    [Obsolete("Use 'Result<T>.ToActionResult()' instead")]
     public ObjectResult GetDataOrError<T, R>(Result<T> result, Func<T, R> resolveResponse)
     {
         return result.Match(

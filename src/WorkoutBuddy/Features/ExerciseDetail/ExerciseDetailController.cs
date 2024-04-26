@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutBuddy.Data.Model;
+using WorkoutBuddy.Util;
 
 namespace WorkoutBuddy.Features;
 
@@ -18,15 +18,24 @@ public partial class ExerciseDetailController : CustomControllerBase
         _exerciseService = exerciseService;
     }
     [HttpGet]
-    public async Task<ActionResult<List<ExerciseDetailResponse>>> GetExercises(
+    public async Task<ActionResult<GetExercisesResponse>> GetExercises(
         [FromQuery] VisibilityFilter visibilityFilter = VisibilityFilter.OWNED,
         [FromQuery] MuscleGroupType? muscleGroupType = null,
         [FromQuery] string? searchQuery = null,
-        [FromQuery] int pageNumber = 0,
-        [FromQuery] int pageSize = 10
+        [FromQuery][Range(1, int.MaxValue)] int pageNumber = 1,
+        [FromQuery][Range(1, int.MaxValue)] int pageSize = 10
     )
     {
-        var exercises = await _exerciseService.GetExercisesAsync(
+        var validationList = new List<(bool, string)> {
+             (pageNumber < 1, "Page number cannot be lower that 1"),
+             (pageSize < 1, "Page size cannot be lower that 1")
+             };
+        if (validationList.ContainsValidationErrors(out var badRequestObjectResult))
+        {
+            return badRequestObjectResult;
+        }
+
+        var paginatedExercises = await _exerciseService.GetExercisesAsync(
             visibilityFilter,
             muscleGroupType,
             searchQuery,
@@ -34,12 +43,7 @@ public partial class ExerciseDetailController : CustomControllerBase
             pageSize
         );
 
-        return GetDataOrError(
-            exercises,
-            (e) => e.Select((ed) => new ExerciseDetailResponse(ed))
-        );
-
-        // ERROR handling: https://www.youtube.com/watch?v=YBK93gkGRj8&ab_channel=MilanJovanovi%C4%87
+        return paginatedExercises.ToActionResult(p => new GetExercisesResponse(p));
     }
 
     [HttpGet("{id}")]
@@ -47,10 +51,7 @@ public partial class ExerciseDetailController : CustomControllerBase
     {
         var exercise = await _exerciseService.GetExerciseAsync(id);
 
-        return GetDataOrError(
-            exercise,
-            (ed) => new ExerciseDetailResponse(ed)
-        );
+        return exercise.ToActionResult(e => new ExerciseDetailResponse(e));
     }
 
     [HttpPost]
@@ -60,10 +61,11 @@ public partial class ExerciseDetailController : CustomControllerBase
     {
         var exercise = await _exerciseService.CreateExerciseAsync(createExerciseRequest);
 
-        return GetDataOrError(
-            result: exercise,
-            resolveResponse: (ed) => new ExerciseDetailResponse(ed)
-        );
+        // return GetDataOrError(
+        //     result: exercise,
+        //     resolveResponse: (ed) => new ExerciseDetailResponse(ed)
+        // );
+        return exercise.ToActionResult(ed => new ExerciseDetailResponse(ed));
     }
 
     [HttpPut]

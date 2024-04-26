@@ -1,6 +1,5 @@
-﻿using System.Net;
-using WorkoutBuddy.Data.Model;
-using WorkoutBuddy.Features.ErrorHandling;
+﻿using WorkoutBuddy.Data.Model;
+using WorkoutBuddy.Util.ErrorHandling;
 using WorkoutBuddy.Services;
 
 namespace WorkoutBuddy.Features;

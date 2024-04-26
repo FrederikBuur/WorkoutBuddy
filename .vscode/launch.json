@@ -12,11 +12,11 @@
       "console": "integratedTerminal",
       "stopAtEntry": false,
       // open swagger on launch:
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-        "uriFormat": "%s/swagger"
-      },
+      // "serverReadyAction": {
+      //   "action": "openExternally",
+      //   "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+      //   "uriFormat": "%s/swagger"
+      // },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WorkoutBuddy.Data.Model;
-using WorkoutBuddy.Features.ErrorHandling;
+using WorkoutBuddy.Util.ErrorHandling;
 
 namespace WorkoutBuddy.Features;
 
@@ -39,8 +39,8 @@ public class WorkoutDetailService
         #region predicates
         Expression<Func<WorkoutDetail, bool>> visibilityPredicate = (e) =>
             (visibilityFilter == VisibilityFilter.PUBLIC && e.IsPublic)
-            || visibilityFilter == VisibilityFilter.OWNED && e.Owner == profileResult.Value!.Id
-            || visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileResult.Value!.Id);
+            || visibilityFilter == VisibilityFilter.OWNED && e.Owner == profileResult.Value.Id
+            || visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileResult.Value.Id);
 
         Expression<Func<WorkoutDetail, bool>> searchQueryPredicate = (e) =>
             string.IsNullOrWhiteSpace(searchQuery)
@@ -65,14 +65,14 @@ public class WorkoutDetailService
             return new Result<WorkoutDetail>(profileResult.Error!);
 
         var workout = await _dataContext.WorkoutDetails
-            .SingleOrDefaultAsync(w => w.Id == workoutId && w.Owner == profileResult.Value!.Id);
+            .SingleOrDefaultAsync(w => w.Id == workoutId && w.Owner == profileResult.Value.Id);
 
         if (workout is null)
             return new Result<WorkoutDetail>(
                 Error.NotFound("Your workout could not be found")
             );
 
-        if (workout?.IsPublic != true && workout?.Owner != profileResult.Value!.Id)
+        if (workout?.IsPublic != true && workout?.Owner != profileResult.Value.Id)
             return new Result<WorkoutDetail>(
                 Error.Unauthorized("You dont have access to this workout")
             );
@@ -92,8 +92,8 @@ public class WorkoutDetailService
         // creates workout detail
         var workoutDetail = new WorkoutDetail(
             null,
-            profileResult.Value!.Id,
-            profileResult.Value!.Id,
+            profileResult.Value.Id,
+            profileResult.Value.Id,
             workoutRequest.Name,
             workoutRequest.Description,
             workoutRequest.IsPublic
@@ -130,7 +130,7 @@ public class WorkoutDetailService
         var existingWorkoutDetail = await _dataContext.WorkoutDetails.SingleOrDefaultAsync(w =>
             w.Id == workoutRequest.Id
             && w.Owner == workoutRequest.Owner
-            && w.Owner == profileResult.Value!.Id
+            && w.Owner == profileResult.Value.Id
         );
 
         if (existingWorkoutDetail is null)
@@ -153,7 +153,7 @@ public class WorkoutDetailService
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
-        var workout = await _dataContext.WorkoutDetails.SingleOrDefaultAsync(w => w.Id == workoutId && w.Owner == profileResult.Value!.Id);
+        var workout = await _dataContext.WorkoutDetails.SingleOrDefaultAsync(w => w.Id == workoutId && w.Owner == profileResult.Value.Id);
         if (workout is null)
             return new Result<WorkoutDetail>(
                 Error.NotFound("Your workout could not be found")

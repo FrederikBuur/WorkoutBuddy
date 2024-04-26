@@ -1,8 +1,8 @@
 using System.Net;
 
-namespace WorkoutBuddy.Features.ErrorHandling;
+namespace WorkoutBuddy.Util.ErrorHandling;
 
-public record Error
+public sealed record Error
 {
     private Error(string name, string description, int statusCode)
     {
@@ -26,4 +26,7 @@ public record Error
 
     public static Error Conflict(string description) =>
         new("Conflict", description, StatusCodes.Status409Conflict);
+
+    public static Error InternalServerError(string description = "The server encountered an unexpected condition that prevented it from fulfilling the request") =>
+        new("Internal Server Error", description, StatusCodes.Status500InternalServerError);
 }
