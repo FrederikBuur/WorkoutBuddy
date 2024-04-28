@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutBuddy.Util;
@@ -18,7 +19,7 @@ public partial class ExerciseDetailController : CustomControllerBase
         _exerciseService = exerciseService;
     }
     [HttpGet]
-    public async Task<ActionResult<GetExercisesResponse>> GetExercises(
+    public async Task<ActionResult<ExerciseDetailsResponse>> GetExercises(
         [FromQuery] VisibilityFilter visibilityFilter = VisibilityFilter.OWNED,
         [FromQuery] MuscleGroupType? muscleGroupType = null,
         [FromQuery] string? searchQuery = null,
@@ -32,7 +33,7 @@ public partial class ExerciseDetailController : CustomControllerBase
              };
         if (validationList.ContainsValidationErrors(out var badRequestObjectResult))
         {
-            return badRequestObjectResult;
+            return badRequestObjectResult ?? new ObjectResult(default) { StatusCode = StatusCodes.Status500InternalServerError };
         }
 
         var paginatedExercises = await _exerciseService.GetExercisesAsync(
@@ -43,7 +44,7 @@ public partial class ExerciseDetailController : CustomControllerBase
             pageSize
         );
 
-        return paginatedExercises.ToActionResult(p => new GetExercisesResponse(p));
+        return paginatedExercises.ToActionResult(p => new ExerciseDetailsResponse(p));
     }
 
     [HttpGet("{id}")]
@@ -61,10 +62,6 @@ public partial class ExerciseDetailController : CustomControllerBase
     {
         var exercise = await _exerciseService.CreateExerciseAsync(createExerciseRequest);
 
-        // return GetDataOrError(
-        //     result: exercise,
-        //     resolveResponse: (ed) => new ExerciseDetailResponse(ed)
-        // );
         return exercise.ToActionResult(ed => new ExerciseDetailResponse(ed));
     }
 
@@ -75,10 +72,8 @@ public partial class ExerciseDetailController : CustomControllerBase
     {
         var updatedExercise = await _exerciseService.UpdateExerciseAsync(exercise);
 
-        return GetDataOrError(
-            updatedExercise,
-            (ed) => new ExerciseDetailResponse(ed)
-        );
+
+        return updatedExercise.ToActionResult(ed => new ExerciseDetailResponse(ed));
     }
 
     [HttpDelete("{id}")]
@@ -87,9 +82,6 @@ public partial class ExerciseDetailController : CustomControllerBase
     {
         var deletedExercise = await _exerciseService.DeleteExerciseAsync(exerciseId);
 
-        return GetDataOrError(
-            deletedExercise,
-            (ed) => new ExerciseDetailResponse(ed)
-        );
+        return deletedExercise.ToActionResult(ed => new ExerciseDetailResponse(ed));
     }
 }

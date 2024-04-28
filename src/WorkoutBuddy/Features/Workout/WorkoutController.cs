@@ -26,10 +26,7 @@ public class WorkoutController : CustomControllerBase
     {
         var workoutsResult = await _workoutService.GetWorkoutsForProfile();
 
-        return GetDataOrError(
-            result: workoutsResult,
-            resolveResponse: (w) => w.Select(e => new WorkoutResponse(e))
-        );
+        return workoutsResult.ToActionResult((w) => w.Select(i => new WorkoutResponse(i)));
     }
 
     [HttpGet("{id}")]
@@ -37,10 +34,7 @@ public class WorkoutController : CustomControllerBase
     {
         var workoutResult = await _workoutService.GetWorkoutById(workoutId);
 
-        return GetDataOrError(
-            result: workoutResult,
-            resolveResponse: (w) => new WorkoutResponse(w)
-        );
+        return workoutResult.ToActionResult((w) => new WorkoutResponse(w));
     }
 
     // delete workout by id 
@@ -49,10 +43,7 @@ public class WorkoutController : CustomControllerBase
     {
         var workoutResult = await _workoutService.DeleteWorkout(workoutId);
 
-        return GetDataOrError(
-            result: workoutResult,
-            resolveResponse: (w) => new WorkoutResponse(w)
-        );
+        return workoutResult.ToActionResult((w) => new WorkoutResponse(w));
     }
 
     // create workoutset by workout id

@@ -22,19 +22,21 @@ public class WorkoutDetailController : CustomControllerBase
     }
 
     [HttpGet()]
-    public async Task<ActionResult<IEnumerable<WorkoutDetailResponse>>> GetWorkoutDetails(
+    public async Task<ActionResult<GetWorkoutDetailsResponse>> GetWorkoutDetails(
         [FromQuery] VisibilityFilter visibilityFilter = VisibilityFilter.OWNED,
         [FromQuery] string? searchQuery = null,
         [FromQuery] int pageNumber = 0,
         [FromQuery] int pageSize = 10
     )
     {
-        var workoutDetailsResult = await _workoutDetailService.SearchWorkoutDetails(visibilityFilter, searchQuery, pageNumber, pageSize);
-
-        return GetDataOrError(
-            result: workoutDetailsResult,
-            resolveResponse: (wd) => wd.Select(e => new WorkoutDetailResponse(e))
+        var paignatedWorkoutDetialsResult = await _workoutDetailService.SearchWorkoutDetails(
+            visibilityFilter,
+            searchQuery,
+            pageNumber,
+            pageSize
         );
+
+        return paignatedWorkoutDetialsResult.ToActionResult(p => new GetWorkoutDetailsResponse(p));
     }
 
     [HttpGet("{id}")]
@@ -44,10 +46,7 @@ public class WorkoutDetailController : CustomControllerBase
     {
         var workoutDetailResult = await _workoutDetailService.GetWorkoutDetailById(id);
 
-        return GetDataOrError(
-            result: workoutDetailResult,
-            resolveResponse: (wd) => new WorkoutDetailResponse(wd)
-            );
+        return workoutDetailResult.ToActionResult((wd) => new WorkoutDetailResponse(wd));
     }
 
     [HttpPost]
@@ -57,10 +56,7 @@ public class WorkoutDetailController : CustomControllerBase
     {
         var workoutDetailResult = await _workoutDetailService.CreateWorkoutDetail(createWorkoutRequest);
 
-        return GetDataOrError(
-            result: workoutDetailResult,
-            resolveResponse: (wd) => new WorkoutDetailResponse(wd)
-            );
+        return workoutDetailResult.ToActionResult((wd) => new WorkoutDetailResponse(wd));
     }
 
     [HttpPut]
@@ -70,10 +66,7 @@ public class WorkoutDetailController : CustomControllerBase
     {
         var workoutDetailResult = await _workoutDetailService.UpdateWorkoutDetail(workout);
 
-        return GetDataOrError(
-            result: workoutDetailResult,
-            resolveResponse: (wd) => new WorkoutDetailResponse(wd)
-            );
+        return workoutDetailResult.ToActionResult((wd) => new WorkoutDetailResponse(wd));
     }
 
     [HttpDelete("{id}")]
@@ -83,11 +76,8 @@ public class WorkoutDetailController : CustomControllerBase
     {
         var workoutDetailResult = await _workoutDetailService.DeleteWorkoutDetail(workoutDetailId);
 
-        return GetDataOrError(
-            result: workoutDetailResult,
-            resolveResponse: (wd) => new WorkoutDetailResponse(wd)
-            );
+        return workoutDetailResult.ToActionResult((wd) => new WorkoutDetailResponse(wd));
     }
 
-    // dublicate workout
+    // dublicate workout if nesccesary
 }

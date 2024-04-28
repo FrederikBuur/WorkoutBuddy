@@ -35,7 +35,7 @@ public static class ControllerExtensions
                 );
     }
 
-    public static bool ContainsValidationErrors(this List<(bool contidion, string description)> errorContidions, out BadRequestObjectResult badRequestObjectResult)
+    public static bool ContainsValidationErrors(this List<(bool contidion, string description)> errorContidions, out BadRequestObjectResult? badRequestObjectResult)
     {
         var errors = errorContidions.Where(ec => ec.contidion)
         .Select(ec => ec.description).ToList();
@@ -47,7 +47,7 @@ public static class ControllerExtensions
         }
         else
         {
-            badRequestObjectResult = new BadRequestObjectResult(default!);
+            badRequestObjectResult = null;
             return false;
         }
 

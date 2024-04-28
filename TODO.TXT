@@ -1,25 +1,19 @@
 Todo list:
 
-
-- add page model to responses
-    - workouts
 - tilføj flere endpoints
     - lav workout
         service
         controller
-        exctension
-    - lav exercise
-        service
-        controller
-        exctension
+        extension
     - lav workoutset
         service
         controller
-        exctension
+        extension
     - lav exerciseset
         service
         controller
-        exctension
+        extension
+- add auth/firebase service 
 - add sql to bicep + remove cosmos
 - add index values
 - integrer noget AI
@@ -30,7 +24,7 @@ Todo list:
 - setup healthcheck 
     - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
 - tilføj mere seed data
-    - en ny profil (min egen) + exercises
+    - en ny profil (min egen) + exercises + en rigtig master profil som er creater til alt seed data
     - flere exercises
     - flere workouts
 

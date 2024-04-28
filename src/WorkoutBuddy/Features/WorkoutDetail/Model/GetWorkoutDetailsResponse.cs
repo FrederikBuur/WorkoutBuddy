@@ -4,20 +4,20 @@ using WorkoutBuddy.Util;
 
 namespace WorkoutBuddy.Features;
 
-public record GetExercisesResponse(
+public record GetWorkoutDetailsResponse(
     int totalPages,
     int CurrentPage,
     int TotalItems,
     bool lastPage,
-    List<ExerciseDetailResponse> items
+    List<WorkoutDetailResponse> items
 )
 {
-    public GetExercisesResponse(Paginated<ExerciseDetail> p) : this(
+    public GetWorkoutDetailsResponse(Paginated<WorkoutDetail> p) : this(
         p.TotalPages,
         p.CurrentPage,
         p.TotalItems,
         p.LastPage,
-        p.Items.Select(i => new ExerciseDetailResponse(i)).ToList()
+        p.Items.Select(i => new WorkoutDetailResponse(i)).ToList()
     )
     { }
 }

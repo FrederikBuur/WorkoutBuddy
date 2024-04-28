@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WorkoutBuddy.Data.Model;
+using WorkoutBuddy.Util;
 using WorkoutBuddy.Util.ErrorHandling;
 
 namespace WorkoutBuddy.Features;
@@ -26,7 +27,7 @@ public class WorkoutDetailService
         _exerciseDetailService = exerciseDetailService;
     }
 
-    public async Task<Result<IEnumerable<WorkoutDetail>>> SearchWorkoutDetails(
+    public async Task<Result<Paginated<WorkoutDetail>>> SearchWorkoutDetails(
         VisibilityFilter visibilityFilter,
         string? searchQuery,
         int pageNumber,
@@ -34,28 +35,41 @@ public class WorkoutDetailService
     {
         var profileResult = _profileService.GetProfileResult();
         if (profileResult.IsFaulted)
-            return new Result<IEnumerable<WorkoutDetail>>(profileResult.Error!);
+            return new Result<Paginated<WorkoutDetail>>(profileResult.Error!);
 
         #region predicates
         Expression<Func<WorkoutDetail, bool>> visibilityPredicate = (e) =>
-            (visibilityFilter == VisibilityFilter.PUBLIC && e.IsPublic)
-            || visibilityFilter == VisibilityFilter.OWNED && e.Owner == profileResult.Value.Id
-            || visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileResult.Value.Id);
+            (visibilityFilter == VisibilityFilter.PUBLIC && e.IsPublic) ||
+            visibilityFilter == VisibilityFilter.OWNED && e.Owner == profileResult.Value.Id ||
+            visibilityFilter == VisibilityFilter.ALL && (e.IsPublic || e.Owner == profileResult.Value.Id);
 
         Expression<Func<WorkoutDetail, bool>> searchQueryPredicate = (e) =>
-            string.IsNullOrWhiteSpace(searchQuery)
-            || e.Name.ToLower().Contains(searchQuery!.ToLower() ?? "");
+            string.IsNullOrWhiteSpace(searchQuery) ||
+            e.Name.ToLower().Contains(searchQuery!.ToLower() ?? "");
 
         #endregion
 
-        var workouts = await _dataContext.WorkoutDetails
+        var filteredWorkoutDetails = _dataContext.WorkoutDetails
             .Include(wd => wd.Exercises)
             .Where(visibilityPredicate)
-            .Where(searchQueryPredicate)
-            .Skip(pageNumber * pageSize)
+            .Where(searchQueryPredicate);
+
+        var count = filteredWorkoutDetails.Count();
+        var totalPages = count / pageSize;
+        if (count % pageSize != 0) totalPages++;
+
+        var pagedWorkoutDetails = await filteredWorkoutDetails.Skip(Math.Max(0, pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
-        return workouts;
+
+        return new Paginated<WorkoutDetail>(
+            totalPages: totalPages,
+            currentPage: pageNumber,
+            pageSize: pageSize,
+            totalItems: count,
+            lastPage: totalPages == pageNumber,
+            items: pagedWorkoutDetails
+        );
     }
 
     public async Task<Result<WorkoutDetail>> GetWorkoutDetailById(Guid workoutId)

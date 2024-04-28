@@ -59,13 +59,14 @@ public class ExerciseDetailService
         var totalPages = count / pageSize;
         if (count % pageSize != 0) totalPages++;
 
-        var pagedExercises = await filteredExercises.Skip((pageNumber - 1) * pageSize)
+        var pagedExercises = await filteredExercises.Skip(Math.Max(0, pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
         return new Paginated<ExerciseDetail>(
             totalPages: totalPages,
             currentPage: pageNumber,
+            pageSize: pageSize,
             totalItems: count,
             lastPage: totalPages == pageNumber,
             items: pagedExercises
