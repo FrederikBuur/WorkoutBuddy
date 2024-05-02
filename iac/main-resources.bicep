@@ -6,7 +6,7 @@
 // parameters
 @description('The name of the environment being deployed to.')
 @allowed([
-  'test'
+  'staging'
   'prod'
 ])
 param deploymentEnvironment string
@@ -23,10 +23,14 @@ var storageAccountName = 'st${appName}${deploymentEnvironment}we'
 var containerName1 = 'test-container-1' 
 var containerName2 = 'another-container'
 var identityName = 'id-${appName}-${deploymentEnvironment}-we'
-var keyvaultName = 'kv-${appName}-${deploymentEnvironment}-we'
+var keyvaultName = 'kv-${appName}-${deploymentEnvironment == 'staging' ? 'sta' : deploymentEnvironment}-we' // must bee between 3-24
 var cosmosDbAccountName = 'cosdb-${appName}-${deploymentEnvironment}-we'
 var cosmosDbName = '${appName}-${deploymentEnvironment}'
+var sqlServerName = 'sql-server-${appName}-${deploymentEnvironment}-we'
+var sqlDbName = 'sql-db-${appName}-${deploymentEnvironment}-we'
 var webAppName = 'app-${appName}-${deploymentEnvironment}-we'
+
+var myAADId = 'a4d2de89-ed7b-4762-b315-6a8d3d0a7b8f' // id of me in AAD
 
 // resources
 module appInsights 'modules/app-insights.bicep' = {
@@ -59,7 +63,7 @@ module keyvault 'modules/keyvault.bicep' = {
     location: location
     accessPolicies: [
       {
-        objectId: 'a4d2de89-ed7b-4762-b315-6a8d3d0a7b8f' // id of me in AAD
+        objectId: myAADId
         keysPermissions: ['all']
         secretsPermissions: ['all']
         certificatesPermissions: ['all']
@@ -79,18 +83,30 @@ resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' 
   name: identityName
 }
 
-module cosmosDb 'modules/cosmos-db.bicep' = {
-  name: 'cosmosDb'
-  dependsOn: [
-    keyvault
-  ]
+// module cosmosDb 'modules/cosmos-db.bicep' = {
+//   name: 'cosmosDb'
+//   dependsOn: [
+//     keyvault
+//   ]
+//   params:{
+//     location: location
+//     cosmosDbAccountName: cosmosDbAccountName
+//     cosmosDbName: cosmosDbName
+//     deploymentEnvironment: deploymentEnvironment
+//     keyVaultName: keyvaultName
+//     managedIdentityId: identity.id
+//   }
+// }
+
+module sqlDb 'modules/sql-db.bicep' = {
+  name: 'sqlDb'
   params:{
+    sqlServerName: sqlServerName
+    sqlDbName: sqlDbName
     location: location
-    cosmosDbAccountName: cosmosDbAccountName
-    cosmosDbName: cosmosDbName
     deploymentEnvironment: deploymentEnvironment
-    keyVaultName: keyvaultName
     managedIdentityId: identity.id
+    myAADId: myAADId
   }
 }
 
@@ -111,7 +127,8 @@ module webApp 'modules/web-app.bicep' = {
       'KeyVault__Url': 'https://${keyvaultName}.vault.azure.net/'
       'Cosmos__DbName': cosmosDbName
       'Cosmos__Uri': 'https://${cosmosDbAccountName}.documents.azure.com:443/'
-      'ASPNETCORE_ENVIRONMENT': deploymentEnvironment == 'dev' ? 'Development' : deploymentEnvironment == 'prod' ? 'Production' : 'unsupported-env-${deploymentEnvironment}'
+      'ConnectionStrings__SQL': sqlDb.outputs.connectionString
+      'ASPNETCORE_ENVIRONMENT': deploymentEnvironment == 'staging' ? 'Staging' : deploymentEnvironment == 'prod' ? 'Production' : 'unsupported-env-${deploymentEnvironment}'
       'PUBLIC_SUPABASE_URL': 'https://iwejadjjejamlxztxsbs.supabase.co'
       'PUBLIC_SUPABASE_ANON_KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3ZWphZGpqZWphbWx4enR4c2JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzQ2Nzc5ODcsImV4cCI6MTk5MDI1Mzk4N30.aLqD7SEJqKz0nOL5Yvh_hKW-kqnm1DNT3TvP_y6uUo8'
     }

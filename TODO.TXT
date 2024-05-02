@@ -14,7 +14,7 @@ Todo list:
         controller
         extension
 - add auth/firebase service 
-- add sql to bicep + remove cosmos
+- add sql to bicep + remove cosmos // looks like free sql db is now available - https://learn.microsoft.com/en-us/azure/azure-sql/database/free-offer?view=azuresql
 - add index values
 - integrer noget AI
     - brug large language models - GBT-4 i azure    
