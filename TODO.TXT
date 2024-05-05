@@ -5,28 +5,19 @@ Todo list:
         service
         controller
         extension
-    - lav workoutset
-        service
-        controller
-        extension
-    - lav exerciseset
+    - lav workoutlog/exerciselog
         service
         controller
         extension
 - add auth/firebase service 
-- add sql to bicep + remove cosmos // looks like free sql db is now available - https://learn.microsoft.com/en-us/azure/azure-sql/database/free-offer?view=azuresql
-- add index values
+- add index values (compare request times)
 - integrer noget AI
-    - brug large language models - GBT-4 i azure    
-    - 
+    - brug large language models - GBT-4 i azure
 - write automated tests
-    - add logger and insights
+- add logger and insights
 - setup healthcheck 
     - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
 - tilføj mere seed data
     - en ny profil (min egen) + exercises + en rigtig master profil som er creater til alt seed data
     - flere exercises
     - flere workouts
-
-  
-  ERROR handling: https://www.youtube.com/watch?v=YBK93gkGRj8&ab_channel=MilanJovanovi%C4%87

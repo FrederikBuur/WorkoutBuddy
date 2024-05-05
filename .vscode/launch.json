@@ -22,7 +22,7 @@
       }
     },
     {
-      "name": "Initialise DB",
+      "name": "Init and seed DB",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",

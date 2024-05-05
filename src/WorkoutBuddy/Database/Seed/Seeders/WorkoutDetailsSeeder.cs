@@ -35,12 +35,14 @@ public static class WorkoutDetailsSeeder
 
                 if (existingWorkout is null)
                 {
-                    created = await CreateWorkoutAndRelations(context, created, seedingWorkout);
+                    await CreateWorkoutAndRelations(context, seedingWorkout);
+                    created++;
                 }
                 else if (!existingWorkout.Equals(seedingWorkout)
                     || !Enumerable.SequenceEqual(existingWorkout.Exercises.Select(w => w.Id), seedingWorkout.Exercises.Select(w => w.Id)))
                 {
-                    updated = await UpdateWorkoutAndRelations(context, updated, seedingWorkout, existingWorkout);
+                    await UpdateWorkoutAndRelations(context, seedingWorkout, existingWorkout);
+                    updated++;
                 }
                 else
                 {
@@ -58,7 +60,7 @@ public static class WorkoutDetailsSeeder
         Console.WriteLine($"Result of {nameof(WorkoutDetailsSeeder)}. Created: {created}, Updated: {updated}, Skipped: {skipped}, Failed: {failed}, Total: {total}");
     }
 
-    private static async Task<int> CreateWorkoutAndRelations(DataContext context, int created, WorkoutDetail seedingWorkout)
+    private static async Task CreateWorkoutAndRelations(DataContext context, WorkoutDetail seedingWorkout)
     {
         // add relation between workout detail and exercise detail
         var updatedExercises = new List<ExerciseDetail>();
@@ -74,10 +76,9 @@ public static class WorkoutDetailsSeeder
         context.WorkoutDetails.Add(seedingWorkout);
 
         Console.WriteLine($"Adding Workout: {seedingWorkout.Name}");
-        return created++;
     }
 
-    private static async Task<int> UpdateWorkoutAndRelations(DataContext context, int updated, WorkoutDetail seedingWorkout, WorkoutDetail existingWorkout)
+    private static async Task UpdateWorkoutAndRelations(DataContext context, WorkoutDetail seedingWorkout, WorkoutDetail existingWorkout)
     {
         if (!existingWorkout.Equals(seedingWorkout))
         {
@@ -98,6 +99,5 @@ public static class WorkoutDetailsSeeder
 
         context.WorkoutDetails.Update(existingWorkout);
         Console.WriteLine($"Update Workout: {existingWorkout.Name}");
-        return updated++;
     }
 }

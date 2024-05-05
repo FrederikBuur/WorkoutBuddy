@@ -24,8 +24,7 @@ public class DataContext : DbContext
         // Profile
         modelBuilder.Entity<Profile>(entity =>
         {
-            entity.ToTable("Profiles")
-            .HasKey(p => p.Id);
+            entity.HasKey(p => p.Id);
 
             entity.HasIndex(p => p.UserId);
         });
@@ -33,15 +32,13 @@ public class DataContext : DbContext
         // Exercise Detail
         modelBuilder.Entity<ExerciseDetail>(entity =>
         {
-            entity.ToTable("ExerciseDetails")
-            .HasKey(ed => ed.Id);
+            entity.HasKey(ed => ed.Id);
         });
 
         // Workout Detail
         modelBuilder.Entity<WorkoutDetail>(entity =>
         {
-            entity.ToTable("WorkoutDetails")
-            .HasKey(wd => wd.Id);
+            entity.HasKey(wd => wd.Id);
 
             entity.HasMany(w => w.Exercises)
             .WithMany()
@@ -52,8 +49,7 @@ public class DataContext : DbContext
         // Workout
         modelBuilder.Entity<Workout>(entity =>
         {
-            entity.ToTable("Workouts")
-            .HasKey(w => w.Id);
+            entity.HasKey(w => w.Id);
 
             entity.HasOne(w => w.Profile)
             .WithOne()
@@ -62,6 +58,49 @@ public class DataContext : DbContext
             entity.HasOne(w => w.WorkoutDetail)
             .WithOne()
             .HasForeignKey<Workout>(w => w.WorkoutDetailId);
+
+            entity.HasMany(w => w.WorkoutLog)
+            .WithOne();
+        });
+
+        // WorkoutLog
+        modelBuilder.Entity<WorkoutLog>(entity =>
+        {
+            entity.HasKey(wl => wl.Id);
+
+            entity.HasOne(wl => wl.Workout)
+                .WithMany()
+                .HasForeignKey(wl => wl.WorkoutId);
+
+            entity.HasMany(wl => wl.ExerciseLog)
+            .WithOne();
+        });
+
+        // ExercuseLog
+        modelBuilder.Entity<ExerciseLog>(entity =>
+        {
+            entity.HasKey(el => el.Id);
+
+            entity.HasOne(el => el.WorkoutLog)
+            .WithMany()
+            .HasForeignKey(el => el.WorkoutLogId);
+
+            entity.HasOne(el => el.ExerciseDetail)
+            .WithMany()
+            .HasForeignKey(el => el.ExerciseDetailId);
+
+            entity.HasMany(el => el.ExerciseSets)
+            .WithOne(es => es.ExerciseLog);
+        });
+
+        // ExerciseSet
+        modelBuilder.Entity<ExerciseSet>(entity =>
+        {
+            entity.HasKey(es => es.Id);
+
+            entity.HasOne(es => es.ExerciseLog)
+            .WithMany()
+            .HasForeignKey(es => es.ExerciseLogId);
         });
     }
 
