@@ -9,7 +9,7 @@ public class ExerciseLog : IEntityBase
     public WorkoutLog? WorkoutLog { get; set; }
     public Guid ExerciseDetailId { get; set; }
     public ExerciseDetail? ExerciseDetail { get; set; }
-    public ICollection<ExerciseSet> ExerciseSets { get; set; } = new List<ExerciseSet>();
+    public ICollection<ExerciseSet>? ExerciseSets { get; set; }
 
     // EF Core needs empty constructor
     public ExerciseLog() { }

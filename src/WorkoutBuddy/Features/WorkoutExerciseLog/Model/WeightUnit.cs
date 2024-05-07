@@ -1,4 +1,4 @@
-namespace WorkoutBuddy.Data;
+namespace WorkoutBuddy.Features;
 
 public enum WeightUnit
 {

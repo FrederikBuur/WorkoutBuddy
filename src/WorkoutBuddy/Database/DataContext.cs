@@ -52,15 +52,15 @@ public class DataContext : DbContext
             entity.HasKey(w => w.Id);
 
             entity.HasOne(w => w.Profile)
-            .WithOne()
-            .HasForeignKey<Workout>(w => w.ProfileId);
+                .WithMany()
+                .HasForeignKey(w => w.ProfileId);
 
             entity.HasOne(w => w.WorkoutDetail)
-            .WithOne()
-            .HasForeignKey<Workout>(w => w.WorkoutDetailId);
+                .WithMany()
+                .HasForeignKey(w => w.WorkoutDetailId);
 
-            entity.HasMany(w => w.WorkoutLog)
-            .WithOne();
+            entity.HasMany(w => w.WorkoutLogs)
+                .WithOne();
         });
 
         // WorkoutLog

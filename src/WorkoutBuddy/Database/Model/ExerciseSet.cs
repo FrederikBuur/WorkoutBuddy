@@ -1,4 +1,5 @@
 using WorkoutBuddy.Data.Model;
+using WorkoutBuddy.Features;
 
 namespace WorkoutBuddy.Data;
 

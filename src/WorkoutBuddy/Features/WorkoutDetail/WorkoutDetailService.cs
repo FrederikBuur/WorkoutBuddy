@@ -83,7 +83,7 @@ public class WorkoutDetailService
 
         if (workout is null)
             return new Result<WorkoutDetail>(
-                Error.NotFound("Your workout could not be found")
+                Error.NotFound("Your workout detail could not be found")
             );
 
         if (workout?.IsPublic != true && workout?.Owner != profileResult.Value.Id)
@@ -149,7 +149,7 @@ public class WorkoutDetailService
 
         if (existingWorkoutDetail is null)
             return new Result<WorkoutDetail>(
-                Error.NotFound("Your workout could not be found")
+                Error.NotFound("Your workout detail could not be found")
             );
 
         existingWorkoutDetail.Name = workoutRequest.Name;
@@ -170,7 +170,7 @@ public class WorkoutDetailService
         var workout = await _dataContext.WorkoutDetails.SingleOrDefaultAsync(w => w.Id == workoutId && w.Owner == profileResult.Value.Id);
         if (workout is null)
             return new Result<WorkoutDetail>(
-                Error.NotFound("Your workout could not be found")
+                Error.NotFound("Your workout detail could not be found")
             );
 
         _dataContext.Remove(workout);

@@ -2,7 +2,6 @@ global using WorkoutBuddy.Data;
 using WorkoutBuddy.Services;
 using WorkoutBuddy.Features;
 using WorkoutBuddy.Util;
-using Microsoft.AspNetCore.Mvc;
 using WorkoutBuddy.Util.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);

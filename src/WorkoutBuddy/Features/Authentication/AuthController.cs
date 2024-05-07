@@ -3,6 +3,7 @@ using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkoutBuddy.Features;
+using WorkoutBuddy.Util;
 
 namespace WorkoutBuddy.Authentication;
 
@@ -39,13 +40,10 @@ public class AuthController : Controller
     }
 
     [HttpPost("login/email-password")]
-    public async Task<ActionResult> LoginWithEmailPassword([FromBody][Required] LoginInfo loginInfo)
+    public async Task<ActionResult<AuthToken?>> LoginWithEmailPassword([FromBody][Required] LoginInfo loginInfo)
     {
-        var token = await _googleJwtProvider.GetForCredentialsAsync(loginInfo.Username, loginInfo.Password);
+        var tokenResult = await _googleJwtProvider.GetForCredentialsAsync(loginInfo.Username, loginInfo.Password);
 
-        if (token is null)
-            return BadRequest("Getting token failed");
-
-        return Ok(token);
+        return tokenResult.ToActionResult((t) => t);
     }
 }

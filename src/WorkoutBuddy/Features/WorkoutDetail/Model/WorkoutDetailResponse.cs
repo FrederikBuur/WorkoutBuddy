@@ -9,7 +9,7 @@ public record WorkoutDetailResponse(
     string Name,
     string? Description,
     bool IsPublic,
-    IEnumerable<ExerciseDetailResponse> Exercises
+    IEnumerable<ExerciseDetailResponse>? Exercises
 )
 {
     public WorkoutDetailResponse(WorkoutDetail wd) : this(
@@ -19,7 +19,7 @@ public record WorkoutDetailResponse(
         wd.Name,
         wd.Description,
         wd.IsPublic,
-        wd.Exercises.Select(e => new ExerciseDetailResponse(e))
+        wd.Exercises?.Select(e => new ExerciseDetailResponse(e))
     )
     { }
 };

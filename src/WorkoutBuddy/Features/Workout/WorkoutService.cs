@@ -8,14 +8,17 @@ public class WorkoutService
     private readonly ILogger<WorkoutService> _logger;
     private readonly DataContext _dataContext;
     private readonly ProfileService _profileService;
+    private readonly WorkoutDetailService _workoutDetailService;
 
     public WorkoutService(ILogger<WorkoutService> logger,
     DataContext dataContext,
-    ProfileService profileService)
+    ProfileService profileService,
+    WorkoutDetailService workoutDetailService)
     {
         _logger = logger;
         _dataContext = dataContext;
         _profileService = profileService;
+        _workoutDetailService = workoutDetailService;
     }
 
     public async Task<Result<IEnumerable<Workout>>> GetWorkoutsForProfile()
@@ -27,8 +30,10 @@ public class WorkoutService
         var workouts = await _dataContext.Workouts
             .Where(w => w.ProfileId == profileResult.Value.Id)
             .ToListAsync();
-        return workouts.Select(w => w).ToList();
+
+        return workouts;
     }
+
 
     public async Task<Result<Workout>> GetWorkoutById(Guid id)
     {
@@ -36,16 +41,60 @@ public class WorkoutService
         if (profileResult.IsFaulted)
             return new Result<Workout>(profileResult.Error!);
 
-
         var workout = await _dataContext.Workouts
+            .Include(w => w.WorkoutDetail!)
+            .Include(w => w.WorkoutLogs!)
+            .ThenInclude(wl => wl.ExerciseLog!)
+            .ThenInclude(el => el.ExerciseSets!)
             .SingleOrDefaultAsync(w => w.ProfileId == profileResult.Value.Id && w.Id == id);
 
         if (workout is null)
-            return new Result<Workout>(
-                Error.NotFound("Your workout could not be found")
-                );
+            return new Result<Workout>(Error.NotFound("Your workout could not be found"));
 
         return workout;
+    }
+
+    public async Task<Result<Workout>> CreateWorkout(CreateWorkoutRequest createWorkoutRequest)
+    {
+        var profileResult = _profileService.GetProfileResult();
+        if (profileResult.IsFaulted)
+            return new Result<Workout>(profileResult.Error);
+
+        var workoutDetailResult = await _workoutDetailService.GetWorkoutDetailById(createWorkoutRequest.WorkoutDetailId);
+        if (workoutDetailResult.IsFaulted)
+        {
+            return new Result<Workout>(workoutDetailResult.Error);
+        }
+
+        if (workoutDetailResult.Value.Owner != profileResult.Value.Id
+            && !workoutDetailResult.Value.IsPublic)
+        {
+            return new Result<Workout>(Error.BadRequest(
+                $"Workout detail: ${createWorkoutRequest.WorkoutDetailId}, could not be found or missing access"));
+        }
+
+        var workout = new Workout(
+            id: Guid.NewGuid(),
+            name: createWorkoutRequest.Name,
+            lastPerformed: null,
+            count: 0
+        )
+        {
+            Profile = profileResult.Value,
+            WorkoutDetail = workoutDetailResult.Value
+        };
+
+        var createdWorkout = await _dataContext.Workouts.AddAsync(workout);
+        await _dataContext.SaveChangesAsync();
+
+        if (createdWorkout?.Entity is not null)
+        {
+            return new Result<Workout>(createdWorkout.Entity);
+        }
+        else
+        {
+            return new Result<Workout>(Error.InternalServerError());
+        }
     }
 
     public async Task<Result<Workout>> DeleteWorkout(Guid workoutId)
@@ -60,8 +109,9 @@ public class WorkoutService
                 Error.NotFound("Your workout detail could not be found")
             );
 
-        _dataContext.Remove(workout);
+        var res = _dataContext.Remove(workout);
         await _dataContext.SaveChangesAsync();
-        return workout;
+
+        return res.Entity;
     }
 }

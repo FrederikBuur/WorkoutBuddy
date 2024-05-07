@@ -39,7 +39,10 @@ public static class WorkoutDetailsSeeder
                     created++;
                 }
                 else if (!existingWorkout.Equals(seedingWorkout)
-                    || !Enumerable.SequenceEqual(existingWorkout.Exercises.Select(w => w.Id), seedingWorkout.Exercises.Select(w => w.Id)))
+                    || (
+                        existingWorkout.Exercises?.Any() == true &&
+                        seedingWorkout.Exercises?.Any() == true &&
+                        !Enumerable.SequenceEqual(existingWorkout.Exercises!.Select(w => w.Id), seedingWorkout.Exercises!.Select(w => w.Id))))
                 {
                     await UpdateWorkoutAndRelations(context, seedingWorkout, existingWorkout);
                     updated++;
@@ -64,7 +67,7 @@ public static class WorkoutDetailsSeeder
     {
         // add relation between workout detail and exercise detail
         var updatedExercises = new List<ExerciseDetail>();
-        foreach (var ed in seedingWorkout.Exercises)
+        foreach (var ed in seedingWorkout.Exercises ?? new List<ExerciseDetail>())
         {
             var existingExercise = await context.ExerciseDetails.FindAsync(ed.Id);
             if (existingExercise is not null) updatedExercises.Add(existingExercise);
@@ -85,7 +88,9 @@ public static class WorkoutDetailsSeeder
             context.Entry(existingWorkout).CurrentValues.SetValues(seedingWorkout);
         }
 
-        if (!Enumerable.SequenceEqual(existingWorkout.Exercises.Select(w => w.Id), seedingWorkout.Exercises.Select(w => w.Id)))
+        if (existingWorkout.Exercises?.Any() == true &&
+            seedingWorkout.Exercises?.Any() == true &&
+            !Enumerable.SequenceEqual(existingWorkout.Exercises!.Select(w => w.Id), seedingWorkout.Exercises!.Select(w => w.Id)))
         {
             var updatedExercises = new List<ExerciseDetail>();
             foreach (var ed in seedingWorkout.Exercises)

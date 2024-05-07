@@ -10,7 +10,7 @@ public class WorkoutDetail : IEntityBase
     public bool IsPublic { get; set; }
 
     // navigation properties
-    public ICollection<ExerciseDetail> Exercises { get; set; } = new List<ExerciseDetail>();
+    public ICollection<ExerciseDetail>? Exercises { get; set; }
 
     // EF Core needs empty constructor
     public WorkoutDetail() { }
