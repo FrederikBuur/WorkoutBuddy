@@ -14,6 +14,11 @@ public class ExerciseLog : IEntityBase
     // EF Core needs empty constructor
     public ExerciseLog() { }
 
+    public ExerciseLog(Guid? id)
+    {
+        Id = id ?? Guid.NewGuid();
+    }
+
     public ExerciseLog(Guid? id,
         Guid workoutLogId,
         Guid exerciseDetailId)

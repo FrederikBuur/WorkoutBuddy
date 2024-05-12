@@ -1,5 +1,6 @@
 Todo list:
 
+- create seeder for workout/workoutlog/exerciselog/exerciseset
 - add auth/firebase service 
     - register
     - refresh token

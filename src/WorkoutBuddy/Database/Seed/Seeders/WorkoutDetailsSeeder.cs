@@ -10,7 +10,7 @@ public static class WorkoutDetailsSeeder
     {
         Console.WriteLine("Seeding Workouts");
 
-        var json = await File.ReadAllTextAsync("Database/Seed/Json/workouts.json");
+        var json = await File.ReadAllTextAsync("Database/Seed/Json/workoutDetails.json");
         IEnumerable<WorkoutDetail> seedingWorkoutDetails = JsonSerializer.Deserialize<IEnumerable<WorkoutDetail>>(json)
             ?? throw new Exception("Failed to deserialize workouts.json");
 
