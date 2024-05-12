@@ -9,7 +9,7 @@ public class WorkoutLog : IEntityBase
     // navigation property
     public Guid WorkoutId { get; set; }
     public Workout? Workout { get; set; }
-    public ICollection<ExerciseLog>? ExerciseLog { get; set; }
+    public ICollection<ExerciseLog>? ExerciseLogs { get; set; }
 
     // EF Core needs empty constructor
     public WorkoutLog() { }

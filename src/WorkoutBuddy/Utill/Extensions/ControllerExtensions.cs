@@ -15,7 +15,7 @@ public static class ControllerExtensions
                         var res = new OkObjectResult(response);
                         if (response?.GetType() != typeof(R))
                         {
-                            throw new ArgumentException($"Return type \"${response?.GetType()}\" does not match return type \"${typeof(R)}\"");
+                            throw new ArgumentException($"Return type \"{response?.GetType()}\" does not match return type \"{typeof(R)}\"");
                         }
                         return res;
 

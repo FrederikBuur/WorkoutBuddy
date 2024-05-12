@@ -44,7 +44,7 @@ public class WorkoutService
         var workout = await _dataContext.Workouts
             .Include(w => w.WorkoutDetail!)
             .Include(w => w.WorkoutLogs!)
-            .ThenInclude(wl => wl.ExerciseLog!)
+            .ThenInclude(wl => wl.ExerciseLogs!)
             .ThenInclude(el => el.ExerciseSets!)
             .SingleOrDefaultAsync(w => w.ProfileId == profileResult.Value.Id && w.Id == id);
 
@@ -70,7 +70,7 @@ public class WorkoutService
             && !workoutDetailResult.Value.IsPublic)
         {
             return new Result<Workout>(Error.BadRequest(
-                $"Workout detail: ${createWorkoutRequest.WorkoutDetailId}, could not be found or missing access"));
+                $"Workout detail: {createWorkoutRequest.WorkoutDetailId}, could not be found or missing access"));
         }
 
         var workout = new Workout(
@@ -113,5 +113,20 @@ public class WorkoutService
         await _dataContext.SaveChangesAsync();
 
         return res.Entity;
+    }
+
+    public async Task<bool> UserHasAccessToWorkout(Guid workoutId, Guid? userId = null)
+    {
+        var profileResult = _profileService.GetProfileResult();
+        if (profileResult.IsFaulted)
+            return false;
+
+        var idToCheck = userId ?? profileResult.Value.Id;
+
+        var workout = await _dataContext.Workouts
+            .SingleOrDefaultAsync(w => w.Id == workoutId &&
+                w.ProfileId == profileResult.Value.Id);
+
+        return workout is not null;
     }
 }

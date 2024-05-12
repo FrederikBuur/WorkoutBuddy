@@ -1,16 +1,13 @@
 Todo list:
 
-- tilføj flere endpoints
-    - lav workout
-        service
-        controller
-        extension
-    - lav workoutlog/exerciselog
-        service
-        controller
-        extension
 - add auth/firebase service 
+    - register
+    - refresh token
+    - link accounts - facebook/google/user&pass login
 - add index values (compare request times)
+- integrer ef db update i build pipeline
+- lav middlewere der tilføjer profile info til httpcontext / inject profile info? er der en best practice?
+    - hvordan kan httpContext.user være sat automatisk?
 - integrer noget AI
     - brug large language models - GBT-4 i azure
 - write automated tests

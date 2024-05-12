@@ -40,9 +40,13 @@ public class AuthController : Controller
     }
 
     [HttpPost("login/email-password")]
-    public async Task<ActionResult<AuthToken?>> LoginWithEmailPassword([FromBody][Required] LoginInfo loginInfo)
+    public async Task<ActionResult<AuthToken?>> LoginWithEmailPassword(
+        [FromBody][Required] LoginInfo loginInfo
+        )
     {
-        var tokenResult = await _googleJwtProvider.GetForCredentialsAsync(loginInfo.Username, loginInfo.Password);
+        var tokenResult = await _googleJwtProvider.GetForCredentialsAsync(
+            loginInfo.Username,
+            loginInfo.Password);
 
         return tokenResult.ToActionResult((t) => t);
     }

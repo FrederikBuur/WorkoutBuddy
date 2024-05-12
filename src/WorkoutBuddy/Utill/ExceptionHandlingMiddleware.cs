@@ -23,7 +23,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, $"Exception occurred: ${exception.Message}");
+            _logger.LogError(exception, $"Exception occurred: {exception.Message}");
 
             var problemDetails = new ProblemDetails
             {

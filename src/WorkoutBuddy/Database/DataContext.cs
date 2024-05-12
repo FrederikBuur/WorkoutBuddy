@@ -18,6 +18,9 @@ public class DataContext : DbContext
     public DbSet<ExerciseDetail> ExerciseDetails => Set<ExerciseDetail>();
     public DbSet<WorkoutDetail> WorkoutDetails => Set<WorkoutDetail>();
     public DbSet<Workout> Workouts => Set<Workout>();
+    public DbSet<WorkoutLog> WorkoutLogs => Set<WorkoutLog>();
+    public DbSet<ExerciseLog> ExerciseLogs => Set<ExerciseLog>();
+    public DbSet<ExerciseSet> ExerciseSets => Set<ExerciseSet>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,7 +63,8 @@ public class DataContext : DbContext
                 .HasForeignKey(w => w.WorkoutDetailId);
 
             entity.HasMany(w => w.WorkoutLogs)
-                .WithOne();
+                .WithOne(wl => wl.Workout)
+                .HasForeignKey(wl => wl.WorkoutId);
         });
 
         // WorkoutLog
@@ -69,20 +73,21 @@ public class DataContext : DbContext
             entity.HasKey(wl => wl.Id);
 
             entity.HasOne(wl => wl.Workout)
-                .WithMany()
+                .WithMany(w => w.WorkoutLogs)
                 .HasForeignKey(wl => wl.WorkoutId);
 
-            entity.HasMany(wl => wl.ExerciseLog)
-            .WithOne();
+            entity.HasMany(wl => wl.ExerciseLogs)
+            .WithOne(el => el.WorkoutLog)
+            .HasForeignKey(el => el.WorkoutLogId);
         });
 
-        // ExercuseLog
+        // ExerciseLog
         modelBuilder.Entity<ExerciseLog>(entity =>
         {
             entity.HasKey(el => el.Id);
 
             entity.HasOne(el => el.WorkoutLog)
-            .WithMany()
+            .WithMany(wl => wl.ExerciseLogs)
             .HasForeignKey(el => el.WorkoutLogId);
 
             entity.HasOne(el => el.ExerciseDetail)

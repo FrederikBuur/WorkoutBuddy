@@ -22,7 +22,8 @@ builder.Services.AddScoped<UserService, UserService>()
     .AddScoped<ProfileService, ProfileService>()
     .AddScoped<WorkoutDetailService, WorkoutDetailService>()
     .AddScoped<ExerciseDetailService, ExerciseDetailService>()
-    .AddScoped<WorkoutService, WorkoutService>();
+    .AddScoped<WorkoutService, WorkoutService>()
+    .AddScoped<SessionService, SessionService>();
 
 // Setup http clients
 builder.Services.AddHttpClient<GoogleJwtProvider, GoogleJwtProvider>(httpClient =>

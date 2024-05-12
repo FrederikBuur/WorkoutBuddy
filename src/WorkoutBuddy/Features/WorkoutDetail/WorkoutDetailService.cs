@@ -14,17 +14,14 @@ public class WorkoutDetailService
     private readonly ILogger<WorkoutDetailService> _logger;
     private readonly DataContext _dataContext;
     private readonly ProfileService _profileService;
-    private readonly ExerciseDetailService _exerciseDetailService;
 
     public WorkoutDetailService(ILogger<WorkoutDetailService> logger,
     DataContext dataContext,
-    ProfileService profileService,
-    ExerciseDetailService exerciseDetailService)
+    ProfileService profileService)
     {
         _logger = logger;
         _dataContext = dataContext;
         _profileService = profileService;
-        _exerciseDetailService = exerciseDetailService;
     }
 
     public async Task<Result<Paginated<WorkoutDetail>>> SearchWorkoutDetails(
