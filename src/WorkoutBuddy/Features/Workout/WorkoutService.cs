@@ -27,7 +27,7 @@ public class WorkoutService
         if (profileResult.IsFaulted)
             return new Result<IEnumerable<Workout>>(profileResult.Error!);
 
-        var workouts = await _dataContext.Workouts
+        var workouts = await _dataContext.Workout
             .Where(w => w.ProfileId == profileResult.Value.Id)
             .ToListAsync();
 
@@ -41,7 +41,7 @@ public class WorkoutService
         if (profileResult.IsFaulted)
             return new Result<Workout>(profileResult.Error!);
 
-        var workout = await _dataContext.Workouts
+        var workout = await _dataContext.Workout
             .Include(w => w.WorkoutDetail!)
             .Include(w => w.WorkoutLogs!)
             .ThenInclude(wl => wl.ExerciseLogs!)
@@ -84,7 +84,7 @@ public class WorkoutService
             WorkoutDetail = workoutDetailResult.Value
         };
 
-        var createdWorkout = await _dataContext.Workouts.AddAsync(workout);
+        var createdWorkout = await _dataContext.Workout.AddAsync(workout);
         await _dataContext.SaveChangesAsync();
 
         if (createdWorkout?.Entity is not null)
@@ -103,7 +103,7 @@ public class WorkoutService
         if (profileResult.IsFaulted)
             return new Result<Workout>(profileResult.Error!);
 
-        var workout = await _dataContext.Workouts.SingleOrDefaultAsync(w => w.Id == workoutId && w.ProfileId == profileResult.Value.Id);
+        var workout = await _dataContext.Workout.SingleOrDefaultAsync(w => w.Id == workoutId && w.ProfileId == profileResult.Value.Id);
         if (workout is null)
             return new Result<Workout>(
                 Error.NotFound("Your workout detail could not be found")
@@ -123,7 +123,7 @@ public class WorkoutService
 
         var idToCheck = userId ?? profileResult.Value.Id;
 
-        var workout = await _dataContext.Workouts
+        var workout = await _dataContext.Workout
             .SingleOrDefaultAsync(w => w.Id == workoutId &&
                 w.ProfileId == profileResult.Value.Id);
 

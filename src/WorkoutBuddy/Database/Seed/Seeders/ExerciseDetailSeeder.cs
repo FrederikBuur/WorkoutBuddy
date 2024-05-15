@@ -13,7 +13,7 @@ public static class ExerciseDetailSeeder
         // https://exrx.net/Lists/Directory
         // https://www.bodybuilding.com/exercises/
 
-        var json = await File.ReadAllTextAsync("Database/Seed/Json/exerciseDetails.json");
+        var json = await File.ReadAllTextAsync("Database/Seed/JsonLists/exerciseDetails.json");
         IEnumerable<ExerciseDetail> initialExerciseDetails = JsonSerializer.Deserialize<IEnumerable<ExerciseDetail>>(json)
             ?? throw new Exception("Failed to deserialize exercieses.json");
 
@@ -32,10 +32,10 @@ public static class ExerciseDetailSeeder
                 exerciseDetail.CreatorId = creatorId;
                 exerciseDetail.IsPublic = true;
 
-                var e = context.ExerciseDetails.SingleOrDefault(e => e.Id == exerciseDetail.Id);
+                var e = context.ExerciseDetail.SingleOrDefault(e => e.Id == exerciseDetail.Id);
                 if (e is null)
                 {
-                    context.ExerciseDetails.Add(exerciseDetail);
+                    context.ExerciseDetail.Add(exerciseDetail);
 
                     Console.WriteLine($"Adding Exercise: {exerciseDetail.Name}");
                     created++;

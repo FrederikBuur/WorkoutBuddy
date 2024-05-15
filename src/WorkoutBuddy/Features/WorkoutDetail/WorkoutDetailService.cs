@@ -46,7 +46,7 @@ public class WorkoutDetailService
 
         #endregion
 
-        var filteredWorkoutDetails = _dataContext.WorkoutDetails
+        var filteredWorkoutDetails = _dataContext.WorkoutDetail
             .Include(wd => wd.Exercises)
             .Where(visibilityPredicate)
             .Where(searchQueryPredicate);
@@ -75,7 +75,7 @@ public class WorkoutDetailService
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
-        var workout = await _dataContext.WorkoutDetails
+        var workout = await _dataContext.WorkoutDetail
             .SingleOrDefaultAsync(w => w.Id == workoutId && w.Owner == profileResult.Value.Id);
 
         if (workout is null)
@@ -114,7 +114,7 @@ public class WorkoutDetailService
         var exercises = new List<ExerciseDetail>();
         foreach (var exerciseId in workoutRequest.ExerciseIds)
         {
-            var exercise = await _dataContext.ExerciseDetails.FindAsync(exerciseId);
+            var exercise = await _dataContext.ExerciseDetail.FindAsync(exerciseId);
 
             if (exercise is not null)
                 exercises.Add(exercise);
@@ -124,7 +124,7 @@ public class WorkoutDetailService
 
         // saves data to db
         workoutDetail.Exercises = exercises;
-        var result = _dataContext.WorkoutDetails.Add(workoutDetail);
+        var result = _dataContext.WorkoutDetail.Add(workoutDetail);
         await _dataContext.SaveChangesAsync();
 
         return result.Entity;
@@ -138,7 +138,7 @@ public class WorkoutDetailService
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
-        var existingWorkoutDetail = await _dataContext.WorkoutDetails.SingleOrDefaultAsync(w =>
+        var existingWorkoutDetail = await _dataContext.WorkoutDetail.SingleOrDefaultAsync(w =>
             w.Id == workoutRequest.Id
             && w.Owner == workoutRequest.Owner
             && w.Owner == profileResult.Value.Id
@@ -164,7 +164,7 @@ public class WorkoutDetailService
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
-        var workout = await _dataContext.WorkoutDetails.SingleOrDefaultAsync(w => w.Id == workoutId && w.Owner == profileResult.Value.Id);
+        var workout = await _dataContext.WorkoutDetail.SingleOrDefaultAsync(w => w.Id == workoutId && w.Owner == profileResult.Value.Id);
         if (workout is null)
             return new Result<WorkoutDetail>(
                 Error.NotFound("Your workout detail could not be found")

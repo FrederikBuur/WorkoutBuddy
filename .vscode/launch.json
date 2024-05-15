@@ -22,6 +22,25 @@
       }
     },
     {
+      "name": "Migrate Database",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/WorkoutBuddy/bin/Debug/net7.0/WorkoutBuddy.dll",
+      "args": ["migrate"],
+      "cwd": "${workspaceFolder}/src/WorkoutBuddy",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach"
+    },
+    {
       "name": "Init and seed DB",
       "type": "coreclr",
       "request": "launch",

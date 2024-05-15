@@ -26,6 +26,9 @@ internal static class DatabaseHelper
         await context.SeedProfiles();
         await context.SeedExerciseDetails();
         await context.SeedWorkoutDetails();
+        await context.SeedWorkoutAndSessionDataSeeder();//scope);
         Console.WriteLine("Finished seeding");
+
+        scope.Dispose();
     }
 }

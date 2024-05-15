@@ -27,12 +27,19 @@ public static class ServiceCollectionExtensions
         });
 
         // Inject keyvault secrets
-        var shouldUseKeyVault = configuration.GetValue<bool>("KeyVault:UseKeyVault", true);
+        var shouldUseKeyVault = configuration.GetValue("KeyVault:UseKeyVault", true);
         if (shouldUseKeyVault)
         {
-            var keyVaultUrl = configuration.GetValue<Uri>("KeyVault:Url"); // ?? throw new ArgumentNullException("Missing configuration: KeyVault:Url");
+            var keyVaultUrl = configuration.GetValue<Uri>("KeyVault:Url");
 
-            configuration.AddAzureKeyVault(keyVaultUrl, azureCredentials);
+            if (keyVaultUrl is not null)
+            {
+                configuration.AddAzureKeyVault(keyVaultUrl, azureCredentials);
+            }
+            else
+            {
+                Console.WriteLine($"{nameof(SetupFirebase)}: KeyVault:Url from configuration was null");
+            }
         }
         return services;
     }
@@ -107,11 +114,19 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         ConfigurationManager configuration)
     {
-        var firebaseConfig = configuration.GetValue<string>("Auth:FirebaseConfig"); // ?? throw new ArgumentNullException("missing firebase config");
-        FirebaseApp.Create(new AppOptions()
+        var firebaseConfig = configuration.GetValue<string>("Auth:FirebaseConfig");
+
+        if (!string.IsNullOrEmpty(firebaseConfig))
         {
-            Credential = GoogleCredential.FromJson(firebaseConfig)
-        });
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromJson(firebaseConfig)
+            });
+        }
+        else
+        {
+            Console.WriteLine($"{nameof(SetupFirebase)}: Auth:FirebaseConfig form config was null");
+        }
         return services;
     }
 }

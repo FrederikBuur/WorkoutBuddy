@@ -51,21 +51,29 @@ stages:
                     archiveFilePatterns: $(Pipeline.Workspace)/WorkoutBuddyCode/WorkoutBuddy.zip
                     destinationFolder: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                 - task: AzureCLI@2
-                  displayName: Init and Seed Db
+                  displayName: Migrate Database
                   inputs:
-                    azureSubscription: Azure subscription 1
+                    azureSubscription: WorkoutBuddy DevOps
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: ./WorkoutBuddy migrate
+                    workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
+                  env:
+                    ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-staging-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-staging-we;Connection Timeout=30;Authentication=Active Directory Default;"
+                - task: AzureCLI@2
+                  displayName: Init and Seed Database
+                  inputs:
+                    azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: ./WorkoutBuddy initAndSeedDb
                     workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                   env:
-                    KeyVault__Url: https://kv-workoutbuddy-staging-we.vault.azure.net/
-                    Cosmos__Uri: https://cosdb-workoutbuddy-staging-we.documents.azure.com:443/
-                    Cosmos__DbName: workoutbuddy-staging
+                    ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-staging-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-staging-we;Connection Timeout=30;Authentication=Active Directory Default;"
                 - task: AzureCLI@2
-                  displayName: Deploy
+                  displayName: Deploy Code
                   inputs:
-                    azureSubscription: Azure subscription 1
+                    azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: |
@@ -90,22 +98,29 @@ stages:
                     archiveFilePatterns: $(Pipeline.Workspace)/WorkoutBuddyCode/WorkoutBuddy.zip
                     destinationFolder: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                 - task: AzureCLI@2
-                  displayName: Make sure cosmos database is created
-                  condition: eq(variables['initialiseDatabase'], 'True')
+                  displayName: Migrate Database
                   inputs:
-                    azureSubscription: Azure subscription 1
+                    azureSubscription: WorkoutBuddy DevOps
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: ./WorkoutBuddy migrate
+                    workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
+                  env:
+                    ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-prod-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-prod-we;Connection Timeout=30;Authentication=Active Directory Default;"
+                - task: AzureCLI@2
+                  displayName: Init and Seed Database
+                  inputs:
+                    azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: ./WorkoutBuddy initAndSeedDb
                     workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                   env:
-                    KeyVault__Url: https://kv-workoutbuddy-prod-we.vault.azure.net/
-                    Cosmos__Uri: https://cosdb-workoutbuddy-prod-we.documents.azure.com:443/
-                    Cosmos__DbName: workoutbuddy-prod
+                    ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-prod-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-prod-we;Connection Timeout=30;Authentication=Active Directory Default;"
                 - task: AzureCLI@2
-                  displayName: Deploy
+                  displayName: Deploy Code
                   inputs:
-                    azureSubscription: Azure subscription 1
+                    azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: |

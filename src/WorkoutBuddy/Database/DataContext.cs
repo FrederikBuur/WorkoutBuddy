@@ -14,13 +14,13 @@ public class DataContext : DbContext
         // Database.EnsureCreated();
     }
 
-    public DbSet<Profile> Profiles => Set<Profile>();
-    public DbSet<ExerciseDetail> ExerciseDetails => Set<ExerciseDetail>();
-    public DbSet<WorkoutDetail> WorkoutDetails => Set<WorkoutDetail>();
-    public DbSet<Workout> Workouts => Set<Workout>();
-    public DbSet<WorkoutLog> WorkoutLogs => Set<WorkoutLog>();
-    public DbSet<ExerciseLog> ExerciseLogs => Set<ExerciseLog>();
-    public DbSet<ExerciseSet> ExerciseSets => Set<ExerciseSet>();
+    public DbSet<Profile> Profile => Set<Profile>();
+    public DbSet<ExerciseDetail> ExerciseDetail => Set<ExerciseDetail>();
+    public DbSet<WorkoutDetail> WorkoutDetail => Set<WorkoutDetail>();
+    public DbSet<Workout> Workout => Set<Workout>();
+    public DbSet<WorkoutLog> WorkoutLog => Set<WorkoutLog>();
+    public DbSet<ExerciseLog> ExerciseLog => Set<ExerciseLog>();
+    public DbSet<ExerciseSet> ExerciseSet => Set<ExerciseSet>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

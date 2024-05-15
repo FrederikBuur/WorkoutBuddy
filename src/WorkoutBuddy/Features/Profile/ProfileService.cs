@@ -20,7 +20,7 @@ public class ProfileService
     public Result<Profile> GetProfileResult()
     {
         var userId = _userService.Id;
-        var profile = _dataContext.Profiles.SingleOrDefault(p => p.UserId == userId);
+        var profile = _dataContext.Profile.SingleOrDefault(p => p.UserId == userId);
         if (profile is null)
             return new Result<Profile>(Error.Unauthorized("Missing user"));
         else

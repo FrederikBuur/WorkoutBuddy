@@ -10,7 +10,7 @@ public static class WorkoutDetailsSeeder
     {
         Console.WriteLine("Seeding Workouts");
 
-        var json = await File.ReadAllTextAsync("Database/Seed/Json/workoutDetails.json");
+        var json = await File.ReadAllTextAsync("Database/Seed/JsonLists/workoutDetails.json");
         IEnumerable<WorkoutDetail> seedingWorkoutDetails = JsonSerializer.Deserialize<IEnumerable<WorkoutDetail>>(json)
             ?? throw new Exception("Failed to deserialize workouts.json");
 
@@ -29,7 +29,7 @@ public static class WorkoutDetailsSeeder
                 seedingWorkout.CreatorId = creatorId;
                 seedingWorkout.IsPublic = true;
 
-                var existingWorkout = context.WorkoutDetails
+                var existingWorkout = context.WorkoutDetail
                     .Include(w => w.Exercises)
                     .SingleOrDefault(w => w.Id == seedingWorkout.Id);
 
@@ -69,14 +69,14 @@ public static class WorkoutDetailsSeeder
         var updatedExercises = new List<ExerciseDetail>();
         foreach (var ed in seedingWorkout.Exercises ?? new List<ExerciseDetail>())
         {
-            var existingExercise = await context.ExerciseDetails.FindAsync(ed.Id);
+            var existingExercise = await context.ExerciseDetail.FindAsync(ed.Id);
             if (existingExercise is not null) updatedExercises.Add(existingExercise);
             else Console.WriteLine($"Could not add exercise id '{ed.Id}' to workout {seedingWorkout.Name} since exercise with that id does not exist");
         }
         seedingWorkout.Exercises = updatedExercises;
 
         // add workout detial
-        context.WorkoutDetails.Add(seedingWorkout);
+        context.WorkoutDetail.Add(seedingWorkout);
 
         Console.WriteLine($"Adding Workout: {seedingWorkout.Name}");
     }
@@ -95,14 +95,14 @@ public static class WorkoutDetailsSeeder
             var updatedExercises = new List<ExerciseDetail>();
             foreach (var ed in seedingWorkout.Exercises)
             {
-                var existingExercise = await context.ExerciseDetails.FindAsync(ed.Id);
+                var existingExercise = await context.ExerciseDetail.FindAsync(ed.Id);
                 if (existingExercise is not null) updatedExercises.Add(existingExercise);
                 else Console.WriteLine($"Could not add exercise id '{ed.Id}' to workout {seedingWorkout.Name} since exercise with that id does not exist");
             }
             existingWorkout.Exercises = updatedExercises;
         }
 
-        context.WorkoutDetails.Update(existingWorkout);
+        context.WorkoutDetail.Update(existingWorkout);
         Console.WriteLine($"Update Workout: {existingWorkout.Name}");
     }
 }

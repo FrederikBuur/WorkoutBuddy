@@ -50,7 +50,7 @@ public class ExerciseDetailService
 
         #endregion
 
-        var filteredExercises = _dataContext.ExerciseDetails
+        var filteredExercises = _dataContext.ExerciseDetail
             .Where(visibilityPredicate)
             .Where(muscleGroupPredicate)
             .Where(searchQueryPredicate);
@@ -79,7 +79,7 @@ public class ExerciseDetailService
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 
-        var exercise = await _dataContext.ExerciseDetails
+        var exercise = await _dataContext.ExerciseDetail
             .SingleOrDefaultAsync(e => e.Id == exerciseId && e.Owner == profileResult.Value.Id)
         ;
 
@@ -125,7 +125,7 @@ public class ExerciseDetailService
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 
-        var existingExercise = await _dataContext.ExerciseDetails.SingleOrDefaultAsync(e => e.Id == exerciseRequest.id);
+        var existingExercise = await _dataContext.ExerciseDetail.SingleOrDefaultAsync(e => e.Id == exerciseRequest.id);
 
         if (existingExercise is null)
             return new Result<ExerciseDetail>(
@@ -154,7 +154,7 @@ public class ExerciseDetailService
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 
-        var exercise = await _dataContext.ExerciseDetails.SingleOrDefaultAsync(e => e.Id == exerciseId);
+        var exercise = await _dataContext.ExerciseDetail.SingleOrDefaultAsync(e => e.Id == exerciseId);
         if (exercise is null)
             return new Result<ExerciseDetail>(
                 Error.NotFound("Your exercise detail could not be found")

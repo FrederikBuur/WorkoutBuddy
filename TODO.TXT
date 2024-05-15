@@ -1,6 +1,9 @@
 Todo list:
 
+- tjek deploy pipelin virker + tilføj migrate step
+    - kan ikke få adgang til sql når jeg kører migration step?? kan jeg logge ind med AAD med ssms?
 - create seeder for workout/workoutlog/exerciselog/exerciseset
+    - finish status logging for seeding
 - add auth/firebase service 
     - register
     - refresh token

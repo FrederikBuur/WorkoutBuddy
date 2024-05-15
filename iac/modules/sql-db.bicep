@@ -16,14 +16,25 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' = {
   }
   properties: {
     primaryUserAssignedIdentityId: managedIdentityId
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'Enabled'
     restrictOutboundNetworkAccess: 'Disabled'
     administrators: {
+      administratorType: 'ActiveDirectory'
+      principalType: 'User'
       login: 'Frede Buur'
       sid: myAADId
       tenantId: tenant().tenantId
       azureADOnlyAuthentication: true
     }
+  }
+}
+
+resource sqlAllowAzureIps 'Microsoft.Sql/servers/firewallRules@2020-11-01-preview' = {
+  name: 'AllowAllWindowsAzureIps' 
+  parent: sqlServer
+  properties: {
+    startIpAddress: '0.0.0.0'
+    endIpAddress: '0.0.0.0'
   }
 }
 

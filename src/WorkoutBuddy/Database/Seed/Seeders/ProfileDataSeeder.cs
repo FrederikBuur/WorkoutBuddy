@@ -26,11 +26,11 @@ public static class ProfileDataSeeder
 
         foreach (var profile in initialProfiles)
         {
-            var p = context.Profiles.SingleOrDefault(e => e.Id == profile.Id);
+            var p = context.Profile.SingleOrDefault(e => e.Id == profile.Id);
 
             if (p is null)
             {
-                await context.Profiles.AddAsync(profile);
+                await context.Profile.AddAsync(profile);
                 created++;
                 Console.WriteLine($"Adding Profile: {profile.Name}");
             }

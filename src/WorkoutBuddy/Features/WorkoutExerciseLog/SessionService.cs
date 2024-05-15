@@ -35,7 +35,7 @@ public class SessionService
         if (!await _workoutService.UserHasAccessToWorkout(workoutId))
             return new Result<Paginated<WorkoutLog>>(Error.Unauthorized("User does not have access to workout"));
 
-        var filteredWorkoutLogs = _dataContext.WorkoutLogs
+        var filteredWorkoutLogs = _dataContext.WorkoutLog
             .Include(wl => wl.Workout)
             .Where(wl => wl.WorkoutId == workoutId)
             .OrderByDescending(wl => wl.CreatedAt);
@@ -56,7 +56,7 @@ public class SessionService
         if (profileResult.IsFaulted)
             return new Result<WorkoutLog>(profileResult.Error!);
 
-        var workout = await _dataContext.WorkoutLogs
+        var workout = await _dataContext.WorkoutLog
             .Include(wl => wl.Workout)
             .Include(wl => wl.ExerciseLogs!)
             .ThenInclude(el => el.ExerciseSets)
@@ -79,7 +79,7 @@ public class SessionService
         if (profileResult.IsFaulted)
             return new Result<WorkoutLog>(profileResult.Error!);
 
-        var workout = await _dataContext.Workouts
+        var workout = await _dataContext.Workout
             .SingleOrDefaultAsync(w => w.Id == workoutLogRequest.WorkoutId
                 && w.ProfileId == profileResult.Value.Id);
 
@@ -105,7 +105,7 @@ public class SessionService
 
         workoutLog.ExerciseLogs = exerciseLogs.Value;
 
-        var workoutLogEntity = await _dataContext.WorkoutLogs.AddAsync(workoutLog);
+        var workoutLogEntity = await _dataContext.WorkoutLog.AddAsync(workoutLog);
         await _dataContext.SaveChangesAsync();
 
         return workoutLogEntity.Entity;
@@ -133,7 +133,7 @@ public class SessionService
 
             exerciseLog.ExerciseSets = exerciseSets.Value;
 
-            var exerciseLogEntity = await _dataContext.ExerciseLogs.AddAsync(exerciseLog);
+            var exerciseLogEntity = await _dataContext.ExerciseLog.AddAsync(exerciseLog);
             exerciseLogs.Add(exerciseLogEntity.Entity);
         }
 
@@ -162,7 +162,7 @@ public class SessionService
                 ExerciseLogId = exerciseLogId
             };
 
-            var exerciseSetEntity = await _dataContext.ExerciseSets.AddAsync(exerciseSet);
+            var exerciseSetEntity = await _dataContext.ExerciseSet.AddAsync(exerciseSet);
             exerciseSets.Add(exerciseSetEntity.Entity);
         }
 

@@ -76,8 +76,8 @@ module webAppSettings './appsettings.bicep' = {
   params: {
     currentAppSettings: list('${webApp.id}/config/appsettings', '2021-02-01').properties
     appSettings: union(appSettings, {
-      'WEBSITE_RUN_FROM_PACKAGE': '1'
-      'AZURE_CLIENT_ID': managedIdentityClientId
+      WEBSITE_RUN_FROM_PACKAGE: '1'
+      AZURE_CLIENT_ID: managedIdentityClientId
     })
     name: '${webApp.name}/appsettings'
   }

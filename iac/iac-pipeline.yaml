@@ -29,7 +29,6 @@ stages:
                         --resource-group workout-buddy-staging-we `
                         --template-file $(Build.SourcesDirectory)/iac/main-resources.bicep `
                         --parameters deploymentEnvironment=staging
-
   - stage: DeployProd
     jobs:
       - deployment: DeployWorkoutBuddyEnvironmentInfrastructureToAzureProd

@@ -24,8 +24,8 @@ var containerName1 = 'test-container-1'
 var containerName2 = 'another-container'
 var identityName = 'id-${appName}-${deploymentEnvironment}-we'
 var keyvaultName = 'kv-${appName}-${deploymentEnvironment == 'staging' ? 'sta' : deploymentEnvironment}-we' // must bee between 3-24
-var cosmosDbAccountName = 'cosdb-${appName}-${deploymentEnvironment}-we'
-var cosmosDbName = '${appName}-${deploymentEnvironment}'
+// var cosmosDbAccountName = 'cosdb-${appName}-${deploymentEnvironment}-we'
+// var cosmosDbName = '${appName}-${deploymentEnvironment}'
 var sqlServerName = 'sql-server-${appName}-${deploymentEnvironment}-we'
 var sqlDbName = 'sql-db-${appName}-${deploymentEnvironment}-we'
 var webAppName = 'app-${appName}-${deploymentEnvironment}-we'
@@ -121,16 +121,16 @@ module webApp 'modules/web-app.bicep' = {
     managedIdentityId: identity.id
     managedIdentityClientId: identity.properties.clientId
     appSettings: {
-      'Blob__ServiceUri': storageAccount.outputs.primaryEndpoints.blob
-      'Blob__TestContainer1': containerName1
-      'Blob__TestContainer2': containerName2
-      'KeyVault__Url': 'https://${keyvaultName}.vault.azure.net/'
-      'Cosmos__DbName': cosmosDbName
-      'Cosmos__Uri': 'https://${cosmosDbAccountName}.documents.azure.com:443/'
-      'ConnectionStrings__SQL': sqlDb.outputs.connectionString
-      'ASPNETCORE_ENVIRONMENT': deploymentEnvironment == 'staging' ? 'Staging' : deploymentEnvironment == 'prod' ? 'Production' : 'unsupported-env-${deploymentEnvironment}'
-      'PUBLIC_SUPABASE_URL': 'https://iwejadjjejamlxztxsbs.supabase.co'
-      'PUBLIC_SUPABASE_ANON_KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3ZWphZGpqZWphbWx4enR4c2JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzQ2Nzc5ODcsImV4cCI6MTk5MDI1Mzk4N30.aLqD7SEJqKz0nOL5Yvh_hKW-kqnm1DNT3TvP_y6uUo8'
+      ASPNETCORE_ENVIRONMENT: deploymentEnvironment == 'staging' ? 'Staging' : deploymentEnvironment == 'prod' ? 'Production' : 'unsupported-env-${deploymentEnvironment}'
+      Blob__ServiceUri: storageAccount.outputs.primaryEndpoints.blob
+      Blob__TestContainer1: containerName1
+      Blob__TestContainer2: containerName2
+      KeyVault__Url: 'https://${keyvaultName}.vault.azure.net/'
+      ConnectionStrings__SQL: sqlDb.outputs.connectionString
+      // 'Cosmos__DbName': cosmosDbName
+      // 'Cosmos__Uri': 'https://${cosmosDbAccountName}.documents.azure.com:443/'
+      // PUBLIC_SUPABASE_URL: 'https://iwejadjjejamlxztxsbs.supabase.co'
+      // PUBLIC_SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3ZWphZGpqZWphbWx4enR4c2JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzQ2Nzc5ODcsImV4cCI6MTk5MDI1Mzk4N30.aLqD7SEJqKz0nOL5Yvh_hKW-kqnm1DNT3TvP_y6uUo8'
     }
   }
 }
