@@ -30,7 +30,8 @@ var sqlServerName = 'sql-server-${appName}-${deploymentEnvironment}-we'
 var sqlDbName = 'sql-db-${appName}-${deploymentEnvironment}-we'
 var webAppName = 'app-${appName}-${deploymentEnvironment}-we'
 
-var myAADId = 'a4d2de89-ed7b-4762-b315-6a8d3d0a7b8f' // id of me in AAD
+var myAADId = 'a4d2de89-ed7b-4762-b315-6a8d3d0a7b8f' // id of me in AAD HARDCODED
+var adminGroupId = '4e88bef3-eee4-4a8d-904f-213fef9d6aac' // id of group WorkoutBuddyAdmins HARDCODED
 
 // resources
 module appInsights 'modules/app-insights.bicep' = {
@@ -106,7 +107,7 @@ module sqlDb 'modules/sql-db.bicep' = {
     location: location
     deploymentEnvironment: deploymentEnvironment
     managedIdentityId: identity.id
-    myAADId: myAADId
+    adminId: adminGroupId
   }
 }
 

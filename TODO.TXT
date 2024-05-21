@@ -4,10 +4,14 @@ Todo list:
     - kan ikke få adgang til sql når jeg kører migration step?? kan jeg logge ind med AAD med ssms?
 - create seeder for workout/workoutlog/exerciselog/exerciseset
     - finish status logging for seeding
+- opdater iac pipeline
+    - tilføj alle secrets til kv i iac pipeline
+    - tilføj logik til kun lav iac hvis res ikke findes i forvejen
 - add auth/firebase service 
     - register
     - refresh token
     - link accounts - facebook/google/user&pass login
+- kan man lave test accounts i firebase console som kun dukker op for test?
 - add index values (compare request times)
 - integrer ef db update i build pipeline
 - lav middlewere der tilføjer profile info til httpcontext / inject profile info? er der en best practice?

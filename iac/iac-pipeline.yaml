@@ -21,7 +21,7 @@ stages:
                 - task: AzureCLI@2
                   displayName: Deploy
                   inputs:
-                    azureSubscription: Azure subscription 1
+                    azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: |
@@ -42,7 +42,7 @@ stages:
                 - task: AzureCLI@2
                   displayName: Deploy
                   inputs:
-                    azureSubscription: Azure subscription 1
+                    azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
                     inlineScript: |

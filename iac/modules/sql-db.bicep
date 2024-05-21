@@ -3,7 +3,7 @@ param sqlDbName string
 param location string
 param deploymentEnvironment string
 param managedIdentityId string
-param myAADId string
+param adminId string
 
 resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' = {
   name: sqlServerName
@@ -20,9 +20,8 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' = {
     restrictOutboundNetworkAccess: 'Disabled'
     administrators: {
       administratorType: 'ActiveDirectory'
-      principalType: 'User'
-      login: 'Frede Buur'
-      sid: myAADId
+      principalType: 'Group'
+      sid: adminId
       tenantId: tenant().tenantId
       azureADOnlyAuthentication: true
     }
