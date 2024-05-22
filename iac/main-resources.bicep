@@ -31,7 +31,7 @@ var sqlDbName = 'sql-db-${appName}-${deploymentEnvironment}-we'
 var webAppName = 'app-${appName}-${deploymentEnvironment}-we'
 
 var myAADId = 'a4d2de89-ed7b-4762-b315-6a8d3d0a7b8f' // id of me in AAD HARDCODED
-var adminGroupId = '4e88bef3-eee4-4a8d-904f-213fef9d6aac' // id of group WorkoutBuddyAdmins HARDCODED
+var adminGroupId = '86ad9283-4097-4793-87fd-7462339d4371' // id of group WorkoutBuddyAdmins HARDCODED
 
 // resources
 module appInsights 'modules/app-insights.bicep' = {
@@ -126,7 +126,7 @@ module webApp 'modules/web-app.bicep' = {
       Blob__ServiceUri: storageAccount.outputs.primaryEndpoints.blob
       Blob__TestContainer1: containerName1
       Blob__TestContainer2: containerName2
-      KeyVault__Url: 'https://${keyvaultName}.vault.azure.net/'
+      KeyVault__Url: 'https://${keyvaultName}${environment().suffixes.keyvaultDns}'
       ConnectionStrings__SQL: sqlDb.outputs.connectionString
       // 'Cosmos__DbName': cosmosDbName
       // 'Cosmos__Uri': 'https://${cosmosDbAccountName}.documents.azure.com:443/'

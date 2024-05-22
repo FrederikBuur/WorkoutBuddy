@@ -58,6 +58,15 @@ resource secret2 'Microsoft.KeyVault/vaults/secrets@2022-11-01' = {
   name: 'test-secret2'
   parent: keyVault
   properties: {
-    value: 'super secret2'
+    value: 'super secret2 updated'
   }
 }
+
+resource secret3 'Microsoft.KeyVault/vaults/secrets@2022-11-01' = {
+  name: 'test-secret3'
+  parent: keyVault
+  properties: {
+    value: 'super secret3'
+  }
+}
+

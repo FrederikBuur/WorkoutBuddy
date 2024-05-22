@@ -20,6 +20,7 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' = {
     restrictOutboundNetworkAccess: 'Disabled'
     administrators: {
       administratorType: 'ActiveDirectory'
+      login: 'WorkoutBuddyAdmins'
       principalType: 'Group'
       sid: adminId
       tenantId: tenant().tenantId
@@ -63,4 +64,4 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01-preview' = {
   }
 }
 
-output connectionString string = 'Server=tcp:${sqlServerName}.database.windows.net,1433;Initial Catalog=${sqlDbName};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication="Active Directory Default";'
+output connectionString string = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlDbName};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication="Active Directory Default";'

@@ -1,7 +1,7 @@
 Todo list:
 
 - tjek deploy pipelin virker + tilføj migrate step
-    - kan ikke få adgang til sql når jeg kører migration step?? kan jeg logge ind med AAD med ssms?
+    - kan ikke få adgang til sql når jeg kører migration step??  lave4t service principal i Entra
 - create seeder for workout/workoutlog/exerciselog/exerciseset
     - finish status logging for seeding
 - opdater iac pipeline
