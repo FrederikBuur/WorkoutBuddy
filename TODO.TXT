@@ -6,7 +6,6 @@ Todo list:
     - finish status logging for seeding
 - opdater iac pipeline
     - tilføj alle secrets til kv i iac pipeline
-    - tilføj logik til kun lav iac hvis res ikke findes i forvejen
 - add auth/firebase service 
     - register
     - refresh token

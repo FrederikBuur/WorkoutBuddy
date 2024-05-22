@@ -51,6 +51,7 @@ stages:
                     archiveFilePatterns: $(Pipeline.Workspace)/WorkoutBuddyCode/WorkoutBuddy.zip
                     destinationFolder: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                 - task: AzureCLI@2
+                  retryCountOnTaskFailure: 5 # since free tier sql db might be sleeping and need to warm up
                   displayName: Migrate Database
                   inputs:
                     azureSubscription: WorkoutBuddy DevOps
@@ -58,6 +59,7 @@ stages:
                     scriptLocation: inlineScript
                     inlineScript: ./WorkoutBuddy migrate
                     workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
+
                   env:
                     ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-staging-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-staging-we;Connection Timeout=30;Authentication=Active Directory Default;"
                 - task: AzureCLI@2

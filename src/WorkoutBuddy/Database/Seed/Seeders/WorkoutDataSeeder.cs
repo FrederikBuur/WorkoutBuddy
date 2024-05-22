@@ -57,10 +57,10 @@ public static class WorkoutAndSessionDataSeeder
                     var el = await context.ExerciseLog.SingleOrDefaultAsync(x => x.Id == exerciseLog.Id);
                     if (el is null)
                     {
-                        await context.ExerciseLog.AddAsync(exerciseLog);
+                        context.ExerciseLog.Add(exerciseLog);
                         exerciseLogsCreated++;
                     }
-                    else if (exerciseLog.Equals(el))
+                    else if (!exerciseLog.Equals(el))
                     {
                         context.Entry(el).CurrentValues.SetValues(exerciseLog);
                         exerciseLogsUpdated++;
@@ -70,11 +70,11 @@ public static class WorkoutAndSessionDataSeeder
                         exerciseLogsSkipped++;
                     }
                     exerciseLogsTotal++;
-                    await context.ExerciseLog.AddAsync(exerciseLog);
+                    // await context.ExerciseLog.AddAsync(exerciseLog);
                 }
-                await context.WorkoutLog.AddAsync(workoutLog);
+                context.WorkoutLog.Add(workoutLog);
             }
-            var workoutEntity = await context.Workout.AddAsync(workout);
+            var workoutEntity = context.Workout.Add(workout);
 
             // var test = workoutEntity.Entity;
         }
