@@ -6,5 +6,6 @@
 - manually needs to set firebase secrets in kv
 - in devops create service connection witch points to app registration. us this in ci/cd pipeline (azureSubscription)
 - manually added admin group as contributer to web app. otherwise pipelin cant deploy code
+- manually added admin group as contributer to subscription. otherwise pipeline cant deploy code
 
 if deploy pipeline gives sql connection error. run again. sql is free tier so might need to warm up

@@ -27,4 +27,23 @@ public class ExerciseLog : IEntityBase
         WorkoutLogId = workoutLogId;
         ExerciseDetailId = exerciseDetailId;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj is not ExerciseLog other) return false;
+
+        return Id == other.Id;
+    }
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new();
+        hash.Add(Id);
+        hash.Add(ExerciseSets);
+        return hash.ToHashCode();
+    }
 }

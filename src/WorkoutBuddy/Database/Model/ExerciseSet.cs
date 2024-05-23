@@ -29,4 +29,30 @@ public class ExerciseSet : IEntityBase
         WeightUnit = weightUnit;
         OneRepMax = weight / (1.0278 - 0.0278 * repetitions); // Matt Brzycki formular
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj is not ExerciseSet other) return false;
+
+        return Id == other.Id
+            && Repetitions == other.Repetitions
+            && Weight == other.Weight
+            && WeightUnit == other.WeightUnit
+            && OneRepMax == other.OneRepMax;
+    }
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new();
+        hash.Add(Id);
+        hash.Add(Repetitions);
+        hash.Add(Weight);
+        hash.Add(WeightUnit);
+        hash.Add(OneRepMax);
+        return hash.ToHashCode();
+    }
 }

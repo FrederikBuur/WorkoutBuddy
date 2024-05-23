@@ -7,15 +7,12 @@ public static class WorkoutAndSessionDataSeeder
 {
     public static async Task SeedWorkoutAndSessionDataSeeder(this DataContext context)//, IServiceScope scope)
     {
-        // var workoutService = scope.ServiceProvider.GetService<WorkoutService>();
-        // var sessionService = scope.ServiceProvider.GetService<SessionService>();
-
         var workouts = WorkoutsData.WorkoutsSeedData1;
 
-        var workoutCreated = 0;
-        var workoutUpdated = 0;
-        var workoutSkipped = 0;
-        var workoutTotal = 0;
+        var workoutsCreated = 0;
+        var workoutsUpdated = 0;
+        var workoutsSkipped = 0;
+        var workoutsTotal = 0;
 
         var workoutLogsCreated = 0;
         var workoutLogsUpdated = 0;
@@ -48,12 +45,14 @@ public static class WorkoutAndSessionDataSeeder
                     !exerciseLog.ExerciseSets.Any())
                         Console.WriteLine("Exercise sets where null or empty");
 
+                    // upsert exerciseset
                     var exerciseSetsStatus = await SeedExerciseSets(context, exerciseLog);
                     exerciseSetsCreated += exerciseSetsStatus.exerciseSetsCreated;
                     exerciseSetsUpdated += exerciseSetsStatus.exerciseSetsUpdated;
                     exerciseSetsSkipped += exerciseSetsStatus.exerciseSetsSkipped;
                     exerciseSetsTotal += exerciseSetsStatus.exerciseSetsTotal;
 
+                    // upsert exerciselog
                     var el = await context.ExerciseLog.SingleOrDefaultAsync(x => x.Id == exerciseLog.Id);
                     if (el is null)
                     {
@@ -72,24 +71,62 @@ public static class WorkoutAndSessionDataSeeder
                     exerciseLogsTotal++;
                     // await context.ExerciseLog.AddAsync(exerciseLog);
                 }
-                context.WorkoutLog.Add(workoutLog);
-            }
-            var workoutEntity = context.Workout.Add(workout);
 
-            // var test = workoutEntity.Entity;
+                // upsert workoutlog
+                var wl = await context.WorkoutLog.SingleOrDefaultAsync(x => x.Id == workoutLog.Id);
+                if (wl is null)
+                {
+                    await context.WorkoutLog.AddAsync(workoutLog);
+                    workoutLogsCreated++;
+                }
+                else if (!workoutLog.Equals(wl))
+                {
+                    context.Entry(wl).CurrentValues.SetValues(workoutLog);
+                    workoutLogsUpdated++;
+                }
+                else
+                {
+                    workoutLogsSkipped++;
+                }
+                workoutLogsTotal++;
+
+            }
+            // upsert workout
+            var w = await context.Workout.SingleOrDefaultAsync(x => x.Id == workout.Id);
+            if (w is null)
+            {
+                context.Workout.Add(workout);
+                workoutsCreated++;
+            }
+            else if (!workout.Equals(w))
+            {
+                context.Entry(w).CurrentValues.SetValues(workout);
+                workoutsUpdated++;
+            }
+            else
+            {
+                workoutsSkipped++;
+            }
+            workoutsTotal++;
         }
 
-        Console.WriteLine($"Result of {nameof(SeedWorkoutAndSessionDataSeeder)} Exercise Sets. Created: {exerciseSetsCreated}, " +
-            "Updated: {exerciseSetsUpdated}, Skipped: {exerciseSetsSkipped}, Failed: {exerciseSetsTotal - exerciseSetsUpdated - exerciseSetsSkipped}, Total: {exerciseSetsTotal}");
-        Console.WriteLine($"Result of {nameof(SeedWorkoutAndSessionDataSeeder)} Exercise Logs. Created: {exerciseLogsCreated}, " +
-            "Updated: {exerciseLogsUpdated}, Skipped: {exerciseLogsSkipped}, Failed: {exerciseLogsTotal - exerciseLogsUpdated - exerciseLogsSkipped}, Total: {exerciseLogsTotal}");
-
-        // todo add logging for workout logs and workouts
+        Console.WriteLine($"Result of {nameof(SeedWorkoutAndSessionDataSeeder)} Exercise Sets. \n\tCreated: {exerciseSetsCreated}, " +
+            $"\tUpdated: {exerciseSetsUpdated}, \tSkipped: {exerciseSetsSkipped}, \tFailed: {exerciseSetsTotal - exerciseSetsUpdated - exerciseSetsSkipped}, \tTotal: {exerciseSetsTotal}");
+        Console.WriteLine($"Result of {nameof(SeedWorkoutAndSessionDataSeeder)} Exercise Logs. \n\tCreated: {exerciseLogsCreated}, " +
+            $"\tUpdated: {exerciseLogsUpdated}, \tSkipped: {exerciseLogsSkipped}, \tFailed: {exerciseLogsTotal - exerciseLogsUpdated - exerciseLogsSkipped}, \tTotal: {exerciseLogsTotal}");
+        Console.WriteLine($"Result of {nameof(SeedWorkoutAndSessionDataSeeder)} Workout Logs. \n\tCreated: {workoutLogsCreated}, " +
+            $"\tUpdated: {workoutLogsUpdated}, \tSkipped: {workoutLogsSkipped}, \tFailed: {workoutLogsTotal - workoutLogsUpdated - workoutLogsSkipped}, \tTotal: {workoutLogsTotal}");
+        Console.WriteLine($"Result of {nameof(SeedWorkoutAndSessionDataSeeder)} Workouts. \n\tCreated: {workoutsCreated}, " +
+            $"\tUpdated: {workoutsUpdated}, \tSkipped: {workoutsSkipped}, \tFailed: {workoutsTotal - workoutsUpdated - workoutsSkipped}, \tTotal: {workoutsTotal}");
 
         await context.SaveChangesAsync();
     }
 
-    private static async Task<(int exerciseSetsCreated, int exerciseSetsUpdated, int exerciseSetsSkipped, int exerciseSetsTotal)>
+    private static async Task<(
+        int exerciseSetsCreated,
+        int exerciseSetsUpdated,
+        int exerciseSetsSkipped,
+        int exerciseSetsTotal)>
     SeedExerciseSets(DataContext context, ExerciseLog exerciseLog)
     {
         var created = 0;
@@ -105,7 +142,7 @@ public static class WorkoutAndSessionDataSeeder
                 context.ExerciseSet.Add(exerciseSet);
                 created++;
             }
-            else if (exerciseSet.Equals(es))
+            else if (!exerciseSet.Equals(es))
             {
                 context.Entry(es).CurrentValues.SetValues(exerciseSet);
                 updated++;

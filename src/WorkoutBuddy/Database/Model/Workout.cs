@@ -25,4 +25,29 @@ public class Workout : IEntityBase
         LastPerformed = lastPerformed;
         Count = count;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj is not Workout other) return false;
+
+        return Id == other.Id
+        && Name == other.Name
+        && LastPerformed == other.LastPerformed
+        && Count == other.Count;
+    }
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new();
+        hash.Add(Id);
+        hash.Add(Name);
+        hash.Add(LastPerformed);
+        hash.Add(Count);
+        hash.Add(WorkoutLogs);
+        return hash.ToHashCode();
+    }
 }

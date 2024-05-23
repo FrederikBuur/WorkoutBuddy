@@ -41,12 +41,12 @@
       "request": "attach"
     },
     {
-      "name": "Init and seed DB",
+      "name": "Seed DB",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/src/WorkoutBuddy/bin/Debug/net7.0/WorkoutBuddy.dll",
-      "args": ["initAndSeedDb"],
+      "args": ["seedDb"],
       "cwd": "${workspaceFolder}/src/WorkoutBuddy",
       "console": "integratedTerminal",
       "stopAtEntry": false,

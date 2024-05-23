@@ -19,4 +19,25 @@ public class WorkoutLog : IEntityBase
         Id = id ?? Guid.NewGuid();
         CompletedAt = completedAt;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj is not WorkoutLog other) return false;
+
+        return Id == other.Id
+        && CompletedAt == other.CompletedAt;
+    }
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new();
+        hash.Add(Id);
+        hash.Add(CompletedAt);
+        hash.Add(ExerciseLogs);
+        return hash.ToHashCode();
+    }
 }

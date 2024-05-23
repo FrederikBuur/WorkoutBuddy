@@ -63,12 +63,12 @@ stages:
                   env:
                     ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-staging-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-staging-we;Connection Timeout=30;Authentication=Active Directory Default;"
                 - task: AzureCLI@2
-                  displayName: Init and Seed Database
+                  displayName: Seed Database
                   inputs:
                     azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
-                    inlineScript: ./WorkoutBuddy initAndSeedDb
+                    inlineScript: ./WorkoutBuddy seedDb
                     workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                   env:
                     ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-staging-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-staging-we;Connection Timeout=30;Authentication=Active Directory Default;"
@@ -82,7 +82,7 @@ stages:
                       az webapp deployment source config-zip `
                         --src $env:PIPELINE_WORKSPACE/WorkoutBuddyCode/WorkoutBuddy.zip `
                         --name app-workoutbuddy-staging-we `
-                        --resource-group workout-buddy-staging
+                        --resource-group workout-buddy-staging-we
 
   - stage: DeployProd
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
@@ -110,12 +110,12 @@ stages:
                   env:
                     ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-prod-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-prod-we;Connection Timeout=30;Authentication=Active Directory Default;"
                 - task: AzureCLI@2
-                  displayName: Init and Seed Database
+                  displayName: Seed Database
                   inputs:
                     azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
-                    inlineScript: ./WorkoutBuddy initAndSeedDb
+                    inlineScript: ./WorkoutBuddy seedDb
                     workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                   env:
                     ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-prod-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-prod-we;Connection Timeout=30;Authentication=Active Directory Default;"
@@ -129,4 +129,4 @@ stages:
                       az webapp deployment source config-zip `
                         --src $env:PIPELINE_WORKSPACE/WorkoutBuddyCode/WorkoutBuddy.zip `
                         --name app-workoutbuddy-prod-we `
-                        --resource-group workout-buddy-prod
+                        --resource-group workout-buddy-prod-we

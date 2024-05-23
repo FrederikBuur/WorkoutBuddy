@@ -1,9 +1,10 @@
 Todo list:
 
+- fix så man kan køre seeding felre gange uden problemer
 - tjek deploy pipelin virker + tilføj migrate step
     - kan ikke få adgang til sql når jeg kører migration step??  lave4t service principal i Entra
 - create seeder for workout/workoutlog/exerciselog/exerciseset
-    - finish status logging for seeding
+    - sørg for at opdatering af refs for data også lbiver opdateret korrekt. ligesom i workout details seeder
 - opdater iac pipeline
     - tilføj alle secrets til kv i iac pipeline
 - add auth/firebase service 

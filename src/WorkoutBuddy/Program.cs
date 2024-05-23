@@ -37,8 +37,8 @@ var app = builder.Build();
 
 switch (args.FirstOrDefault())
 {
-    case "initAndSeedDb":
-        await app.InitAndSeedDb();
+    case "seedDb":
+        await app.SeedDb();
         return;
     case "migrate":
         await app.Migrate();
