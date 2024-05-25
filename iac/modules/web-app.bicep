@@ -13,9 +13,6 @@ param logAnalyticsId string
 @description('The id of the user assigned managed identity to use.')
 param managedIdentityId string
 
-@description('The clientId of the user assigned managed identity to use.')
-param managedIdentityClientId string
-
 @description('App settings configuration values.')
 param appSettings object
 
@@ -77,7 +74,6 @@ module webAppSettings './appsettings.bicep' = {
     currentAppSettings: list('${webApp.id}/config/appsettings', '2021-02-01').properties
     appSettings: union(appSettings, {
       WEBSITE_RUN_FROM_PACKAGE: '1'
-      AZURE_CLIENT_ID: managedIdentityClientId
     })
     name: '${webApp.name}/appsettings'
   }

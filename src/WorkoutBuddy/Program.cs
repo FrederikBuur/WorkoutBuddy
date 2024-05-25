@@ -40,8 +40,11 @@ switch (args.FirstOrDefault())
     case "seedDb":
         await app.SeedDb();
         return;
-    case "migrate":
-        await app.Migrate();
+    case "migrate-latest":
+        await app.MigrateLatest();
+        return;
+    case "migrate-down":
+        await app.MigrateDown();
         return;
     case null:
         RunApp(app);

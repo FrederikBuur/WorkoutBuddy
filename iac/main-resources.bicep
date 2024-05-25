@@ -120,8 +120,10 @@ module webApp 'modules/web-app.bicep' = {
     appInsightsConnectionString: appInsights.outputs.connectionString
     logAnalyticsId: appInsights.outputs.logAnalyticsId
     managedIdentityId: identity.id
-    managedIdentityClientId: identity.properties.clientId
     appSettings: {
+      AZURE_CLIENT_ID: identity.properties.clientId
+      APPLICATIONINSIGHTS_CONNECTION_STRING: appInsights.outputs.connectionString
+      APPINSIGHTS_INSTRUMENTATIONKEY: appInsights.outputs.instrumentationKey
       ASPNETCORE_ENVIRONMENT: deploymentEnvironment == 'staging' ? 'Staging' : deploymentEnvironment == 'prod' ? 'Production' : 'unsupported-env-${deploymentEnvironment}'
       Blob__ServiceUri: storageAccount.outputs.primaryEndpoints.blob
       Blob__TestContainer1: containerName1

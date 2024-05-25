@@ -57,7 +57,7 @@ stages:
                     azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
-                    inlineScript: ./WorkoutBuddy migrate
+                    inlineScript: ./WorkoutBuddy migrate-latest
                     workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
 
                   env:
@@ -105,7 +105,7 @@ stages:
                     azureSubscription: WorkoutBuddy DevOps
                     scriptType: pscore
                     scriptLocation: inlineScript
-                    inlineScript: ./WorkoutBuddy migrate
+                    inlineScript: ./WorkoutBuddy migrate-latest
                     workingDirectory: $(Pipeline.Workspace)/WorkoutBuddyCode/extracted
                   env:
                     ConnectionStrings__SQL: "Server=tcp:sql-server-workoutbuddy-prod-we.database.windows.net,1433;Initial Catalog=sql-db-workoutbuddy-prod-we;Connection Timeout=30;Authentication=Active Directory Default;"

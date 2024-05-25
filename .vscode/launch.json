@@ -27,7 +27,21 @@
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/src/WorkoutBuddy/bin/Debug/net7.0/WorkoutBuddy.dll",
-      "args": ["migrate"],
+      "args": ["migrate-latest"],
+      "cwd": "${workspaceFolder}/src/WorkoutBuddy",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Migrate Database Down",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/WorkoutBuddy/bin/Debug/net7.0/WorkoutBuddy.dll",
+      "args": ["migrate-down"],
       "cwd": "${workspaceFolder}/src/WorkoutBuddy",
       "console": "integratedTerminal",
       "stopAtEntry": false,

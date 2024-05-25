@@ -29,5 +29,6 @@ resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
 }
 
 output connectionString string = appInsights.properties.ConnectionString
+output instrumentationKey string = appInsights.properties.InstrumentationKey
 output resourceId string = appInsights.id
 output logAnalyticsId string = workspace.id
