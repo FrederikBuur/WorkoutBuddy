@@ -129,4 +129,11 @@ public static class ServiceCollectionExtensions
         }
         return services;
     }
+    public static IServiceCollection SetupApplicationInsights(this IServiceCollection services, IConfiguration configuration) =>
+        services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.DeveloperMode = false;
+                options.InstrumentationKey = configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+            });
+
 }

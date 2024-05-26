@@ -1,7 +1,5 @@
 Todo list:
 
-- tjek deploy pipelin virker + tilføj migrate step
-    - kan ikke få adgang til sql når jeg kører migration step??  lave4t service principal i Entra
 - create seeder for workout/workoutlog/exerciselog/exerciseset
     - sørg for at opdatering af refs for data også lbiver opdateret korrekt. ligesom i workout details seeder
 - opdater iac pipeline
@@ -14,13 +12,13 @@ Todo list:
 - kan man lave test accounts i firebase console som kun dukker op for test?
 - add index values (compare request times)
 - tjek migrate down virker?
-- integrer ef db update i build pipeline
 - lav middlewere der tilføjer profile info til httpcontext / inject profile info? er der en best practice?
     - hvordan kan httpContext.user være sat automatisk?
 - integrer noget AI
     - brug large language models - GBT-4 i azure
 - write automated tests
 - add logger and insights
+    bør være sat op. tjek at det virker på staging > redeploy iac
 - setup healthcheck 
     - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
 - tilføj mere seed data

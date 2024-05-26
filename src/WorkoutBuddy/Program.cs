@@ -16,6 +16,10 @@ builder.Services
 builder.Services.AddControllers();
 builder.Services.AddOutputCache(); // can be faulty if multiple instances
 builder.Services.AddHttpContextAccessor();
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.SetupApplicationInsights(builder.Configuration);
+}
 
 // Add services to the container.
 builder.Services.AddScoped<UserService, UserService>()
