@@ -6,6 +6,8 @@ using WorkoutBuddy.Util.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var _logger = ApplicationLogging.CreateLogger("Program");
+
 // Setup infrastructure
 builder.Services
     .SetupKeyVaultInjection(builder.Configuration)
@@ -32,8 +34,14 @@ builder.Services.AddScoped<UserService, UserService>()
 // Setup http clients
 builder.Services.AddHttpClient<GoogleJwtProvider, GoogleJwtProvider>(httpClient =>
 {
-    var baseAddress = builder.Configuration["Auth:TokenUri"] ?? throw new ArgumentNullException("Missing: Auth:TokenUri");
-    var apiKey = builder.Configuration["Auth:FirebaseApiKey"] ?? throw new ArgumentException("Missing firebase api key");
+    var tokenUri = builder.Configuration.GetValue<string>("Auth:TokenUri");
+    var firebaseApiKey = builder.Configuration.GetValue<string>("Auth:FirebaseApiKey");
+
+    if (string.IsNullOrEmpty(tokenUri)) _logger.LogError($"{nameof(tokenUri)} is null/empty");
+    if (string.IsNullOrEmpty(firebaseApiKey)) _logger.LogError($"{nameof(firebaseApiKey)} is null/empty");
+
+    var baseAddress = tokenUri;
+    var apiKey = firebaseApiKey;
     httpClient.BaseAddress = new Uri($"{baseAddress}?key={apiKey}");
 });
 
@@ -70,6 +78,7 @@ static void RunApp(WebApplication app)
         c.SwaggerEndpoint($"/swagger/v1/swagger.json", "WorkoutBuddy Api");
     });
 
+    app.UseDeveloperExceptionPage();
     app.UseHttpsRedirection();
     app.UseOutputCache(); // can be faulty if multiple instances of app running
 

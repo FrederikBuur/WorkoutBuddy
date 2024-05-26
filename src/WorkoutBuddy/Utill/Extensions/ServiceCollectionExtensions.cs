@@ -10,6 +10,12 @@ using Microsoft.OpenApi.Models;
 namespace WorkoutBuddy.Util;
 public static class ServiceCollectionExtensions
 {
+    private static ILogger _logger;
+    static ServiceCollectionExtensions()
+    {
+        _logger = ApplicationLogging.CreateLogger("ServiceCollectionExtensions");
+    }
+
     public static IServiceCollection SetupKeyVaultInjection(
         this IServiceCollection services,
         ConfigurationManager configuration)
@@ -38,7 +44,8 @@ public static class ServiceCollectionExtensions
             }
             else
             {
-                Console.WriteLine($"{nameof(SetupFirebase)}: KeyVault:Url from configuration was null");
+                _logger.LogError($"{nameof(SetupFirebase)}: KeyVault:Url from configuration was null");
+                // Console.WriteLine($"{nameof(SetupFirebase)}: KeyVault:Url from configuration was null");
             }
         }
         return services;
@@ -87,7 +94,7 @@ public static class ServiceCollectionExtensions
         {
             OnAuthenticationFailed = context =>
             {
-                Console.WriteLine("Unauthorized request: \n" + context.Exception);
+                _logger.LogWarning("Unauthorized request: \n" + context.Exception);
                 return Task.CompletedTask;
             }
         };
@@ -125,7 +132,8 @@ public static class ServiceCollectionExtensions
         }
         else
         {
-            Console.WriteLine($"{nameof(SetupFirebase)}: Auth:FirebaseConfig form config was null");
+            _logger.LogError($"{nameof(SetupFirebase)}: Auth:FirebaseConfig form config was null");
+            // Console.WriteLine($"{nameof(SetupFirebase)}: Auth:FirebaseConfig form config was null");
         }
         return services;
     }

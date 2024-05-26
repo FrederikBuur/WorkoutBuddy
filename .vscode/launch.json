@@ -9,7 +9,7 @@
       "program": "${workspaceFolder}/src/WorkoutBuddy/bin/Debug/net7.0/WorkoutBuddy.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/WorkoutBuddy",
-      "console": "integratedTerminal",
+      // "console": "integratedTerminal",
       "stopAtEntry": false,
       // open swagger on launch:
       // "serverReadyAction": {
