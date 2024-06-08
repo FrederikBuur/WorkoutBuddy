@@ -2,10 +2,9 @@
 using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WorkoutBuddy.Features;
 using WorkoutBuddy.Util;
 
-namespace WorkoutBuddy.Authentication;
+namespace WorkoutBuddy.Features.Authentication;
 
 /**
  * setup firebase auth with swagger ui
@@ -17,37 +16,52 @@ namespace WorkoutBuddy.Authentication;
 [Route("auth")]
 public class AuthController : Controller
 {
-    private readonly GoogleJwtProvider _googleJwtProvider;
+    private readonly AuthService _authService;
 
-    public AuthController(GoogleJwtProvider googleJwtProvider)
+    public AuthController(AuthService authService)
     {
-        _googleJwtProvider = googleJwtProvider;
+        _authService = authService;
     }
 
-    [HttpPost("register")]
-    public async Task<ActionResult> RegisterUser([FromBody][Required] LoginInfo loginInfo)
+    [HttpPost("register/email-password")]
+    public async Task<ActionResult> RegisterUserEmailPassword([FromBody] LoginRequest loginInfo)
     {
 
+        // todo move into auth service
         var userArgs = new UserRecordArgs
         {
-            Email = loginInfo.Username,
+            Email = loginInfo.Email,
             Password = loginInfo.Password
         };
 
         var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
 
+
         return Ok(userRecord.Uid);
     }
 
     [HttpPost("login/email-password")]
-    public async Task<ActionResult<AuthToken?>> LoginWithEmailPassword(
-        [FromBody][Required] LoginInfo loginInfo
-        )
+    public async Task<ActionResult<IdentityAuthToken>> LoginWithEmailPassword(
+        [FromBody] LoginRequest loginRequest)
     {
-        var tokenResult = await _googleJwtProvider.GetForCredentialsAsync(
-            loginInfo.Username,
-            loginInfo.Password);
+        var tokenResult = await _authService.LoginWithEmail(loginRequest);
 
         return tokenResult.ToActionResult((t) => t);
+    }
+
+    [HttpPost("register/google")]
+    public async Task<ActionResult<UserRecord>> RegisterUserGoogle()
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("refresh-jwt")]
+    public async Task<ActionResult<RefreshJwtResponse>> RefreshJwt(
+        [FromBody] RefreshJwtRequest refreshJwtReq
+    )
+    {
+        var newTokenResult = await _authService.RefreshJwtToken(refreshJwtReq);
+
+        return newTokenResult.ToActionResult((t) => t);
     }
 }

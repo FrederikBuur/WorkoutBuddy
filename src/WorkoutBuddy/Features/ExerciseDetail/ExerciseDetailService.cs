@@ -30,7 +30,7 @@ public class ExerciseDetailService
         int pageSize)
     {
 
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<Paginated<ExerciseDetail>>(profileResult.Error!);
 
@@ -75,7 +75,7 @@ public class ExerciseDetailService
 
     public async Task<Result<ExerciseDetail>> GetExerciseAsync(Guid exerciseId)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 
@@ -98,7 +98,7 @@ public class ExerciseDetailService
 
     public async Task<Result<ExerciseDetail>> CreateExerciseAsync(CreateExerciseDetailRequest exerciseRequest)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 
@@ -121,7 +121,7 @@ public class ExerciseDetailService
 
     public async Task<Result<ExerciseDetail>> UpdateExerciseAsync(UpdateExerciseDetailRequest exerciseRequest)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 
@@ -150,7 +150,7 @@ public class ExerciseDetailService
 
     public async Task<Result<ExerciseDetail>> DeleteExerciseAsync(Guid exerciseId)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<ExerciseDetail>(profileResult.Error!);
 

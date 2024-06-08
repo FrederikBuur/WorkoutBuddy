@@ -23,7 +23,7 @@ public class WorkoutService
 
     public async Task<Result<IEnumerable<Workout>>> GetWorkoutsForProfile()
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<IEnumerable<Workout>>(profileResult.Error!);
 
@@ -37,7 +37,7 @@ public class WorkoutService
 
     public async Task<Result<Workout>> GetWorkoutById(Guid id)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<Workout>(profileResult.Error!);
 
@@ -56,7 +56,7 @@ public class WorkoutService
 
     public async Task<Result<Workout>> CreateWorkout(CreateWorkoutRequest createWorkoutRequest)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<Workout>(profileResult.Error);
 
@@ -99,7 +99,7 @@ public class WorkoutService
 
     public async Task<Result<Workout>> DeleteWorkout(Guid workoutId)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<Workout>(profileResult.Error!);
 
@@ -117,7 +117,7 @@ public class WorkoutService
 
     public async Task<bool> UserHasAccessToWorkout(Guid workoutId, Guid? userId = null)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return false;
 

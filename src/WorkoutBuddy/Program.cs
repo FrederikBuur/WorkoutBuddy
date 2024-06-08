@@ -3,6 +3,7 @@ using WorkoutBuddy.Services;
 using WorkoutBuddy.Features;
 using WorkoutBuddy.Util;
 using WorkoutBuddy.Util.ErrorHandling;
+using WorkoutBuddy.Features.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,10 +30,23 @@ builder.Services.AddScoped<UserService, UserService>()
     .AddScoped<WorkoutDetailService, WorkoutDetailService>()
     .AddScoped<ExerciseDetailService, ExerciseDetailService>()
     .AddScoped<WorkoutService, WorkoutService>()
-    .AddScoped<SessionService, SessionService>();
+    .AddScoped<SessionService, SessionService>()
+    .AddScoped<AuthService, AuthService>();
 
 // Setup http clients
 builder.Services.AddHttpClient<GoogleJwtProvider, GoogleJwtProvider>(httpClient =>
+{
+    var identityUri = builder.Configuration.GetValue<string>("Auth:IdentityUri");
+    var firebaseApiKey = builder.Configuration.GetValue<string>("Auth:FirebaseApiKey");
+
+    if (string.IsNullOrEmpty(identityUri)) _logger.LogError($"{nameof(identityUri)} is null/empty");
+    if (string.IsNullOrEmpty(firebaseApiKey)) _logger.LogError($"{nameof(firebaseApiKey)} is null/empty");
+
+    var baseAddress = identityUri;
+    var apiKey = firebaseApiKey;
+    httpClient.BaseAddress = new Uri($"{baseAddress}?key={apiKey}");
+});
+builder.Services.AddHttpClient<GoogleRefreshProvider, GoogleRefreshProvider>(httpClient =>
 {
     var tokenUri = builder.Configuration.GetValue<string>("Auth:TokenUri");
     var firebaseApiKey = builder.Configuration.GetValue<string>("Auth:FirebaseApiKey");

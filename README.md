@@ -7,6 +7,8 @@
 - in devops create service connection witch points to app registration. use this in ci/cd pipeline in azureSubscription property
 - manually added admin group as contributer to web app. otherwise pipelin cant deploy code (not needed?)
 - manually added admin group as contributer to subscription. otherwise pipeline cant deploy code
+- remember to unescape firebase config in kv. only in local secrets needs to be escaped
+- manually add managed identiy to db owner in db with sql script in code base
 
 - if deploy pipeline gives sql connection error. run again. sql is free tier so might need to warm up
   har sat retry på

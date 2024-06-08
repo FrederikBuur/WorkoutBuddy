@@ -1,4 +1,4 @@
-using WorkoutBuddy.Authentication;
+using WorkoutBuddy.Features.Authentication;
 using WorkoutBuddy.Util.ErrorHandling;
 
 namespace WorkoutBuddy.Features;
@@ -14,7 +14,7 @@ public class GoogleJwtProvider
         _logger = logger;
     }
 
-    public async Task<Result<AuthToken?>> GetForCredentialsAsync(string email, string password)
+    public async Task<Result<IdentityAuthToken>> GetForCredentialsAsync(string email, string password)
     {
         var request = new
         {
@@ -29,10 +29,12 @@ public class GoogleJwtProvider
         {
             var errorMsg = await response.Content.ReadAsStringAsync();
             _logger.LogError($"Error getting GoogleJwt {errorMsg}");
-            return new Result<AuthToken?>(Error.BadRequest("Provided credentials are invalid"));
+            return new Result<IdentityAuthToken>(Error.BadRequest("Provided credentials are invalid"));
         }
 
-        var authToken = await response.Content.ReadFromJsonAsync<AuthToken>();
+        var authToken = await response.Content.ReadFromJsonAsync<IdentityAuthToken>();
+
+        if (authToken is null) return new Result<IdentityAuthToken>(Error.InternalServerError("Error parsing auth token from google auth"));
 
         return authToken;
     }

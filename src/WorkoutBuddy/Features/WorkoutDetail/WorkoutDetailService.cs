@@ -30,7 +30,7 @@ public class WorkoutDetailService
         int pageNumber,
         int pageSize)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<Paginated<WorkoutDetail>>(profileResult.Error!);
 
@@ -71,7 +71,7 @@ public class WorkoutDetailService
 
     public async Task<Result<WorkoutDetail>> GetWorkoutDetailById(Guid workoutId)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
@@ -96,7 +96,7 @@ public class WorkoutDetailService
     )
     {
         // checks that user exists
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
@@ -134,7 +134,7 @@ public class WorkoutDetailService
         [FromBody] UpdateWorkoutDetailRequest workoutRequest
     )
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 
@@ -160,7 +160,7 @@ public class WorkoutDetailService
 
     public async Task<Result<WorkoutDetail>> DeleteWorkoutDetail(Guid workoutId)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<WorkoutDetail>(profileResult.Error!);
 

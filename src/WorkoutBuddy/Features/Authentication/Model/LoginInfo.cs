@@ -1,14 +1,8 @@
-using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace WorkoutBuddy.Authentication;
+namespace WorkoutBuddy.Features.Authentication;
 
-public class LoginInfo
-{
-    [JsonPropertyName("username")]
-    public string Username { get; set; } = "";
-
-    [JsonPropertyName("password")]
-    public string Password { get; set; } = "";
-
-}
+public record LoginRequest(
+    string Email,
+    string Password
+);

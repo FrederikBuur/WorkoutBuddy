@@ -1,24 +1,31 @@
 Todo list:
 
+NEED TO HAVE
+
+- add auth controller/firebase service 
+    - register
+    - refresh token
+    - link accounts - facebook/google/user&pass login
+- add index values (compare request times)
+- add logger and insights
+    bør være sat op. tjek at det virker på staging > redeploy iac
+
+
+NICE TO HAVE
+
 - create seeder for workout/workoutlog/exerciselog/exerciseset
     - sørg for at opdatering af refs for data også lbiver opdateret korrekt. ligesom i workout details seeder
 - opdater iac pipeline
     - tilføj alle secrets til kv i iac pipeline
         - firebase secrets. Er der brug for flere?
-- add auth/firebase service 
-    - register
-    - refresh token
-    - link accounts - facebook/google/user&pass login
+- tilføj profil til claims med claims transformation
+    https://www.youtube.com/watch?v=cgjifZF8ZME
 - kan man lave test accounts i firebase console som kun dukker op for test?
-- add index values (compare request times)
+    er måske ikke så vigtig alligevel
 - tjek migrate down virker?
-- lav middlewere der tilføjer profile info til httpcontext / inject profile info? er der en best practice?
-    - hvordan kan httpContext.user være sat automatisk?
 - integrer noget AI
     - brug large language models - GBT-4 i azure
 - write automated tests
-- add logger and insights
-    bør være sat op. tjek at det virker på staging > redeploy iac
 - setup healthcheck 
     - https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas
 - tilføj mere seed data

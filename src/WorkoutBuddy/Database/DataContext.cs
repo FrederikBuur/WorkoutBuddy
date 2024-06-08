@@ -7,12 +7,7 @@ namespace WorkoutBuddy.Data;
 
 public class DataContext : DbContext
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
-    {
-        // seems like migrations are not supported for cosmos. makes sence since it is document based
-        // Database.EnsureDeleted();
-        // Database.EnsureCreated();
-    }
+    public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
     public DbSet<Profile> Profile => Set<Profile>();
     public DbSet<ExerciseDetail> ExerciseDetail => Set<ExerciseDetail>();
@@ -30,6 +25,9 @@ public class DataContext : DbContext
             entity.HasKey(p => p.Id);
 
             entity.HasIndex(p => p.UserId);
+            entity.HasIndex(p => p.Email)
+                .IsUnique();
+
         });
 
         // Exercise Detail

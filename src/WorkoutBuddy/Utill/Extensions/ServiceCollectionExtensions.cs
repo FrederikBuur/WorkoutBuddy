@@ -44,8 +44,8 @@ public static class ServiceCollectionExtensions
             }
             else
             {
-                _logger.LogError($"{nameof(SetupFirebase)}: KeyVault:Url from configuration was null");
-                // Console.WriteLine($"{nameof(SetupFirebase)}: KeyVault:Url from configuration was null");
+                _logger.LogError($"{nameof(SetupKeyVaultInjection)}: KeyVault:Url from configuration was null");
+                // Console.WriteLine($"{nameof(SetupKeyVaultInjection)}: KeyVault:Url from configuration was null");
             }
         }
         return services;

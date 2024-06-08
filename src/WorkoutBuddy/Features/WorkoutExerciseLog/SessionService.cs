@@ -28,7 +28,7 @@ public class SessionService
         int pageNumber,
         int pageSize)
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<Paginated<WorkoutLog>>(profileResult.Error!);
 
@@ -52,7 +52,7 @@ public class SessionService
         Guid workoutId
     )
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<WorkoutLog>(profileResult.Error!);
 
@@ -75,7 +75,7 @@ public class SessionService
         WorkoutLogRequest workoutLogRequest
     )
     {
-        var profileResult = _profileService.GetProfileResult();
+        var profileResult = _profileService.GetProfile();
         if (profileResult.IsFaulted)
             return new Result<WorkoutLog>(profileResult.Error!);
 

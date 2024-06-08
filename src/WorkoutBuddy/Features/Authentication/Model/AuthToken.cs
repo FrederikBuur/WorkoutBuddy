@@ -1,6 +1,6 @@
-namespace WorkoutBuddy.Authentication;
+namespace WorkoutBuddy.Features.Authentication;
 
-public class AuthToken
+public class IdentityAuthToken
 {
     public string? kind { get; set; }
     public string? localId { get; set; }

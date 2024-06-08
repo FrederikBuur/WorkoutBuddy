@@ -12,16 +12,6 @@ internal static class DatabaseHelper
         using var scope = app.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-        // db initialisation/migration handled in Migrator.cs
-        // if (await context.Database.EnsureCreatedAsync())
-        // {
-        //     Console.WriteLine("Db was created");
-        // }
-        // else
-        // {
-        //     Console.WriteLine("Db already exists");
-        // }
-
         // seed database
         Console.WriteLine("Begin seeding");
         await context.SeedProfiles();
