@@ -1,6 +1,7 @@
 
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
+using WorkoutBuddy.Data.Model;
 using WorkoutBuddy.Util.ErrorHandling;
 
 namespace WorkoutBuddy.Features.Authentication;
@@ -23,7 +24,28 @@ public class AuthService
     }
 
     // register with email/password - can be done from app
-    // public async Task<Result<IdentityAuthToken>> 
+    public async Task<Result<Profile>> RegisterEmailPassword(LoginRequest loginInfo)
+    {
+        var userArgs = new UserRecordArgs
+        {
+            Email = loginInfo.Email,
+            Password = loginInfo.Password
+        };
+
+        var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
+
+        var profileResult = await _profileService.CreateProfile(new(
+            UserId: userRecord.Uid,
+            Name: userRecord.DisplayName,
+            Email: userRecord.Email,
+            ProfilePictureUrl: userRecord.PhotoUrl
+        ));
+
+        if (profileResult.IsFaulted)
+            return new Result<Profile>(profileResult.Error);
+
+        return profileResult;
+    }
 
     // register with google login - can be done from app
 

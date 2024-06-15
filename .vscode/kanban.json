@@ -1,0 +1,87 @@
+{
+    "title": "Kanban",
+    "cols": [
+        {
+            "title": "Backlog",
+            "tasks": [
+                {
+                    "text": "tilføj mere seed data\n- en ny profil (min egen) + exercises + en rigtig master profil som er creater til alt seed data\n- flere exercises\n- flere workouts",
+                    "id": "gnjbm6k13fi84dygh0f9q0vu"
+                },
+                {
+                    "text": "setup healthcheck \n- https://www.youtube.com/watch?v=p2faw9DCSsY&ab_channel=NickChapsas",
+                    "id": "vgkshp48j2rg77c23kxoi0aj"
+                },
+                {
+                    "text": "write automated tests",
+                    "id": "tnf6uzsvwcgqrsjqbztd6ddm"
+                },
+                {
+                    "text": "integrer noget AI\n- brug large language models - GBT-4 i azure",
+                    "id": "jhu8nyp90lzz4is0ge9tmxqe"
+                },
+                {
+                    "text": "tjek migrate down virker?",
+                    "id": "trsbrrttp5i6rhzk8yrv8smc"
+                },
+                {
+                    "text": "kan man lave test accounts i firebase console som kun dukker op for test?\n    er måske ikke så vigtig alligevel",
+                    "id": "y69taem4netfgdr8l9ci2z9f"
+                },
+                {
+                    "text": "tilføj profil til claims med claims transformation\n    https://www.youtube.com/watch?v=cgjifZF8ZME",
+                    "id": "lhuzhzlubopevhg3hx9e0sj9"
+                },
+                {
+                    "text": "opdater iac pipeline\n- tilføj alle secrets til kv i iac pipeline\n- firebase secrets. Er der brug for flere?",
+                    "id": "bewrw7rh0eeavpq5l59dfgf0"
+                },
+                {
+                    "text": "create seeder for workout/workoutlog/exerciselog/exerciseset\n- sørg for at opdatering af refs for data også lbiver opdateret korrekt. ligesom i workout details seeder",
+                    "id": "lbmrvk69jq135hx96exiq7de"
+                }
+            ],
+            "id": "ff3b3wwmvmqibvttlgxdjifx",
+            "color": "#8ed1fc"
+        },
+        {
+            "title": "To-Do",
+            "tasks": [
+                {
+                    "text": "email service\n- verify email\n- forgot pass",
+                    "id": "bq7279teeddcsk3e10hqyrj9"
+                },
+                {
+                    "text": "add index values (compare request times)",
+                    "id": "yg1o6h4c0pebn3eo2yudwmy4"
+                },
+                {
+                    "text": "add logger and insights\n    bør være sat op. tjek at det virker på staging > redeploy iac",
+                    "id": "vs2453a37i0sxltd4zmmoxgt"
+                }
+            ],
+            "id": "ldwtlkyiwjsl4xay7ko2gn4k",
+            "color": "#8ed1fc"
+        },
+        {
+            "title": "In Progress",
+            "tasks": [
+                {
+                    "text": "add auth controller/firebase service/controller \n- register email/pass,google\n- link accounts - facebook/google/user&pass login",
+                    "id": "f3rnugohsxhvgccrwbba8zrd"
+                }
+            ],
+            "id": "nfdkd5gf4dnlc1fa934hkfxj",
+            "color": "#8ed1fc"
+        },
+        {
+            "title": "Done",
+            "tasks": [],
+            "id": "h8c0u94qidibid2exs4brxts",
+            "color": "#8ed1fc"
+        }
+    ],
+    "autosave": true,
+    "saveToFile": true,
+    "timestamp": 1718175920323
+}

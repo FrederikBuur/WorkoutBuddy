@@ -2,6 +2,7 @@
 using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WorkoutBuddy.Data.Model;
 using WorkoutBuddy.Util;
 
 namespace WorkoutBuddy.Features.Authentication;
@@ -24,20 +25,11 @@ public class AuthController : Controller
     }
 
     [HttpPost("register/email-password")]
-    public async Task<ActionResult> RegisterUserEmailPassword([FromBody] LoginRequest loginInfo)
+    public async Task<ActionResult<Profile>> RegisterUserEmailPassword([FromBody] LoginRequest loginInfo)
     {
+        var profileResult = await _authService.RegisterEmailPassword(loginInfo);
 
-        // todo move into auth service
-        var userArgs = new UserRecordArgs
-        {
-            Email = loginInfo.Email,
-            Password = loginInfo.Password
-        };
-
-        var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
-
-
-        return Ok(userRecord.Uid);
+        return profileResult.ToActionResult((p) => p);
     }
 
     [HttpPost("login/email-password")]

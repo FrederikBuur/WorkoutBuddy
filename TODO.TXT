@@ -2,10 +2,12 @@ Todo list:
 
 NEED TO HAVE
 
-- add auth controller/firebase service 
-    - register
-    - refresh token
+- add auth controller/firebase service/controller 
+    - register email/pass,google
     - link accounts - facebook/google/user&pass login
+- email service
+    - verify email
+    - forgot pass
 - add index values (compare request times)
 - add logger and insights
     bør være sat op. tjek at det virker på staging > redeploy iac
