@@ -8,12 +8,12 @@ namespace WorkoutBuddy.Features;
 
 [Authorize]
 [ApiController]
-[Route("api/exercise-detail")]
-public partial class ExerciseDetailController : CustomControllerBase
+[Route("api/exercise-details")]
+public partial class ExerciseDetailsController : CustomControllerBase
 {
-    private readonly ILogger<ExerciseDetailController> _logger;
-    private readonly ExerciseDetailService _exerciseService;
-    public ExerciseDetailController(ILogger<ExerciseDetailController> logger, ExerciseDetailService exerciseService)
+    private readonly ILogger<ExerciseDetailsController> _logger;
+    private readonly ExerciseDetailsService _exerciseService;
+    public ExerciseDetailsController(ILogger<ExerciseDetailsController> logger, ExerciseDetailsService exerciseService)
     {
         _logger = logger;
         _exerciseService = exerciseService;

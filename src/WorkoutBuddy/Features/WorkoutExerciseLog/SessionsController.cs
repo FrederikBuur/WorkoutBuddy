@@ -7,21 +7,21 @@ namespace WorkoutBuddy.Features;
 
 [Authorize]
 [ApiController]
-[Route("api/session")]
-public class SessionController : ControllerBase
+[Route("api/sessions")]
+public class SessionsController : ControllerBase
 {
-    private readonly ILogger<WorkoutDetailController> _logger;
-    private readonly SessionService _sessionService;
+    private readonly ILogger<WorkoutDetailsController> _logger;
+    private readonly SessionsService _sessionService;
 
-    public SessionController(
-        ILogger<WorkoutDetailController> logger,
-        SessionService sessionService)
+    public SessionsController(
+        ILogger<WorkoutDetailsController> logger,
+        SessionsService sessionService)
     {
         _logger = logger;
         _sessionService = sessionService;
     }
 
-    [HttpGet("workout/{id}")]
+    [HttpGet("workouts/{id}")]
     public async Task<ActionResult<GetSessionsResponse>> GetSessionsForWorkout(
         Guid id,
         [FromQuery] int pageNumber = 0,
@@ -36,7 +36,7 @@ public class SessionController : ControllerBase
         return sessionsPageResult.ToActionResult(p => new GetSessionsResponse(id, p));
     }
 
-    [HttpGet("workout-log/{id}")]
+    [HttpGet("workout-logs/{id}")]
     public async Task<ActionResult<WorkoutLogResponse>> GetWorkoutLogById(
         Guid id
     )
@@ -46,7 +46,7 @@ public class SessionController : ControllerBase
         return workoutLogResult.ToActionResult(wl => new WorkoutLogResponse(wl));
     }
 
-    [HttpPost("workout-log")]
+    [HttpPost("workout-logs")]
     public async Task<ActionResult<WorkoutLogResponse>> CreateWorkoutLog(
         [FromBody] WorkoutLogRequest workoutLogRequest
     )

@@ -5,17 +5,17 @@ using WorkoutBuddy.Util.ErrorHandling;
 
 namespace WorkoutBuddy.Features;
 
-public class SessionService
+public class SessionsService
 {
-    private readonly ILogger<WorkoutDetailService> _logger;
+    private readonly ILogger<WorkoutDetailsService> _logger;
     private readonly DataContext _dataContext;
-    private readonly ProfileService _profileService;
-    private readonly WorkoutService _workoutService;
+    private readonly ProfilesService _profileService;
+    private readonly WorkoutsService _workoutService;
 
-    public SessionService(ILogger<WorkoutDetailService> logger,
+    public SessionsService(ILogger<WorkoutDetailsService> logger,
         DataContext dataContext,
-        ProfileService profileService,
-        WorkoutService workoutService)
+        ProfilesService profileService,
+        WorkoutsService workoutService)
     {
         _logger = logger;
         _dataContext = dataContext;

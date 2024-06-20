@@ -4,14 +4,14 @@ using WorkoutBuddy.Services;
 
 namespace WorkoutBuddy.Features;
 
-public class ProfileService
+public class ProfilesService
 {
-    private readonly ILogger<ProfileService> _logger;
+    private readonly ILogger<ProfilesService> _logger;
     private readonly DataContext _dataContext;
     private readonly UserService _userService;
 
-    public ProfileService(
-        ILogger<ProfileService> logger,
+    public ProfilesService(
+        ILogger<ProfilesService> logger,
         DataContext dataContext,
         UserService userService)
     {

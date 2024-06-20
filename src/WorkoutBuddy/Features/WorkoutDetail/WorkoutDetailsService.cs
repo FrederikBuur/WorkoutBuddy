@@ -1,23 +1,21 @@
 using System.Linq.Expressions;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using WorkoutBuddy.Data.Model;
 using WorkoutBuddy.Util;
 using WorkoutBuddy.Util.ErrorHandling;
 
 namespace WorkoutBuddy.Features;
 
-public class WorkoutDetailService
+public class WorkoutDetailsService
 {
-    private readonly ILogger<WorkoutDetailService> _logger;
+    private readonly ILogger<WorkoutDetailsService> _logger;
     private readonly DataContext _dataContext;
-    private readonly ProfileService _profileService;
+    private readonly ProfilesService _profileService;
 
-    public WorkoutDetailService(ILogger<WorkoutDetailService> logger,
+    public WorkoutDetailsService(ILogger<WorkoutDetailsService> logger,
     DataContext dataContext,
-    ProfileService profileService)
+    ProfilesService profileService)
     {
         _logger = logger;
         _dataContext = dataContext;

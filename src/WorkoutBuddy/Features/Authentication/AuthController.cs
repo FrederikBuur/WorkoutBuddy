@@ -14,7 +14,7 @@ namespace WorkoutBuddy.Features.Authentication;
 
 [AllowAnonymous]
 [ApiController]
-[Route("auth")]
+[Route("api/auth")]
 public class AuthController : Controller
 {
     private readonly AuthService _authService;

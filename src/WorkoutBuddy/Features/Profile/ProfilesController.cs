@@ -5,14 +5,14 @@ namespace WorkoutBuddy.Features;
 
 [Authorize]
 [ApiController]
-[Route("api/profile")]
-public class ProfileController : ControllerBase
+[Route("api/profiles")]
+public class ProfilesController : ControllerBase
 {
-    private readonly ILogger<ProfileController> _logger;
+    private readonly ILogger<ProfilesController> _logger;
     private readonly DataContext _dataContext;
-    private readonly ProfileService _profileService;
+    private readonly ProfilesService _profileService;
 
-    public ProfileController(ILogger<ProfileController> logger, DataContext dataContext, ProfileService profileService)
+    public ProfilesController(ILogger<ProfilesController> logger, DataContext dataContext, ProfilesService profileService)
     {
         _logger = logger;
         _dataContext = dataContext;

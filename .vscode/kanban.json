@@ -33,7 +33,7 @@
                     "id": "lhuzhzlubopevhg3hx9e0sj9"
                 },
                 {
-                    "text": "opdater iac pipeline\n- tilføj alle secrets til kv i iac pipeline\n- firebase secrets. Er der brug for flere?",
+                    "text": "opdater iac pipeline\n- tilføj alle secrets til kv i iac pipeline\n  - firebase secrets. Er der brug for flere?",
                     "id": "bewrw7rh0eeavpq5l59dfgf0"
                 },
                 {
@@ -83,5 +83,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1718175920323
+    "timestamp": 1718735328311
 }

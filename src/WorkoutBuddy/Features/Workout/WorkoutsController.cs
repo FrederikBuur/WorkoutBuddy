@@ -7,15 +7,15 @@ namespace WorkoutBuddy.Features;
 
 [Authorize]
 [ApiController]
-[Route("api/workout")]
-public class WorkoutController : CustomControllerBase
+[Route("api/workouts")]
+public class WorkoutsController : CustomControllerBase
 {
-    private readonly ILogger<WorkoutController> _logger;
-    private readonly WorkoutService _workoutService;
+    private readonly ILogger<WorkoutsController> _logger;
+    private readonly WorkoutsService _workoutService;
 
-    public WorkoutController(
-        ILogger<WorkoutController> logger,
-        WorkoutService workoutService)
+    public WorkoutsController(
+        ILogger<WorkoutsController> logger,
+        WorkoutsService workoutService)
     {
         _logger = logger;
         _workoutService = workoutService;

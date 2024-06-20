@@ -26,11 +26,11 @@ if (!builder.Environment.IsDevelopment())
 
 // Add services to the container.
 builder.Services.AddScoped<UserService, UserService>()
-    .AddScoped<ProfileService, ProfileService>()
-    .AddScoped<WorkoutDetailService, WorkoutDetailService>()
-    .AddScoped<ExerciseDetailService, ExerciseDetailService>()
-    .AddScoped<WorkoutService, WorkoutService>()
-    .AddScoped<SessionService, SessionService>()
+    .AddScoped<ProfilesService, ProfilesService>()
+    .AddScoped<WorkoutDetailsService, WorkoutDetailsService>()
+    .AddScoped<ExerciseDetailsService, ExerciseDetailsService>()
+    .AddScoped<WorkoutsService, WorkoutsService>()
+    .AddScoped<SessionsService, SessionsService>()
     .AddScoped<AuthService, AuthService>();
 
 // Setup http clients

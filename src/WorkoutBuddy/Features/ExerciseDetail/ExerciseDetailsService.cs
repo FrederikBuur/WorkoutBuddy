@@ -6,16 +6,16 @@ using WorkoutBuddy.Util;
 
 namespace WorkoutBuddy.Features;
 
-public class ExerciseDetailService
+public class ExerciseDetailsService
 {
-    private readonly ILogger<ExerciseDetailService> _logger;
+    private readonly ILogger<ExerciseDetailsService> _logger;
     private readonly DataContext _dataContext;
-    private readonly ProfileService _profileService;
+    private readonly ProfilesService _profileService;
 
-    public ExerciseDetailService(
-        ILogger<ExerciseDetailService> logger,
+    public ExerciseDetailsService(
+        ILogger<ExerciseDetailsService> logger,
         DataContext dataContext,
-        ProfileService profileService)
+        ProfilesService profileService)
     {
         _logger = logger;
         _dataContext = dataContext;

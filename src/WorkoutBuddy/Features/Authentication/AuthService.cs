@@ -11,9 +11,9 @@ public class AuthService
     private readonly FirebaseApp _firebaseApp;
     private readonly GoogleJwtProvider _googleJwtProvider;
     private readonly GoogleRefreshProvider _googleRefreshProvider;
-    private readonly ProfileService _profileService;
+    private readonly ProfilesService _profileService;
 
-    public AuthService(ProfileService profileService,
+    public AuthService(ProfilesService profileService,
     GoogleJwtProvider googleJwtProvider,
     GoogleRefreshProvider googleRefreshProvider)
     {
