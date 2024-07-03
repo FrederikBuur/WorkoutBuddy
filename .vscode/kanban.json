@@ -5,6 +5,10 @@
             "title": "Backlog",
             "tasks": [
                 {
+                    "text": "add firebase emulator for local development\n* https://firebase.google.com/docs/emulator-suite/connect_auth",
+                    "id": "rfebmi3wyycnwccllm1d0vrx"
+                },
+                {
                     "text": "tilføj mere seed data\n- en ny profil (min egen) + exercises + en rigtig master profil som er creater til alt seed data\n- flere exercises\n- flere workouts",
                     "id": "gnjbm6k13fi84dygh0f9q0vu"
                 },
@@ -83,5 +87,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1718735328311
+    "timestamp": 1719817086190
 }

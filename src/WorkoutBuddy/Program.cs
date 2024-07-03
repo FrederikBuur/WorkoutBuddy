@@ -59,6 +59,20 @@ builder.Services.AddHttpClient<GoogleRefreshProvider, GoogleRefreshProvider>(htt
     httpClient.BaseAddress = new Uri($"{baseAddress}?key={apiKey}");
 });
 
+// CORS
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowLocalhost3000",
+            builder => builder
+                .WithOrigins("http://localhost:3000")
+                .AllowAnyMethod()
+                .AllowAnyHeader() // Allow any header, including Content-Type
+                .AllowCredentials()); // If you need to support credentials
+    });
+}
+
 var app = builder.Build();
 
 switch (args.FirstOrDefault())
@@ -84,6 +98,10 @@ static void RunApp(WebApplication app)
     {
         // if unexcpected exception occurs, reroute to '/error' see ErrorController.cs
         app.UseExceptionHandler("/error");
+    }
+    else if (app.Environment.IsDevelopment())
+    {
+        app.UseCors("AllowLocalhost3000");
     }
 
     app.UseSwagger()
