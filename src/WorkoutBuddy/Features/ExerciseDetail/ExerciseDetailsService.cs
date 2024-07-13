@@ -104,13 +104,13 @@ public class ExerciseDetailsService
 
         var newExercise = new ExerciseDetail(
             null,
-            exerciseRequest.owner,
-            exerciseRequest.creatorId,
-            exerciseRequest.name,
-            exerciseRequest.description,
-            exerciseRequest.imageUrl,
-            exerciseRequest.isPublic,
-            exerciseRequest.muscleGroup
+            exerciseRequest.Owner,
+            exerciseRequest.CreatorId,
+            exerciseRequest.Name,
+            exerciseRequest.Description,
+            exerciseRequest.ImageUrl,
+            exerciseRequest.IsPublic,
+            exerciseRequest.MuscleGroup
         );
 
         var result = _dataContext.Add(newExercise);

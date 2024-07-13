@@ -1,11 +1,11 @@
 namespace WorkoutBuddy.Features;
 
 public record CreateExerciseDetailRequest(
-    Guid owner,
-    Guid creatorId,
-    string name,
-    string? description,
-    string? imageUrl,
-    bool isPublic,
-    string muscleGroup
+    Guid Owner,
+    Guid CreatorId,
+    string Name,
+    string? Description,
+    string? ImageUrl,
+    bool IsPublic,
+    string MuscleGroup
 );

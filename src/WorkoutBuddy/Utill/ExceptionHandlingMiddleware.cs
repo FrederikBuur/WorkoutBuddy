@@ -30,7 +30,8 @@ public class ExceptionHandlingMiddleware
             var problemDetails = new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,
-                Title = "Internal Server Error"
+                Title = "Internal Server Error",
+                Detail = exception.Message // todo should only be here if not in prod
             };
 
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;

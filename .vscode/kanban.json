@@ -17,10 +17,6 @@
                     "id": "vgkshp48j2rg77c23kxoi0aj"
                 },
                 {
-                    "text": "write automated tests",
-                    "id": "tnf6uzsvwcgqrsjqbztd6ddm"
-                },
-                {
                     "text": "integrer noget AI\n- brug large language models - GBT-4 i azure",
                     "id": "jhu8nyp90lzz4is0ge9tmxqe"
                 },
@@ -62,6 +58,10 @@
                 {
                     "text": "add logger and insights\n    bør være sat op. tjek at det virker på staging > redeploy iac",
                     "id": "vs2453a37i0sxltd4zmmoxgt"
+                },
+                {
+                    "text": "write automated/integration tests\n* https://www.youtube.com/watch?v=RXSPCIrrjHc&ab_channel=JulioCasal\n* https://www.youtube.com/watch?v=m7r2qyUabTs&t=304s&ab_channel=NickChapsas",
+                    "id": "tnf6uzsvwcgqrsjqbztd6ddm"
                 }
             ],
             "id": "ldwtlkyiwjsl4xay7ko2gn4k",
@@ -87,5 +87,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1719817086190
+    "timestamp": 1720032899353
 }
