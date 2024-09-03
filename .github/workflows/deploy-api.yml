@@ -106,5 +106,5 @@ jobs:
       # url: ${{ steps.deploy-prod.outputs.webapp-url }} missing deploy to prod step
 
     steps:
-      - name: TODO NOT IMPLEMENTED.
-        run: echo TODO NOT IMPLEMENTED.
+      - name: TODO NOT IMPLEMENTED
+        run: echo TODO NOT IMPLEMENTED
