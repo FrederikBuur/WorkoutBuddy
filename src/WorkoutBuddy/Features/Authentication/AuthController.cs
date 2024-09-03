@@ -41,11 +41,11 @@ public class AuthController : Controller
         return tokenResult.ToActionResult((t) => t);
     }
 
-    [HttpPost("register/google")]
-    public async Task<ActionResult<UserRecord>> RegisterUserGoogle()
-    {
-        throw new NotImplementedException();
-    }
+    // [HttpPost("register/google")]
+    // public async Task<ActionResult<UserRecord>> RegisterUserGoogle()
+    // {
+    //     throw new NotImplementedException();
+    // }
 
     [HttpPost("refresh-jwt")]
     public async Task<ActionResult<RefreshJwtResponse>> RefreshJwt(

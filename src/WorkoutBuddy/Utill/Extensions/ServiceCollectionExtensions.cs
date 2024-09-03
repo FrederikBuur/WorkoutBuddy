@@ -141,7 +141,7 @@ public static class ServiceCollectionExtensions
         services.AddApplicationInsightsTelemetry(options =>
             {
                 options.DeveloperMode = false;
-                options.InstrumentationKey = configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
+                options.ConnectionString = configuration.GetValue<string>("APPLICATIONINSIGHTS_CONNECTION_STRING");
             });
 
 }
