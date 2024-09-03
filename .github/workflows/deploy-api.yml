@@ -1,8 +1,9 @@
-name: Build and Deploy Web Api
+name: Deploy Web Api
 
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
-  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+  WEBAPP_PUBLISH_PATH: ./publish
+  WEBAPP_DEPLOY_PATH: ./deploy
   DOTNET_VERSION: "8"
 
 on:
@@ -26,7 +27,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Dependency cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -37,16 +38,13 @@ jobs:
         run: dotnet build ./src/WorkoutBuddy.sln --configuration Release
 
       - name: Publish
-        run: dotnet publish ./src/WorkoutBuddy/WorkoutBuddy.csproj -c Release -o ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
-
-      - name: Debug Publish Output
-        run: ls -la ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
+        run: dotnet publish ./src/WorkoutBuddy/WorkoutBuddy.csproj -c Release -o ${{env.WEBAPP_PUBLISH_PATH}}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dotnet-api
-          path: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}
+          path: ${{env.WEBAPP_PUBLISH_PATH}}
 
   deploy:
     permissions:
@@ -59,15 +57,15 @@ jobs:
 
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: dotnet-api
-          path: ./deploy
+          path: ${{env.WEBAPP_DEPLOY_PATH}}
 
       - name: Deploy to Azure
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./deploy
+          package: ${{env.WEBAPP_DEPLOY_PATH}}
