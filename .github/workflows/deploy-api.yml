@@ -21,7 +21,6 @@ name: Build and Deploy Web Api
 
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
-  AZURE_WEBAPP_PACKAGE_PATH: "./src/WorkoutBuddy.sln"
   DOTNET_VERSION: "8"
 
 on:
@@ -39,12 +38,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET Core
+      - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Set up dependency caching for faster builds
+      - name: Dependency cache
         uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
@@ -52,13 +51,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Build with dotnet
+      - name: Build
         run: dotnet build ./src/WorkoutBuddy.sln --configuration Release
 
-      - name: dotnet publish
+      - name: Publish
         run: dotnet publish ./src/WorkoutBuddy.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
@@ -74,15 +73,15 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: .net-app
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: ${{env.DOTNET_ROOT}}/myapp
