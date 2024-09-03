@@ -56,7 +56,7 @@ jobs:
         run: dotnet build ./src/WorkoutBuddy.sln --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish ./src/WorkoutBuddy.sln -c Release
+        run: dotnet publish ./src/WorkoutBuddy.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
