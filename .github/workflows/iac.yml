@@ -23,7 +23,7 @@ jobs:
   #-------------------------------------------------------------------
   iac-staging:
     name: Deploy infrastructure to Staging
-    if: github.event_name == 'push' # Only deploy on push, not on pull requests
+    # if: github.event_name == 'push' # Only deploy on push, not on pull requests
     environment:
       name: WorkoutBuddyStaging
     runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
   #-------------------------------------------------------------------
   iac-production:
     name: Deploy infrastructure to Production
-    if: github.event_name == 'push' # Only deploy on push, not on pull requests
+    # if: github.event_name == 'push' # Only deploy on push, not on pull requests
     environment:
       name: WorkoutBuddyProduction
     runs-on: ubuntu-latest
