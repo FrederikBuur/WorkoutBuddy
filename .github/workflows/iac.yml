@@ -2,10 +2,10 @@ name: IAC
 
 # workflow should trigger on push to master, pr into master, and if ran manually
 on:
-  push:
-    branches: ["master"]
-  pull_request:
-    branches: ["master"]
+  # push:
+  #   branches: ["master"]
+  # pull_request:
+  #   branches: ["master"]
   workflow_dispatch:
 
 env:
