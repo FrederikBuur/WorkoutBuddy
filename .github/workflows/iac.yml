@@ -1,0 +1,102 @@
+name: IAC
+
+# workflow should trigger on push to master, pr into master, and if ran manually
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  workflow_dispatch:
+
+env:
+  AZURE_RESOURCE_GROUP_STAGING: workout-buddy-staging-we
+  AZURE_RESOURCE_GROUP_PROD: workout-buddy-production-we
+
+permissions:
+  contents: read
+
+jobs:
+  #-------------------------------------------------------------------
+  #
+  # Deploy Azure infrastructure to Staging
+  #
+  #-------------------------------------------------------------------
+  iac-staging:
+    name: Deploy infrastructure to Staging
+    if: github.event_name == 'push' # Only deploy on push, not on pull requests
+    environment:
+      name: WorkoutBuddyStaging
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@4
+
+      - name: Setup Azure CLI
+        uses: azure/setup-azure@v4
+
+      # Login to Azure using client secret for app reg. WorkoutBuddy DevOps
+      - name: Login to Azure
+        uses: azure/login@1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Install Bicep
+        run: az bicep install
+
+      - name: Validate Bicep file for Staging deploy
+        run: |
+          az bicep build --file ${{ github.workspace }}/iac/main-resources.bicep
+          az deployment group validate \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP_STAGING }} \
+            --template-file ${{ github.workspace }}/iac/main-resources.bicep \
+            --parameters deploymentEnvironment=staging
+
+      - name: Deploy Azure resources
+        run: |
+          az bicep build --file ${{ github.workspace }}/iac/main-resources.bicep
+          az deployment group validate \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP_STAGING }} \
+            --template-file ${{ github.workspace }}/iac/main-resources.bicep \
+            --parameters deploymentEnvironment=staging
+  #-------------------------------------------------------------------
+  #
+  # Deploy Azure infrastructure to Production
+  #
+  #-------------------------------------------------------------------
+  iac-production:
+    name: Deploy infrastructure to Production
+    if: github.event_name == 'push' # Only deploy on push, not on pull requests
+    environment:
+      name: WorkoutBuddyProduction
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@4
+
+      - name: Setup Azure CLI
+        uses: azure/setup-azure@v4
+
+      # Login to Azure using client secret for app reg. WorkoutBuddy DevOps
+      - name: Login to Azure
+        uses: azure/login@1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Install Bicep
+        run: az bicep install
+
+      - name: Validate Bicep file for Production deploy
+        run: |
+          az bicep build --file ${{ github.workspace }}/iac/main-resources.bicep
+          az deployment group validate \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP_PROD }} \
+            --template-file ${{ github.workspace }}/iac/main-resources.bicep \
+            --parameters deploymentEnvironment=prod
+
+      - name: Deploy Azure resources
+        run: |
+          az bicep build --file ${{ github.workspace }}/iac/main-resources.bicep
+          az deployment group validate \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP_PROD }} \
+            --template-file ${{ github.workspace }}/iac/main-resources.bicep \
+            --parameters deploymentEnvironment=prod

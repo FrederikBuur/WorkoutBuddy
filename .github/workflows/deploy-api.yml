@@ -1,18 +1,18 @@
 name: Deploy Web Api
 
-env:
-  AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
-  WEBAPP_PUBLISH_PATH: ./publish
-  WEBAPP_DEPLOY_PATH: ./deploy
-  DOTNET_VERSION: "8"
-
-  # workflow should trigger on push to master, pr into master, and if ran manually
+# workflow should trigger on push to master, pr into master, and if ran manually
 on:
   push:
     branches: ["master"]
   pull_request:
     branches: ["master"]
   workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
+  WEBAPP_PUBLISH_PATH: ./publish
+  WEBAPP_DEPLOY_PATH: ./deploy
+  DOTNET_VERSION: "8"
 
 permissions:
   contents: read
