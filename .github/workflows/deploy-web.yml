@@ -9,7 +9,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
-  WEBAPP_PUBLISH_PATH: ./dist # vite's default build path
+  WEBAPP_PUBLISH_PATH: ${{ github.workspace }}/app/dist # vite's default build path
   WEBAPP_DEPLOY_PATH: ./deploy
   NODE_VERSION: "20"
 
