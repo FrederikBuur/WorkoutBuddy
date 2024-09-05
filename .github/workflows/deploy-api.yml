@@ -11,7 +11,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
   WEBAPP_PUBLISH_PATH: ./publish
-  WEBAPP_DEPLOY_PATH: ./deploy
+  WEBAPP_DEPLOY_PATH: ./deploy/api
   DOTNET_VERSION: "8"
 
 permissions:

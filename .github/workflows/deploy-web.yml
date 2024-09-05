@@ -9,8 +9,8 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
-  WEBAPP_PUBLISH_PATH: ${{ github.workspace }}/app/dist # vite's default build path
-  WEBAPP_DEPLOY_PATH: ./deploy
+  WEBAPP_BUILD_PATH: ${{ github.workspace }}/app/dist # vite's default build path is in 'dist' folder
+  WEBAPP_DEPLOY_PATH: ./deploy/web
   NODE_VERSION: "20"
 
 permissions:
@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: ${{env.WEBAPP_PUBLISH_PATH}}
+          path: ${{env.WEBAPP_BUILD_PATH}}
 
   deploy:
     permissions:
