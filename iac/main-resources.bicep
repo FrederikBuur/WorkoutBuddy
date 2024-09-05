@@ -121,6 +121,7 @@ module webApp 'modules/web-app.bicep' = {
     logAnalyticsId: appInsights.outputs.logAnalyticsId
     managedIdentityId: identity.id
     appSettings: {
+      WEBSITE_NODE_DEFAULT_VERSION: 20
       AZURE_CLIENT_ID: identity.properties.clientId
       APPLICATIONINSIGHTS_CONNECTION_STRING: appInsights.outputs.connectionString
       //APPINSIGHTS_INSTRUMENTATIONKEY: appInsights.outputs.instrumentationKey // use connectionstring instead
