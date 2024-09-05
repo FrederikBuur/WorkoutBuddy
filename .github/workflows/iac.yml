@@ -1,4 +1,4 @@
-name: IAC
+name: IaC
 
 # workflow should trigger on push to master, pr into master, and if ran manually
 on:
