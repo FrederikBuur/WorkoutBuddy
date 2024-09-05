@@ -31,4 +31,8 @@
 
         </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="WorkoutBuddy.Tests"/>
+  </ItemGroup>
+
 </Project>

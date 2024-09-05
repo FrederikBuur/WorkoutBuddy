@@ -86,10 +86,9 @@ switch (args.FirstOrDefault())
     case "migrate-down":
         await app.MigrateDown();
         return;
-    case null:
+    default:
         RunApp(app);
         return;
-    case var arg: throw new ArgumentException($"Unknown command-line argument: {arg}");
 }
 
 static void RunApp(WebApplication app)
@@ -112,7 +111,7 @@ static void RunApp(WebApplication app)
 
     app.UseDeveloperExceptionPage();
     app.UseHttpsRedirection();
-    app.UseOutputCache(); // can be faulty if multiple instances of app running
+    //app.UseOutputCache(); // can be faulty if multiple instances of app running
 
     app.UseAuthentication();
     app.UseAuthorization();
