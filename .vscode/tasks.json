@@ -39,6 +39,33 @@
       // "options": {
       //   "cwd": "${workspaceFolder}/src/WorkoutBuddy/"
       // }
+    },
+    {
+      "label": "webrundev",
+      "type": "npm",
+      "script": "dev",
+      "options": {
+        "cwd": "${workspaceFolder}/app"
+      },
+
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "ready in",
+            "endsPattern": "ready in"
+          }
+        }
+      ]
     }
   ]
 }
