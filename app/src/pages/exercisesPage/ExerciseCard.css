@@ -1,0 +1,43 @@
+.exercise-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  aspect-ratio: 2/3;
+  background-color: white;
+  margin: 8px;
+  border-radius: 2px;
+  box-shadow: 0 4px 8px 0 darkgray, 0 6px 20px 0 darkgray;
+
+  &:hover {
+    background-color: lightgray;
+    box-shadow: rgba(0, 0, 0, 0.22) 0px 19px 43px,
+      rgba(0, 0, 0, 0.18) 0px 4px 11px;
+  }
+}
+
+.exercise-image {
+  width: 100%;
+  height: 60%;
+  aspect-ratio: 3/4;
+  object-position: top;
+  object-fit: cover;
+}
+
+.exercise-info-container {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.exercise-muscle-group-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.exercise-muscle-group {
+  border: 2px solid green;
+  border-radius: 12rem;
+  border-color: gray;
+  color: grey;
+  padding: 4px;
+}

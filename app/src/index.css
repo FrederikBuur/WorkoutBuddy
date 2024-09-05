@@ -1,0 +1,20 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  --olive-green: #3d550c;
+  --lime-green: #81b622;
+  --yellow-green: #ecf87f;
+  --green: #59981a;
+  --background: #0f0f0f;
+  --background-raised: #212121;
+  --background-icons: #3b3b3b;
+  --background-icons-hover: #525252;
+}
+
+body {
+  background-color: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
+}

@@ -1,0 +1,12 @@
+.app-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.app-content {
+  max-width: 80%;
+  margin: 0 auto;
+  max-width: 100rem;
+  background-color: aqua;
+}
