@@ -2,6 +2,7 @@ name: Deploy Website
 
 on:
   push:
+    paths: app/
     branches: ["master"]
   pull_request:
     branches: ["master"]
@@ -10,8 +11,11 @@ on:
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
   WEBAPP_BUILD_PATH: ${{ github.workspace }}/app/dist # vite's default build path is in 'dist' folder
-  WEBAPP_DEPLOY_PATH: ./deploy/web
+  WEBAPP_DEPLOY_PATH: deploy/web
   NODE_VERSION: "20"
+  VITE_FIREBASE_API_KEY: AIzaSyDUkptqktgTsyaEbjjlNKYD4g7jsW20Y98
+  VITE_FIREBASE_APP_ID: 1:217070469792:web:1fb9f4e643b45d1f5f7fc5
+  VITE_FIREBASE_PROJECT_ID: workout-buddy-bc830
 
 permissions:
   contents: read
