@@ -64,7 +64,18 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
       http20Enabled: true
       minTlsVersion: '1.2'
       ftpsState: 'Disabled'
+      virtualApplications: [ // this should enable to deploy api and website to samme webapp
+        {
+          virtualPath: '/'
+          physicalPath: 'site\\wwwroot'
+        }
+        {
+          virtualPath: '/api'
+          physicalPath: 'site\\wwwroot\\api'
+        }
+      ]
     }
+    
   }
 }
 

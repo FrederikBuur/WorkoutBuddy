@@ -13,6 +13,10 @@ env:
   WEBAPP_BUILD_PATH: ${{ github.workspace }}/app/dist # vite's default build path is in 'dist' folder
   WEBAPP_DEPLOY_PATH: deploy/web
   NODE_VERSION: "20"
+
+  # "Firebase-related APIs use API keys only to identify the Firebase project or app,
+  # not for authorization to call the API (like some other APIs allow)"
+  # source: https://firebase.google.com/docs/projects/api-keys
   VITE_FIREBASE_API_KEY: AIzaSyDUkptqktgTsyaEbjjlNKYD4g7jsW20Y98
   VITE_FIREBASE_APP_ID: 1:217070469792:web:1fb9f4e643b45d1f5f7fc5
   VITE_FIREBASE_PROJECT_ID: workout-buddy-bc830
