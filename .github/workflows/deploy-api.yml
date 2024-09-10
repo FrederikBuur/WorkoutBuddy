@@ -27,7 +27,7 @@ jobs:
   #-------------------------------------------------------------------
   build-job:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -70,7 +70,7 @@ jobs:
     # if: github.event_name == 'push' # Only deploy on push, not on pull requests
     permissions:
       contents: none
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build-job
     environment:
       name: "WorkoutBuddyStaging"
@@ -111,7 +111,7 @@ jobs:
     if: github.event_name == 'push' # Only deploy on push, not on pull requests
     permissions:
       contents: none
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: [build-job, deploy-staging-job]
     environment:
       name: "WorkoutBuddyProduction"
