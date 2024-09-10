@@ -11,7 +11,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
   AZURE_WEBAPP_STAGING_RESOURCE_GROUP: workout-buddy-staging-we
-  AZURE_DEPLOYMENT_TARGET: C:\home\site\api
+  AZURE_DEPLOYMENT_TARGET: site\wwwroot_api
 
   WEBAPP_PACKAGE_PATH: publish
   DOTNET_VERSION: "8"
@@ -52,7 +52,7 @@ jobs:
         run: dotnet test ./src/WorkoutBuddy.sln --configuration Release --no-build --verbosity normal
 
       - name: Publish
-        run: dotnet publish ./src/WorkoutBuddy/WorkoutBuddy.csproj -c Release -o ${{env.WEBAPP_PACKAGE_PATH}} /p:DeployIisAppPath="${{ env.AZURE_WEBAPP_NAME }}/api"
+        run: dotnet publish ./src/WorkoutBuddy/WorkoutBuddy.csproj -c Release -o ${{env.WEBAPP_PACKAGE_PATH}} # /p:DeployIisAppPath="${{ env.AZURE_WEBAPP_NAME }}/api"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -83,13 +83,14 @@ jobs:
           name: dotnet-api
           path: ${{env.WEBAPP_PACKAGE_PATH}}
 
-      # - name: Login to Azure
-      #   uses: Azure/login@v2
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # solution? https://stackoverflow.com/questions/64993949/using-webapps-deploy-to-deploy-into-a-specifc-folder-not-just-into-wwwroot
+      - name: Login to Azure
+        uses: Azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # - name: Configure Azure Deployment Target
-      #   run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
+      - name: Configure Azure Deployment Target
+        run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
 
       - name: Deploy to Azure
         id: deploy-staging
