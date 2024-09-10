@@ -84,13 +84,13 @@ jobs:
           name: dotnet-api
           path: ${{env.WEBAPP_DEPLOY_PATH}}
 
-      - name: Login to Azure
-        uses: Azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: Login to Azure
+      #   uses: Azure/login@v2
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Configure Azure Deployment Target
-        run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
+      # - name: Configure Azure Deployment Target
+      #   run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
 
       - name: Deploy to Azure
         id: deploy-staging
