@@ -88,7 +88,6 @@ jobs:
         uses: Azure/login@v1.4.6
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          environment: "AzureUSGovernment"
           run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
 
       - name: Deploy to Azure
