@@ -51,7 +51,7 @@ jobs:
       - name: Deploy Azure resources
         run: |
           az bicep build --file ${{ github.workspace }}/iac/main-resources.bicep
-          az deployment group validate \
+          az deployment group create \
             --resource-group ${{ env.AZURE_RESOURCE_GROUP_STAGING }} \
             --template-file ${{ github.workspace }}/iac/main-resources.bicep \
             --parameters deploymentEnvironment=staging
@@ -91,7 +91,7 @@ jobs:
       - name: Deploy Azure resources
         run: |
           az bicep build --file ${{ github.workspace }}/iac/main-resources.bicep
-          az deployment group validate \
+          az deployment group create \
             --resource-group ${{ env.AZURE_RESOURCE_GROUP_PROD }} \
             --template-file ${{ github.workspace }}/iac/main-resources.bicep \
             --parameters deploymentEnvironment=prod
