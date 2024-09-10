@@ -52,7 +52,7 @@ jobs:
         run: dotnet test ./src/WorkoutBuddy.sln --configuration Release --no-build --verbosity normal
 
       - name: Publish
-        run: dotnet publish ./src/WorkoutBuddy/WorkoutBuddy.csproj -c Release -o ${{env.WEBAPP_PACKAGE_PATH}}
+        run: dotnet publish ./src/WorkoutBuddy/WorkoutBuddy.csproj -c Release -o ${{env.WEBAPP_PACKAGE_PATH}} /p:DeployIisAppPath="${{ env.AZURE_WEBAPP_NAME }}/api"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
