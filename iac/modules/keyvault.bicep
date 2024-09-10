@@ -70,3 +70,11 @@ resource secret3 'Microsoft.KeyVault/vaults/secrets@2022-11-01' = {
   }
 }
 
+resource secret4 'Microsoft.KeyVault/vaults/secrets@2022-11-01' = {
+  name: 'test-secret4'
+  parent: keyVault
+  properties: {
+    value: 'super secret4'
+  }
+}
+
