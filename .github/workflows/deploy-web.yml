@@ -10,6 +10,9 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
+  AZURE_WEBAPP_STAGING_RESOURCE_GROUP: workout-buddy-staging-we
+  AZURE_DEPLOYMENT_TARGET: 'D:\home\site\wwwroot'
+
   WEBAPP_BUILD_PATH: ${{ github.workspace }}/app/dist # vite's default build path is in 'dist' folder
   WEBAPP_DEPLOY_PATH: deploy/web
   NODE_VERSION: "20"
@@ -64,6 +67,13 @@ jobs:
         with:
           name: node-app
           path: ${{env.WEBAPP_DEPLOY_PATH}}
+
+      - name: Configure Azure Deployment Target
+        uses: Azure/login@v1.4.6
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          environment: "AzureUSGovernment"
+          run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
 
       - name: "Deploy to Azure WebApp"
         id: deploy-to-webapp
