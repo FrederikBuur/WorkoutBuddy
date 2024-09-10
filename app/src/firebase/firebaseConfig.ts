@@ -2,6 +2,10 @@ import { FirebaseOptions, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 
+const test = import.meta.env.VITE_FIREBASE_API_KEY;
+
+console.log("VITE_FIREBASE_API_KEY!!!! " + test);
+
 const firebaseOptions: FirebaseOptions = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
