@@ -47,7 +47,7 @@ jobs:
           npm --prefix ${{ github.workspace }}/app run test --if-present
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: node-app
           path: ${{env.WEBAPP_BUILD_PATH}}
@@ -63,16 +63,16 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: node-app
           path: ${{env.WEBAPP_DEPLOY_PATH}}
 
-      - name: Configure Azure Deployment Target
-        uses: Azure/login@v1.4.6
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
+      # - name: Configure Azure Deployment Target
+      #   uses: Azure/login@v1.4.6
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      #     run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
 
       - name: "Deploy to Azure WebApp"
         id: deploy-to-webapp

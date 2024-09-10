@@ -59,7 +59,7 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
     keyVaultReferenceIdentity: managedIdentityId
     clientAffinityEnabled: false
     siteConfig: {
-      netFrameworkVersion: 'v7.0'
+      netFrameworkVersion: 'v8.0'
       alwaysOn: false
       http20Enabled: true
       minTlsVersion: '1.2'

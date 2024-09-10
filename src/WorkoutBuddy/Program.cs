@@ -103,10 +103,14 @@ static void RunApp(WebApplication app)
         app.UseCors("AllowLocalhost3000");
     }
 
-    app.UseSwagger()
+    app.UseSwagger(c =>
+    {
+        c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
+    })
     .UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint($"/swagger/v1/swagger.json", "WorkoutBuddy Api");
+        c.SwaggerEndpoint($"/api/swagger/v1/swagger.json", "WorkoutBuddy Api");
+        c.RoutePrefix = "api/swagger";
     });
 
     app.UseDeveloperExceptionPage();
