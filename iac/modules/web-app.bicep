@@ -71,7 +71,7 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
         }
         {
           virtualPath: '/api'
-          physicalPath: 'site\\wwwroot\\api'
+          physicalPath: 'site\\api'
         }
       ]
     }

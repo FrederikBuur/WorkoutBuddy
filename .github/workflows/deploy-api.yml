@@ -2,16 +2,16 @@ name: Deploy Web Api
 
 # workflow should trigger on push to master, pr into master, and if ran manually
 on:
-  # push:
-  #   branches: ["master"]
-  # pull_request:
-  #   branches: ["master"]
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
   workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: app-workoutbuddy-staging-we
   AZURE_WEBAPP_STAGING_RESOURCE_GROUP: workout-buddy-staging-we
-  AZURE_DEPLOYMENT_TARGET: 'D:\home\site\api'
+  AZURE_DEPLOYMENT_TARGET: D:\home\site\api
 
   WEBAPP_PUBLISH_PATH: publish
   WEBAPP_DEPLOY_PATH: deploy/api
@@ -84,11 +84,13 @@ jobs:
           name: dotnet-api
           path: ${{env.WEBAPP_DEPLOY_PATH}}
 
-      - name: Configure Azure Deployment Target
-        uses: Azure/login@v1.4.6
+      - name: Login to Azure
+        uses: Azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
+
+      - name: Configure Azure Deployment Target
+        run: az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_WEBAPP_STAGING_RESOURCE_GROUP }} --settings DEPLOYMENT_TARGET=${{ env.AZURE_DEPLOYMENT_TARGET }} --output none
 
       - name: Deploy to Azure
         id: deploy-staging
