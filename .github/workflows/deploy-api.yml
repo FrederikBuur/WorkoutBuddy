@@ -67,7 +67,7 @@ jobs:
   #-------------------------------------------------------------------
   deploy-staging-job:
     name: Deploy Staging
-    if: github.event_name == 'push' # Only deploy on push, not on pull requests
+    # if: github.event_name == 'push' # Only deploy on push, not on pull requests
     permissions:
       contents: none
     runs-on: ubuntu-latest
