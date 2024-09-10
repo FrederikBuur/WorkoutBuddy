@@ -66,12 +66,12 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
       ftpsState: 'Disabled'
       virtualApplications: [ // this should enable to deploy api and website to samme webapp
         {
-          virtualPath: '/'
-          physicalPath: 'site\\wwwroot'
-        }
-        {
           virtualPath: '/api'
           physicalPath: 'site\\wwwroot\\api'
+        }
+        {
+          virtualPath: '/'
+          physicalPath: 'site\\wwwroot'
         }
       ]
     }
